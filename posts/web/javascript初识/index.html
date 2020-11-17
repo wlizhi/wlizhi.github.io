@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>JavaScript初识 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="JavaScript初识" />
+<meta property="og:description" content="初学 JavaScript 要掌握的知识有哪些呢？ 1.表达式和语句 表达式： 一个式子，它具有表达某些信息的能力。比如1&#43;2表达式的值为 3。需要注意的地方，conso" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/web/javascript%E5%88%9D%E8%AF%86/" />
+<meta property="og:image" content="http://example.org/logo.png"/>
+<meta property="article:published_time" content="2020-06-01T23:11:21+08:00" />
+<meta property="article:modified_time" content="2020-06-01T23:11:21+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://example.org/logo.png"/>
+
+<meta name="twitter:title" content="JavaScript初识"/>
+<meta name="twitter:description" content="初学 JavaScript 要掌握的知识有哪些呢？ 1.表达式和语句 表达式： 一个式子，它具有表达某些信息的能力。比如1&#43;2表达式的值为 3。需要注意的地方，conso"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://example.org/posts/web/javascript%E5%88%9D%E8%AF%86/" /><link rel="prev" href="http://example.org/posts/web/%E6%B5%85%E6%9E%90url/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "JavaScript初识",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/example.org\/posts\/web\/javascript%E5%88%9D%E8%AF%86\/"
+        },"genre": "posts","keywords": "JavaScript, 入门","wordcount":  1520 ,
+        "url": "http:\/\/example.org\/posts\/web\/javascript%E5%88%9D%E8%AF%86\/","datePublished": "2020-06-01T23:11:21+08:00","dateModified": "2020-06-01T23:11:21+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/favicon.ico"
+        data-srcset="/favicon.ico, /favicon.ico 1.5x, /favicon.ico 2x"
+        data-sizes="auto"
+        alt="/favicon.ico"
+        title="/favicon.ico" />暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索" id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/favicon.ico"
+        data-srcset="/favicon.ico, /favicon.ico 1.5x, /favicon.ico 2x"
+        data-sizes="auto"
+        alt="/favicon.ico"
+        title="/favicon.ico" />暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索" id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">JavaScript初识</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://github.com/wlizhi" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%89%8D%E7%AB%AF/"><i class="far fa-folder fa-fw"></i>前端</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-01">2020-06-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1520 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1表达式和语句">1.表达式和语句</a></li>
+    <li><a href="#2-标识符的规则">2. 标识符的规则</a></li>
+    <li><a href="#3条件判断语句">3.条件判断语句</a></li>
+    <li><a href="#4循环">4.循环</a></li>
+    <li><a href="#5breakcontinue">5、break、continue</a></li>
+    <li><a href="#6label-语句">6.label 语句</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>初学 JavaScript 要掌握的知识有哪些呢？</p>
+<h2 id="1表达式和语句">1.表达式和语句</h2>
+<p><strong>表达式：</strong> 一个式子，它具有表达某些信息的能力。比如<code>1+2</code>表达式的值为 3。需要注意的地方，<code>console.log</code>表达式的值为函数本身，但是<code>console.log(1)</code>表达式的值为 undefined，只是在控制台中显示的内容为 1。</p>
+<p><strong>语句：</strong> 描述一段内容的句子。比如<code>var a = 1</code></p>
+<p>它们两者的区别在于：</p>
+<ul>
+<li>表达式一般都有值，语句可能有也可能没有。</li>
+<li>语句一般会改变环境，比如声明或者赋值。</li>
+</ul>
+<p>但这些都不绝对，特殊情况特殊看待。</p>
+<h2 id="2-标识符的规则">2. 标识符的规则</h2>
+<p>在对变量名等标识符命名的时候并非随心所欲随便命名的，要遵守一定的约定规则。首先 JavaScript 是对大小写敏感的，<code>a</code>和<code>A</code>会被严格区分，所以有时候在函数命名上要小心避免上下文名称不同造成的意外错误。</p>
+<p>标识符第一个字符命名规则：</p>
+<ul>
+<li>不能是数字；</li>
+<li>可以是 Unicode 字符或$、_和中文；</li>
+</ul>
+<p>标识符第二个及以后的字符命名规则：</p>
+<ul>
+<li>可以为任意字符；</li>
+</ul>
+<p>注：标识符的命名要好认、好记通俗易懂。不要写很多个_或是使用.这种比较特殊的字符。标识符要写时好写，后面 review 时要好懂才行。</p>
+<h2 id="3条件判断语句">3.条件判断语句</h2>
+<p><strong>&ldquo;if&hellip;else&hellip;&quot;</strong> 是常用条件判断语句</p>
+<div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="c1">// 伪代码
+</span><span class="c1"></span><span class="k">if</span><span class="p">(</span><span class="nx">表达式</span><span class="p">){</span>
+    <span class="nx">语句1</span>
+    <span class="p">...</span>
+<span class="p">}</span><span class="k">else</span> <span class="p">{</span>
+    <span class="nx">语句2</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><p>在 if 的块中的语句如果只有一句，则可以省略外面的花括号，只写这条语句，但是不推荐这么做，这样会容易造成阅读时看错代码流程。在 if&hellip;else 代码块中还可以继续继续嵌套 if&hellip;else 代码块来处理复杂的条件判断逻辑。</p>
+<div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="c1">// 伪代码
+</span><span class="c1"></span><span class="k">if</span><span class="p">(</span><span class="nx">表达式</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">表达式</span><span class="p">){</span>
+        <span class="nx">语句1</span>
+        <span class="p">...</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="nx">语句2</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+    <span class="nx">语句3</span>
+    <span class="p">...</span>
+<span class="p">}</span><span class="k">else</span> <span class="p">{</span>
+    <span class="nx">语句4</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><p>多个条件判断可以使用<code>if...else if ... else</code>语法</p>
+<div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="k">if</span><span class="p">(</span><span class="nx">表达式</span><span class="p">){</span>
+    <span class="nx">语句1</span>
+    <span class="p">...</span>
+<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">表达式</span><span class="p">){</span>
+    <span class="nx">语句2</span>
+    <span class="p">...</span>
+<span class="p">}</span><span class="k">else</span> <span class="p">{</span>
+    <span class="nx">语句3</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div><p>有时候条件判断并不多的时候没必要使用 if&hellip;else，可以使用 <code>&amp;&amp;</code>来简化条件判断的代码。
+例如有这些需求：一个函数 a 的参数接收一个函数并在这个 a 函数体内调用传入的函数，为了确保调用时不会发生错误，我们通常可以这样写代码。</p>
+<div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="kd">function</span> <span class="nx">a</span><span class="p">(</span><span class="nx">fn</span><span class="p">){</span>
+    <span class="nx">fn</span> <span class="o">&amp;&amp;</span> <span class="nx">fn</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">// fn &amp;&amp; fn() 等同于
+</span><span class="c1"></span><span class="k">if</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span>
+    <span class="nx">fn</span><span class="p">()</span>
+</code></pre></div><p>另外一个短路运算符<code>||</code>则可以用来进行一些保底赋值操作。</p>
+<div class="highlight"><pre class="chroma"><code class="language-JavaScript" data-lang="JavaScript"><span class="nx">a</span> <span class="o">=</span> <span class="nx">a</span> <span class="o">||</span> <span class="mi">100</span>
+<span class="c1">// 等同于
+</span><span class="c1"></span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">a</span><span class="p">)</span>
+    <span class="nx">a</span> <span class="o">=</span> <span class="mi">100</span>
+</code></pre></div><h2 id="4循环">4.循环</h2>
+<p>循环操作可以使用<code>while</code>或者<code>for</code>,while 是表达式内的值为真时则执行块内语句。<code>for</code>语法可以看做是 while 的一个语法糖，因为我们在使用 while 是需要在 while 外部确定循环初始值，表达式内要有循环退出条件，循环体内有执行语句。但是这些都可以简化一下，现在我们来看看使用 for 如何做循环：</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>延伸：由于变量提升，在 for 的代码块内使用定时器函数 setTimeout()函数时，会由于 var 定义的 i 变量从而使通过定时器函数输出的值为 i 循环完后最后的值。如果需要避免这种情况的发生，在声明并定义 i 时要使用<code>let</code>关键字去声明变量，这样就可以将变量 i 的作用域限定在当前的 for 代码块内。</p>
+<h2 id="5breakcontinue">5、break、continue</h2>
+<p>有时候我们并不想让循环完全执行，希望循环在执行带某个条件时可以跳出循环，此时可以使用到 break 和 continue 了。</p>
+<ul>
+<li>break：跳出本层循环</li>
+<li>continue：跳过本次循环</li>
+</ul>
+<p>在有两层循环的时候，在内部的第二层循环体内使用 break 可以跳出这层循环，但是不影响外部循环的执行。</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">j</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>
+			<span class="c1">// 只跳出变量为 j 的这层循环
+</span><span class="c1"></span>			<span class="k">break</span>
+	<span class="p">}</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="6label-语句">6.label 语句</h2>
+<p>用的很少，仅做了解。</p>
+<div class="highlight"><pre class="chroma"><code class="language-Javascript" data-lang="Javascript"><span class="p">{</span>
+    <span class="nx">a</span><span class="o">:</span><span class="mi">1</span>
+<span class="p">}</span>
+</code></pre></div><p>以上代码乍看还会以为是一个对象，但其实是一个 label，它是一个正常代码块内包含一些内容（上面的代码在 Chrome 中使用需要在<code>a:1</code>后面加上<code>;</code>，否则会被 Chrome 修改成一个对象）。有时候面试会问上面这个代码是什么，所以要了解一下。</p>
+<p>label 语法：</p>
+<div class="highlight"><pre class="chroma"><code class="language-Javascript" data-lang="Javascript"><span class="nx">foo</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">break</span> <span class="nx">foo</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;这行不会输出!&#39;</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div><p>这种写法其实就是标记某个代码块，从而通过 continue、break 等影响代码执行流程。`</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-01</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/javascript/">JavaScript</a>,&nbsp;<a href="/tags/%E5%85%A5%E9%97%A8/">入门</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/web/%E6%B5%85%E6%9E%90url/" class="prev" rel="prev" title="浅析URL"><i class="fas fa-angle-left fa-fw"></i>浅析URL</a></div>
+</div>
+<div id="comments"></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://github.com/wlizhi" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp">豫ICP备17048163号-1</span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
