@@ -1,22 +1,22 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>HTML - 标签 - 暗夜零星</title>
-        <link>http://example.org/tags/html/</link>
+        <link>http://wlz922.top/tags/html/</link>
         <description>HTML - 标签 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Wed, 29 Apr 2020 11:00:02 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/html/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Wed, 29 Apr 2020 11:00:02 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/tags/html/" rel="self" type="application/rss+xml" /><item>
     <title>HTML入门之HTML常用标签</title>
-    <link>http://example.org/posts/web/html%E5%85%A5%E9%97%A8%E4%B9%8Bhtml%E5%B8%B8%E7%94%A8%E6%A0%87%E7%AD%BE/</link>
+    <link>http://wlz922.top/posts/web/html%E5%85%A5%E9%97%A8%E4%B9%8Bhtml%E5%B8%B8%E7%94%A8%E6%A0%87%E7%AD%BE/</link>
     <pubDate>Wed, 29 Apr 2020 11:00:02 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/posts/web/html%E5%85%A5%E9%97%A8%E4%B9%8Bhtml%E5%B8%B8%E7%94%A8%E6%A0%87%E7%AD%BE/</guid>
+    <guid>http://wlz922.top/posts/web/html%E5%85%A5%E9%97%A8%E4%B9%8Bhtml%E5%B8%B8%E7%94%A8%E6%A0%87%E7%AD%BE/</guid>
     <description><![CDATA[标签 常用属性 作用 a href \ target 1、跳转外部页面；2、跳转内部锚点；3、跳转到邮箱或电话 img src \ alt \ width \ height 发出 get 请求，展示一张图片 form action \ method 表单。发送 get]]></description>
 </item><item>
     <title>HTML入门笔记1</title>
-    <link>http://example.org/posts/web/html%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B01/</link>
+    <link>http://wlz922.top/posts/web/html%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B01/</link>
     <pubDate>Tue, 28 Apr 2020 18:12:06 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/posts/web/html%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B01/</guid>
+    <guid>http://wlz922.top/posts/web/html%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B01/</guid>
     <description><![CDATA[1.HTML 是怎么产生的？ Tim Berners-Lee &ndash; 万维网的创建者 探寻互联网的初始，那么就必然要了解一下李老爷子本人，这位牛人为如今精彩纷呈的互联网世界打下了坚实的地基。]]></description>
 </item></channel>
 </rss>

@@ -1,57 +1,57 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Categories - 分类 - 暗夜零星</title>
-        <link>http://example.org/categories/</link>
+        <link>http://wlz922.top/categories/</link>
         <description>Categories - 分类 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Mon, 01 Jun 2020 23:11:21 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Mon, 01 Jun 2020 23:11:21 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/categories/" rel="self" type="application/rss+xml" /><item>
     <title>前端</title>
-    <link>http://example.org/categories/%E5%89%8D%E7%AB%AF/</link>
+    <link>http://wlz922.top/categories/%E5%89%8D%E7%AB%AF/</link>
     <pubDate>Mon, 01 Jun 2020 23:11:21 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/categories/%E5%89%8D%E7%AB%AF/</guid>
+    <guid>http://wlz922.top/categories/%E5%89%8D%E7%AB%AF/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>HTTP</title>
-    <link>http://example.org/categories/http/</link>
+    <link>http://wlz922.top/categories/http/</link>
     <pubDate>Wed, 06 May 2020 18:34:04 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/categories/http/</guid>
+    <guid>http://wlz922.top/categories/http/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>spring源码</title>
-    <link>http://example.org/categories/spring%E6%BA%90%E7%A0%81/</link>
+    <link>http://wlz922.top/categories/spring%E6%BA%90%E7%A0%81/</link>
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/categories/spring%E6%BA%90%E7%A0%81/</guid>
+    <guid>http://wlz922.top/categories/spring%E6%BA%90%E7%A0%81/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>test</title>
-    <link>http://example.org/categories/test/</link>
+    <link>http://wlz922.top/categories/test/</link>
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/categories/test/</guid>
+    <guid>http://wlz922.top/categories/test/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>文档</title>
-    <link>http://example.org/categories/%E6%96%87%E6%A1%A3/</link>
+    <link>http://wlz922.top/categories/%E6%96%87%E6%A1%A3/</link>
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/categories/%E6%96%87%E6%A1%A3/</guid>
+    <guid>http://wlz922.top/categories/%E6%96%87%E6%A1%A3/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>日志</title>
-    <link>http://example.org/categories/%E6%97%A5%E5%BF%97/</link>
+    <link>http://wlz922.top/categories/%E6%97%A5%E5%BF%97/</link>
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/categories/%E6%97%A5%E5%BF%97/</guid>
+    <guid>http://wlz922.top/categories/%E6%97%A5%E5%BF%97/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Linux</title>
-    <link>http://example.org/categories/linux/</link>
+    <link>http://wlz922.top/categories/linux/</link>
     <pubDate>Fri, 10 May 2019 16:11:55 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/categories/linux/</guid>
+    <guid>http://wlz922.top/categories/linux/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

@@ -1,22 +1,22 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>Hugo - 标签 - 暗夜零星</title>
-        <link>http://example.org/tags/hugo/</link>
+        <link>http://wlz922.top/tags/hugo/</link>
         <description>Hugo - 标签 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Mon, 27 Apr 2020 22:28:15 &#43;0800</lastBuildDate><atom:link href="http://example.org/tags/hugo/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Mon, 27 Apr 2020 22:28:15 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/tags/hugo/" rel="self" type="application/rss+xml" /><item>
     <title>正确使用hugo主题的姿势</title>
-    <link>http://example.org/posts/web/%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8hugo%E4%B8%BB%E9%A2%98%E7%9A%84%E5%A7%BF%E5%8A%BF/</link>
+    <link>http://wlz922.top/posts/web/%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8hugo%E4%B8%BB%E9%A2%98%E7%9A%84%E5%A7%BF%E5%8A%BF/</link>
     <pubDate>Mon, 27 Apr 2020 22:28:15 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/posts/web/%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8hugo%E4%B8%BB%E9%A2%98%E7%9A%84%E5%A7%BF%E5%8A%BF/</guid>
+    <guid>http://wlz922.top/posts/web/%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8hugo%E4%B8%BB%E9%A2%98%E7%9A%84%E5%A7%BF%E5%8A%BF/</guid>
     <description><![CDATA[在《如何用hugo搭建个人博客中》已经介绍了简单的主题引入办法，这里就不再赘述了。 现在我们来讲讲如何配置我们下载的新主题！（内容可能不多不全]]></description>
 </item><item>
     <title>使用hugo搭建个人博客</title>
-    <link>http://example.org/posts/web/%E5%A6%82%E4%BD%95%E7%94%A8hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</link>
+    <link>http://wlz922.top/posts/web/%E5%A6%82%E4%BD%95%E7%94%A8hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</link>
     <pubDate>Mon, 27 Apr 2020 13:06:46 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/posts/web/%E5%A6%82%E4%BD%95%E7%94%A8hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
+    <guid>http://wlz922.top/posts/web/%E5%A6%82%E4%BD%95%E7%94%A8hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
     <description><![CDATA[阅读前你需要了解这些内容： git MarkDown 使用 Hugo 搭建博客的步骤非常简单。 按照官网 Quick Start 即可快速创建一个站点。此文旨在对官方文档细节补充以及部署到自己的gi]]></description>
 </item></channel>
 </rss>

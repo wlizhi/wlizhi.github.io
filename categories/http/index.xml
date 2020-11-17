@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>HTTP - 分类 - 暗夜零星</title>
-        <link>http://example.org/categories/http/</link>
+        <link>http://wlz922.top/categories/http/</link>
         <description>HTTP - 分类 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Wed, 06 May 2020 18:34:04 &#43;0800</lastBuildDate><atom:link href="http://example.org/categories/http/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Wed, 06 May 2020 18:34:04 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/categories/http/" rel="self" type="application/rss+xml" /><item>
     <title>浅析URL</title>
-    <link>http://example.org/posts/web/%E6%B5%85%E6%9E%90url/</link>
+    <link>http://wlz922.top/posts/web/%E6%B5%85%E6%9E%90url/</link>
     <pubDate>Wed, 06 May 2020 18:34:04 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://example.org/posts/web/%E6%B5%85%E6%9E%90url/</guid>
+    <guid>http://wlz922.top/posts/web/%E6%B5%85%E6%9E%90url/</guid>
     <description><![CDATA[URL 概述 URL（Uniform Resource Locator） 指的是统一资源定位符。URL 无非就是一个给定的独特资源在 Web 上的地址。理论上说，每个有效的 URL 都指]]></description>
 </item></channel>
 </rss>
