@@ -26,6 +26,13 @@
     <guid>http://example.org/categories/spring%E6%BA%90%E7%A0%81/</guid>
     <description><![CDATA[]]></description>
 </item><item>
+    <title>test</title>
+    <link>http://example.org/categories/test/</link>
+    <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://example.org/categories/test/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>文档</title>
     <link>http://example.org/categories/%E6%96%87%E6%A1%A3/</link>
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
