@@ -6,10 +6,10 @@
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
             <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/categories/%E6%96%87%E6%A1%A3/" rel="self" type="application/rss+xml" /><item>
     <title>md文档语法</title>
-    <link>http://wlz922.top/posts/%E6%96%87%E6%A1%A3/md%E8%AF%AD%E6%B3%95/</link>
+    <link>http://wlz922.top/posts/docs/md%E8%AF%AD%E6%B3%95/</link>
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/%E6%96%87%E6%A1%A3/md%E8%AF%AD%E6%B3%95/</guid>
+    <guid>http://wlz922.top/posts/docs/md%E8%AF%AD%E6%B3%95/</guid>
     <description><![CDATA[语法 ````text **Markdown是一种轻量级的「标记语言」** ![markdown](https://www.mdeditor.com/images/logos/markdown.png &quot;markdown&quot;) Markdown是一种可以使用普通文本编辑器编写的标记语言，通过简单的标记语法，]]></description>
 </item></channel>
 </rss>

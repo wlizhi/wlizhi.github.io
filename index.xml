@@ -70,11 +70,11 @@
     <guid>http://wlz922.top/posts/web/%E5%A6%82%E4%BD%95%E7%94%A8hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
     <description><![CDATA[阅读前你需要了解这些内容： git MarkDown 使用 Hugo 搭建博客的步骤非常简单。 按照官网 Quick Start 即可快速创建一个站点。此文旨在对官方文档细节补充以及部署到自己的gi]]></description>
 </item><item>
-    <title>logback配置</title>
-    <link>http://wlz922.top/posts/%E6%97%A5%E5%BF%97/logback%E9%85%8D%E7%BD%AE/</link>
+    <title>cc</title>
+    <link>http://wlz922.top/posts/cc/</link>
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/%E6%97%A5%E5%BF%97/logback%E9%85%8D%E7%BD%AE/</guid>
-    <description><![CDATA[&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt; &lt;!-- 日志级别从低到高分为TRACE &lt; DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL，如果设置为WARN，则低于WARN的信息都不会输出 --&gt; &lt;!-- scan:当此属性]]></description>
+    <guid>http://wlz922.top/posts/cc/</guid>
+    <description><![CDATA[Hello World hello cc]]></description>
 </item></channel>
 </rss>
