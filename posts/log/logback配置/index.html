@@ -6,7 +6,7 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>logback配置 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="logback配置" />
-<meta property="og:description" content="&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt; &lt;!-- 日志级别从低到高分为TRACE &lt; DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL，如果设置为WARN，则低于WARN的信息都不会输出 --&gt; &lt;!-- scan:当此属性" />
+<meta property="og:description" content="logback配置 此配置将不同几倍的日志归置到不同的文件中。 项目中使用，将对应的property属性值更改即可。 &lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt; &lt;!-- 日志级别从低到高分为" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://wlz922.top/posts/log/logback%E9%85%8D%E7%BD%AE/" />
 <meta property="og:image" content="http://wlz922.top/logo.png"/>
@@ -16,11 +16,11 @@
 <meta name="twitter:image" content="http://wlz922.top/logo.png"/>
 
 <meta name="twitter:title" content="logback配置"/>
-<meta name="twitter:description" content="&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt; &lt;!-- 日志级别从低到高分为TRACE &lt; DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL，如果设置为WARN，则低于WARN的信息都不会输出 --&gt; &lt;!-- scan:当此属性"/>
+<meta name="twitter:description" content="logback配置 此配置将不同几倍的日志归置到不同的文件中。 项目中使用，将对应的property属性值更改即可。 &lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt; &lt;!-- 日志级别从低到高分为"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/log/logback%E9%85%8D%E7%BD%AE/" /><link rel="prev" href="http://wlz922.top/posts/docs/md%E8%AF%AD%E6%B3%95/" /><link rel="next" href="http://wlz922.top/posts/cc/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/log/logback%E9%85%8D%E7%BD%AE/" /><link rel="prev" href="http://wlz922.top/posts/spring/spring-aop%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" /><link rel="next" href="http://wlz922.top/posts/web/%E5%A6%82%E4%BD%95%E7%94%A8hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/log\/logback%E9%85%8D%E7%BD%AE\/"
-        },"genre": "posts","keywords": "logback, 入门, 配置","wordcount":  1969 ,
+        },"genre": "posts","keywords": "logback, 入门, 配置","wordcount":  2025 ,
         "url": "http:\/\/wlz922.top\/posts\/log\/logback%E9%85%8D%E7%BD%AE\/","datePublished": "2019-11-16T15:15:09+08:00","dateModified": "2019-11-16T15:15:09+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -120,15 +120,18 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">logback配置</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://github.com/wlizhi" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%97%A5%E5%BF%97/"><i class="far fa-folder fa-fw"></i>日志</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-11-16">2019-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1969 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-11-16">2019-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2025 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
                     <span><i class="details-icon fas fa-angle-right"></i></span>
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
-            </div><div class="content" id="content"><div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+            </div><div class="content" id="content"><h1 id="logback配置">logback配置</h1>
+<p>此配置将不同几倍的日志归置到不同的文件中。<br>
+项目中使用，将对应的property属性值更改即可。</p>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 <span class="c">&lt;!-- 日志级别从低到高分为TRACE &lt; DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL，如果设置为WARN，则低于WARN的信息都不会输出 --&gt;</span>
 <span class="c">&lt;!-- scan:当此属性设置为true时，配置文档如果发生改变，将会被重新加载，默认值为true --&gt;</span>
 <span class="c">&lt;!-- scanPeriod:设置监测配置文档是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。
@@ -139,7 +142,7 @@
 
     <span class="c">&lt;!-- name的值是变量的名称，value的值时变量定义的值。通过定义的值会被插入到logger上下文中。定义后，可以使“${}”来使用变量。 --&gt;</span>
     <span class="p">&lt;</span><span class="nt">property</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;log.path&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;logs&#34;</span><span class="p">/&gt;</span>
-    <span class="p">&lt;</span><span class="nt">property</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;project.name&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;gyl-api&#34;</span><span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">property</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;project.name&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;project-name&#34;</span><span class="p">/&gt;</span>
 
     <span class="c">&lt;!--0. 日志格式和颜色渲染 --&gt;</span>
     <span class="c">&lt;!-- 彩色日志依赖的渲染类 --&gt;</span>
@@ -367,8 +370,8 @@
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/docs/md%E8%AF%AD%E6%B3%95/" class="prev" rel="prev" title="md文档语法"><i class="fas fa-angle-left fa-fw"></i>md文档语法</a>
-            <a href="/posts/cc/" class="next" rel="next" title="cc">cc<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/posts/spring/spring-aop%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="prev" rel="prev" title="Spring AOP实现原理"><i class="fas fa-angle-left fa-fw"></i>Spring AOP实现原理</a>
+            <a href="/posts/web/%E5%A6%82%E4%BD%95%E7%94%A8hugo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" class="next" rel="next" title="使用hugo搭建个人博客">使用hugo搭建个人博客<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
