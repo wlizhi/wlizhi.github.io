@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Linux基础 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="Linux基础" />
-<meta property="og:description" content="1. 基础介绍 Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 UNIX 的多用户、多任务、支持多线程和多 CPU 的操作系统。 发行的linux版本 Linux 的发" />
+        <title>Linux基础 - 暗夜零星</title><meta name="Description" content="linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载"><meta property="og:title" content="Linux基础" />
+<meta property="og:description" content="linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://wlz922.top/posts/linux/linux%E5%9F%BA%E7%A1%80/" />
 <meta property="og:image" content="http://wlz922.top/logo.png"/>
@@ -16,7 +16,7 @@
 <meta name="twitter:image" content="http://wlz922.top/logo.png"/>
 
 <meta name="twitter:title" content="Linux基础"/>
-<meta name="twitter:description" content="1. 基础介绍 Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 UNIX 的多用户、多任务、支持多线程和多 CPU 的操作系统。 发行的linux版本 Linux 的发"/>
+<meta name="twitter:description" content="linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -29,13 +29,13 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/linux\/linux%E5%9F%BA%E7%A1%80\/"
-        },"genre": "posts","keywords": "linux, 操作系统","wordcount":  11633 ,
+        },"genre": "posts","keywords": "linux","wordcount":  11623 ,
         "url": "http:\/\/wlz922.top\/posts\/linux\/linux%E5%9F%BA%E7%A1%80\/","datePublished": "2020-11-18T20:59:11+08:00","dateModified": "2020-11-18T20:59:11+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
                 "@type": "Person",
                 "name": "Wlizhi"
-            },"description": ""
+            },"description": "linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载"
     }
     </script></head>
     <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
@@ -53,7 +53,7 @@
         title="/favicon.ico" />暗夜零星</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="点击搜索" id="search-input-desktop">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
@@ -103,7 +103,7 @@
                     <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
                         取消
                     </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                </div><a class="menu-item" href="/posts/" title="">文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
                 <i class="fas fa-adjust fa-fw"></i>
             </a></div>
     </div>
@@ -119,8 +119,8 @@
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Linux基础</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="https://github.com/wlizhi" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>linux</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-18">2020-11-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 11633 字&nbsp;
+            <div class="post-meta-line"><span class="post-author"><a href="https://github.com/wlizhi" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%B3%BB%E7%BB%9F/"><i class="far fa-folder fa-fw"></i>系统</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-18">2020-11-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 11623 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 24 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -539,16 +539,16 @@ passwd命令还可以用-l(lock)选项锁定某一用户，使其不能登录，
         <div class="details-content">
             <div class="admonition-content"><p>例子：
 ＃ cat /etc/passwd</p>
-<p>root: x:0:0:Superuser:/:<br>
-daemon: x:1:1:System daemons:/etc:<br>
-bin: x:2:2:Owner of system commands:/bin:<br>
-sys: x:3:3:Owner of system files:/usr/sys:<br>
-adm: x:4:4:System accounting:/usr/adm:<br>
-uucp: x:5:5:UUCP administrator:/usr/lib/uucp:<br>
-auth: x:7:21:Authentication administrator:/tcb/files/auth:<br>
-cron: x:9:16:Cron daemon:/usr/spool/cron:<br>
-listen: x:37:4:Network daemon:/usr/net/nls:<br>
-lp: x:71:18:Printer administrator:/usr/spool/lp:</p>
+<p>root:x:0:0:Superuser:/:<br>
+daemon:x:1:1:System daemons:/etc:<br>
+bin:x:2:2:Owner of system commands:/bin:<br>
+sys:x:3:3:Owner of system files:/usr/sys:<br>
+adm:x:4:4:System accounting:/usr/adm:<br>
+uucp:x:5:5:UUCP administrator:/usr/lib/uucp:<br>
+auth:x:7:21:Authentication administrator:/tcb/files/auth:<br>
+cron:x:9:16:Cron daemon:/usr/spool/cron:<br>
+listen:x:37:4:Network daemon:/usr/net/nls:<br>
+lp:x:71:18:Printer administrator:/usr/spool/lp:</p>
 </div>
         </div>
     </div></li>
@@ -1159,8 +1159,7 @@ crontab文件的格式为“M H D m d cmd”，M为分钟1-59，H为小时1-24�
 */5 * * * * sh /opt/lampp/test.sh 表示每5分钟执行一次test.sh这个脚本<br>
 30 21 * * * /usr/local/apache/bin/apachectl restart 表示每晚的21:30重启apache</div>
         </div>
-    </div>
-</div><div class="post-footer" id="post-footer">
+    </div></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
@@ -1177,7 +1176,7 @@ crontab文件的格式为“M H D m d cmd”，M为分钟1-59，H为小时1-24�
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">linux</a>,&nbsp;<a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">linux</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>

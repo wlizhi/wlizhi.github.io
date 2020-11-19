@@ -5,32 +5,25 @@
         <description>Categories - 分类 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
             <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Wed, 18 Nov 2020 20:59:11 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/categories/" rel="self" type="application/rss+xml" /><item>
-    <title>linux</title>
-    <link>http://wlz922.top/categories/linux/</link>
+    <title>系统</title>
+    <link>http://wlz922.top/categories/%E7%B3%BB%E7%BB%9F/</link>
     <pubDate>Wed, 18 Nov 2020 20:59:11 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/categories/linux/</guid>
+    <guid>http://wlz922.top/categories/%E7%B3%BB%E7%BB%9F/</guid>
     <description><![CDATA[]]></description>
 </item><item>
-    <title>文档</title>
-    <link>http://wlz922.top/categories/%E6%96%87%E6%A1%A3/</link>
+    <title>软件</title>
+    <link>http://wlz922.top/categories/%E8%BD%AF%E4%BB%B6/</link>
     <pubDate>Wed, 18 Nov 2020 20:34:49 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/categories/%E6%96%87%E6%A1%A3/</guid>
+    <guid>http://wlz922.top/categories/%E8%BD%AF%E4%BB%B6/</guid>
     <description><![CDATA[]]></description>
 </item><item>
-    <title>前端</title>
-    <link>http://wlz922.top/categories/%E5%89%8D%E7%AB%AF/</link>
-    <pubDate>Mon, 01 Jun 2020 23:11:21 &#43;0800</pubDate>
+    <title>导航</title>
+    <link>http://wlz922.top/categories/%E5%AF%BC%E8%88%AA/</link>
+    <pubDate>Wed, 18 Nov 2020 20:06:23 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/categories/%E5%89%8D%E7%AB%AF/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>HTTP</title>
-    <link>http://wlz922.top/categories/http/</link>
-    <pubDate>Wed, 06 May 2020 18:34:04 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>http://wlz922.top/categories/http/</guid>
+    <guid>http://wlz922.top/categories/%E5%AF%BC%E8%88%AA/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>spring</title>
