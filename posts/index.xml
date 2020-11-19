@@ -4,7 +4,16 @@
         <link>http://wlz922.top/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Wed, 18 Nov 2020 20:59:11 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Thu, 19 Nov 2020 22:55:42 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>我的博客搭建历程</title>
+    <link>http://wlz922.top/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/</link>
+    <pubDate>Thu, 19 Nov 2020 22:55:42 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://wlz922.top/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/</guid>
+    <description><![CDATA[<h3 id="前言">前言</h3>
+<p>搭建过程有些波折，好在总算完善了。目前博客采用hugo的主题。
+不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。</p>]]></description>
+</item><item>
     <title>Linux基础</title>
     <link>http://wlz922.top/posts/linux/linux%E5%9F%BA%E7%A1%80/</link>
     <pubDate>Wed, 18 Nov 2020 20:59:11 &#43;0800</pubDate>
@@ -66,13 +75,6 @@
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
     <guid>http://wlz922.top/posts/spring/springioc-getbean%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B/</guid>
-    <description><![CDATA[未完待续&hellip;]]></description>
-</item><item>
-    <title>SpringMVC实现原理</title>
-    <link>http://wlz922.top/posts/spring/springmvc%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
-    <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>http://wlz922.top/posts/spring/springmvc%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
     <description><![CDATA[未完待续&hellip;]]></description>
 </item></channel>
 </rss>
