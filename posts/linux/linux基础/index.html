@@ -528,11 +528,10 @@ passwd命令还可以用-l(lock)选项锁定某一用户，使其不能登录，
 <h3 id="与用户账号有关的系统文件">与用户账号有关的系统文件</h3>
 <p>与用户和用户组相关的信息都存放在一些系统文件中，这些文件包括/etc/passwd, /etc/shadow, /etc/group等</p>
 <ol>
-<li>
-<p>/etc/passwd文件</p>
+<li>/etc/passwd文件</li>
+</ol>
 <ul>
-<li>
-<p>Linux系统中的每个用户都在/etc/passwd文件中有一个对应的记录行，它记录了这个用户的一些基本属性。
+<li>Linux系统中的每个用户都在/etc/passwd文件中有一个对应的记录行，它记录了这个用户的一些基本属性。
 <div class="details admonition tip">
         <div class="details-summary admonition-title">
             <i class="icon fas fa-lightbulb fa-fw"></i>技巧<i class="details-icon fas fa-angle-right fa-fw"></i>
@@ -552,18 +551,16 @@ listen: x:37:4:Network daemon:/usr/net/nls:<br>
 lp: x:71:18:Printer administrator:/usr/spool/lp:</p>
 </div>
         </div>
-    </div></p>
-</li>
-<li>
-<p>每一行记录对应着一个用户（其中bin/sys/adm/uucp/lp/nobody是伪用户），每行记录又被冒号(:)分隔为7个字段，其格式和具体含义如下：</p>
+    </div></li>
+<li>每一行记录对应着一个用户（其中bin/sys/adm/uucp/lp/nobody是伪用户），每行记录又被冒号(:)分隔为7个字段，其格式和具体含义如下：
 <blockquote>
 <p>用户名:口令:用户标识号:组标识号:注释性描述:主目录:登录Shell</p>
 </blockquote>
 </li>
 </ul>
-</li>
-<li>
-<p>/etc/group文件</p>
+<ol start="2">
+<li>/etc/group文件</li>
+</ol>
 <ul>
 <li>用户组的所有信息都存放在/etc/group文件中。<br>
 <div class="details admonition tip">
@@ -586,8 +583,6 @@ users::20:root,sam</div>
 </blockquote>
 </li>
 </ul>
-</li>
-</ol>
 <h2 id="3-文件与目录">3. 文件与目录</h2>
 <hr>
 <h3 id="文件基本属性">文件基本属性</h3>
