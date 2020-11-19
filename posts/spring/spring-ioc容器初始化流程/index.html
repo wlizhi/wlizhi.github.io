@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/spring\/spring-ioc%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B\/"
-        },"genre": "posts","keywords": "源码, spring源码","wordcount":  827 ,
+        },"genre": "posts","keywords": "源码, spring源码","wordcount":  930 ,
         "url": "http:\/\/wlz922.top\/posts\/spring\/spring-ioc%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B\/","datePublished": "2019-11-16T15:15:09+08:00","dateModified": "2019-11-16T15:15:09+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -119,8 +119,8 @@
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Spring IOC容器初始化流程</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="https://github.com/wlizhi" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-11-16">2019-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 827 字&nbsp;
+            <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-11-16">2019-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 930 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -129,17 +129,13 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#1常见的实现类">1.常见的实现类：</a></li>
-    <li><a href="#2-核心方法refresh-">2. 核心方法refresh() 。</a>
-      <ul>
-        <li><a href="#1-骨架方法">1） 骨架方法</a></li>
-      </ul>
-    </li>
+    <li><a href="#1常见的applicationcontext实现类">1.常见的ApplicationContext实现类：</a></li>
+    <li><a href="#2-核心方法refresh-">2. 核心方法refresh() 。</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h2 id="1常见的实现类">1.常见的实现类：</h2>
+            </div><div class="content" id="content"><h2 id="1常见的applicationcontext实现类">1.常见的ApplicationContext实现类：</h2>
 <ul>
-<li>容器：<!-- raw HTML omitted -->AbstractApplicationContext<!-- raw HTML omitted --> 抽象父类，核心(模板)方法 refresh()。
+<li>容器：<font color="red">AbstractApplicationContext</font> 抽象父类，核心(模板)方法 refresh()。
 <ul>
 <li>ClassPathXmlApplicationContext XML方式启动。</li>
 <li>AnnotationConfigWebApplicationContext 注解方式启动，对局部代码进行测试时比较好用。</li>
@@ -148,86 +144,175 @@
 </li>
 </ul>
 <h2 id="2-核心方法refresh-">2. 核心方法refresh() 。</h2>
-<h3 id="1-骨架方法">1） 骨架方法</h3>
-<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Override</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">refresh</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">BeansException</span><span class="o">,</span> <span class="n">IllegalStateException</span> <span class="o">{</span>
-    <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">startupShutdownMonitor</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c1">// Prepare this context for refreshing.
-</span><span class="c1"></span>        <span class="c1">// 不太重要，预刷新，做一些准备工作。记录了启动时间戳，标记为活动，非关闭状态。
-</span><span class="c1"></span>        <span class="n">prepareRefresh</span><span class="o">();</span>
-
-        <span class="cm">/**
-</span><span class="cm">         * TODO 重点：解析xml配置文件，创建beanFactory，包装BeanDefinition
-</span><span class="cm">         */</span>
-        <span class="c1">// Tell the subclass to refresh the internal bean factory.
-</span><span class="c1"></span>        <span class="n">ConfigurableListableBeanFactory</span> <span class="n">beanFactory</span> <span class="o">=</span> <span class="n">obtainFreshBeanFactory</span><span class="o">();</span>
-
-        <span class="c1">// Prepare the bean factory for use in this context.
-</span><span class="c1"></span>        <span class="c1">// 注册一些对事件、监听器等的支持
-</span><span class="c1"></span>        <span class="n">prepareBeanFactory</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
-
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="c1">// 钩子方法，BeanFactory创建后，对BeanFactory的自定义操作。
-</span><span class="c1"></span>            <span class="c1">// Allows post-processing of the bean factory in context subclasses.
-</span><span class="c1"></span>            <span class="n">postProcessBeanFactory</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
-
-            <span class="c1">// TODO 重点：这里调用了postProcessBeanDefinitionRegistry(registry);springboot中很多激活自动配置的注解都是通过这里导入的。
-</span><span class="c1"></span>            <span class="c1">// Invoke factory processors registered as beans in the context.
-</span><span class="c1"></span>            <span class="n">invokeBeanFactoryPostProcessors</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
-
-            <span class="c1">// TODO 重点：从beanFactory中获取所有的BeanPostProcessor，优先进行getBean操作，实例化
-</span><span class="c1"></span>            <span class="c1">// Register bean processors that intercept bean creation.
-</span><span class="c1"></span>            <span class="n">registerBeanPostProcessors</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
-
-            <span class="c1">// 国际化支持
-</span><span class="c1"></span>            <span class="c1">// Initialize message source for this context.
-</span><span class="c1"></span>            <span class="n">initMessageSource</span><span class="o">();</span>
-
-            <span class="c1">// 初始化ApplicationEventMulticaster。 如果上下文中未定义，则使用SimpleApplicationEventMulticaster。
-</span><span class="c1"></span>            <span class="c1">// Initialize event multicaster for this context.
-</span><span class="c1"></span>            <span class="n">initApplicationEventMulticaster</span><span class="o">();</span>
-
-            <span class="c1">// 钩子方法，springBoot中的嵌入式tomcat就是通过此方法实现的
-</span><span class="c1"></span>            <span class="c1">// Initialize other special beans in specific context subclasses.
-</span><span class="c1"></span>            <span class="n">onRefresh</span><span class="o">();</span>
-
-            <span class="c1">// 监听器注册
-</span><span class="c1"></span>            <span class="c1">// Check for listener beans and register them.
-</span><span class="c1"></span>            <span class="n">registerListeners</span><span class="o">();</span>
-
-            <span class="c1">// TODO 重点方法：完成容器中bean的实例化，及代理的生成等操作。
-</span><span class="c1"></span>            <span class="c1">// Instantiate all remaining (non-lazy-init) singletons.
-</span><span class="c1"></span>            <span class="n">finishBeanFactoryInitialization</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
-
-            <span class="c1">// 完成此上下文的刷新，调用LifecycleProcessor的onRefresh（）方法并发布
-</span><span class="c1"></span>            <span class="c1">// Last step: publish corresponding event.
-</span><span class="c1"></span>            <span class="n">finishRefresh</span><span class="o">();</span>
-        <span class="o">}</span>
-
-        <span class="k">catch</span> <span class="o">(</span><span class="n">BeansException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isWarnEnabled</span><span class="o">())</span> <span class="o">{</span>
-                <span class="n">logger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">&#34;Exception encountered during context initialization - &#34;</span> <span class="o">+</span>
-                        <span class="s">&#34;cancelling refresh attempt: &#34;</span> <span class="o">+</span> <span class="n">ex</span><span class="o">);</span>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractApplicationContext</span> <span class="kd">extends</span> <span class="n">DefaultResourceLoader</span>
+		<span class="kd">implements</span> <span class="n">ConfigurableApplicationContext</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">refresh</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">BeansException</span><span class="o">,</span> <span class="n">IllegalStateException</span> <span class="o">{</span>
+        <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">startupShutdownMonitor</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// Prepare this context for refreshing.
+</span><span class="c1"></span>            <span class="c1">// 不太重要，预刷新，做一些准备工作。记录了启动时间戳，标记为活动，非关闭状态。
+</span><span class="c1"></span>            <span class="n">prepareRefresh</span><span class="o">();</span>
+    
+            <span class="cm">/**
+</span><span class="cm">             * TODO 重点：解析xml配置文件，创建beanFactory，包装BeanDefinition
+</span><span class="cm">             */</span>
+            <span class="c1">// Tell the subclass to refresh the internal bean factory.
+</span><span class="c1"></span>            <span class="n">ConfigurableListableBeanFactory</span> <span class="n">beanFactory</span> <span class="o">=</span> <span class="n">obtainFreshBeanFactory</span><span class="o">();</span>
+    
+            <span class="c1">// Prepare the bean factory for use in this context.
+</span><span class="c1"></span>            <span class="c1">// 注册一些对事件、监听器等的支持
+</span><span class="c1"></span>            <span class="n">prepareBeanFactory</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+    
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="c1">// 钩子方法，BeanFactory创建后，对BeanFactory的自定义操作。
+</span><span class="c1"></span>                <span class="c1">// Allows post-processing of the bean factory in context subclasses.
+</span><span class="c1"></span>                <span class="n">postProcessBeanFactory</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+    
+                <span class="c1">// TODO 重点：这里调用了postProcessBeanDefinitionRegistry(registry);springboot中很多激活自动配置的注解都是通过这里导入的。
+</span><span class="c1"></span>                <span class="c1">// Invoke factory processors registered as beans in the context.
+</span><span class="c1"></span>                <span class="n">invokeBeanFactoryPostProcessors</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+    
+                <span class="c1">// TODO 重点：从beanFactory中获取所有的BeanPostProcessor，优先进行getBean操作，实例化
+</span><span class="c1"></span>                <span class="c1">// Register bean processors that intercept bean creation.
+</span><span class="c1"></span>                <span class="n">registerBeanPostProcessors</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+    
+                <span class="c1">// 国际化支持
+</span><span class="c1"></span>                <span class="c1">// Initialize message source for this context.
+</span><span class="c1"></span>                <span class="n">initMessageSource</span><span class="o">();</span>
+    
+                <span class="c1">// 初始化ApplicationEventMulticaster。 如果上下文中未定义，则使用SimpleApplicationEventMulticaster。
+</span><span class="c1"></span>                <span class="c1">// Initialize event multicaster for this context.
+</span><span class="c1"></span>                <span class="n">initApplicationEventMulticaster</span><span class="o">();</span>
+    
+                <span class="c1">// 钩子方法，springBoot中的嵌入式tomcat就是通过此方法实现的
+</span><span class="c1"></span>                <span class="c1">// Initialize other special beans in specific context subclasses.
+</span><span class="c1"></span>                <span class="n">onRefresh</span><span class="o">();</span>
+    
+                <span class="c1">// 监听器注册
+</span><span class="c1"></span>                <span class="c1">// Check for listener beans and register them.
+</span><span class="c1"></span>                <span class="n">registerListeners</span><span class="o">();</span>
+    
+                <span class="c1">// TODO 重点方法：完成容器中bean的实例化，及代理的生成等操作。
+</span><span class="c1"></span>                <span class="c1">// Instantiate all remaining (non-lazy-init) singletons.
+</span><span class="c1"></span>                <span class="n">finishBeanFactoryInitialization</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+    
+                <span class="c1">// 完成此上下文的刷新，调用LifecycleProcessor的onRefresh（）方法并发布
+</span><span class="c1"></span>                <span class="c1">// Last step: publish corresponding event.
+</span><span class="c1"></span>                <span class="n">finishRefresh</span><span class="o">();</span>
             <span class="o">}</span>
-
-            <span class="c1">// Destroy already created singletons to avoid dangling resources.
-</span><span class="c1"></span>            <span class="n">destroyBeans</span><span class="o">();</span>
-
-            <span class="c1">// Reset &#39;active&#39; flag.
-</span><span class="c1"></span>            <span class="n">cancelRefresh</span><span class="o">(</span><span class="n">ex</span><span class="o">);</span>
-
-            <span class="c1">// Propagate exception to caller.
-</span><span class="c1"></span>            <span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="k">finally</span> <span class="o">{</span>
-            <span class="c1">// Reset common introspection caches in Spring&#39;s core, since we
-</span><span class="c1"></span>            <span class="c1">// might not ever need metadata for singleton beans anymore...
-</span><span class="c1"></span>            <span class="n">resetCommonCaches</span><span class="o">();</span>
+    
+            <span class="k">catch</span> <span class="o">(</span><span class="n">BeansException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isWarnEnabled</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">&#34;Exception encountered during context initialization - &#34;</span> <span class="o">+</span>
+                            <span class="s">&#34;cancelling refresh attempt: &#34;</span> <span class="o">+</span> <span class="n">ex</span><span class="o">);</span>
+                <span class="o">}</span>
+    
+                <span class="c1">// Destroy already created singletons to avoid dangling resources.
+</span><span class="c1"></span>                <span class="n">destroyBeans</span><span class="o">();</span>
+    
+                <span class="c1">// Reset &#39;active&#39; flag.
+</span><span class="c1"></span>                <span class="n">cancelRefresh</span><span class="o">(</span><span class="n">ex</span><span class="o">);</span>
+    
+                <span class="c1">// Propagate exception to caller.
+</span><span class="c1"></span>                <span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
+            <span class="o">}</span>
+    
+            <span class="k">finally</span> <span class="o">{</span>
+                <span class="c1">// Reset common introspection caches in Spring&#39;s core, since we
+</span><span class="c1"></span>                <span class="c1">// might not ever need metadata for singleton beans anymore...
+</span><span class="c1"></span>                <span class="n">resetCommonCaches</span><span class="o">();</span>
+            <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">}</span>
-</code></pre></div></div><div class="post-footer" id="post-footer">
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
@@ -258,7 +343,7 @@
             </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://github.com/wlizhi" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="http://wlz922.top" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
                     <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号-1<a/></span></div>
         </div>
     </footer></div>

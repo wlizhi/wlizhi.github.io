@@ -20,7 +20,7 @@
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/linux/linux%E5%9F%BA%E7%A1%80/" /><link rel="prev" href="http://wlz922.top/posts/docs/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/linux/linux%E5%9F%BA%E7%A1%80/" /><link rel="prev" href="http://wlz922.top/posts/docs/%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/linux\/linux%E5%9F%BA%E7%A1%80\/"
-        },"genre": "posts","keywords": "linux","wordcount":  11623 ,
+        },"genre": "posts","keywords": "linux, 操作系统","wordcount":  11659 ,
         "url": "http:\/\/wlz922.top\/posts\/linux\/linux%E5%9F%BA%E7%A1%80\/","datePublished": "2020-11-18T20:59:11+08:00","dateModified": "2020-11-18T20:59:11+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -119,8 +119,8 @@
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Linux基础</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="https://github.com/wlizhi" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%B3%BB%E7%BB%9F/"><i class="far fa-folder fa-fw"></i>系统</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-18">2020-11-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 11623 字&nbsp;
+            <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/linux/"><i class="far fa-folder fa-fw"></i>linux</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-18">2020-11-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 11659 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 24 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -151,16 +151,43 @@
     </li>
     <li><a href="#3-文件与目录">3. 文件与目录</a>
       <ul>
-        <li><a href="#文件基本属性">文件基本属性</a></li>
+        <li><a href="#文件基本属性">文件基本属性</a>
+          <ul>
+            <li><a href="#1-文件的属性概貌">1. 文件的属性概貌</a></li>
+            <li><a href="#2-文件的属主与属组">2. 文件的属主与属组</a>
+              <ul>
+                <li><a href="#chgrp更改文件属组">chgrp：更改文件属组</a></li>
+                <li><a href="#chown更改文件属主也可以同时更改文件属组">chown：更改文件属主，也可以同时更改文件属组</a></li>
+                <li><a href="#chmod更改文件9个属性">chmod：更改文件9个属性</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
         <li><a href="#文件与目录管理命令">文件与目录管理命令</a></li>
-        <li><a href="#硬链接与软链接">硬链接与软链接</a></li>
+        <li><a href="#硬链接与软链接">硬链接与软链接</a>
+          <ul>
+            <li><a href="#硬连接">硬连接</a></li>
+            <li><a href="#软连接">软连接</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#4-安装程序rpmyum">4. 安装程序rpm/yum</a>
       <ul>
         <li><a href="#1-rpm方式">1. rpm方式</a></li>
-        <li><a href="#2-yum方式">2. yum方式</a></li>
-        <li><a href="#3-配置环境变量">3. 配置环境变量</a></li>
+        <li><a href="#2-yum方式">2. yum方式</a>
+          <ul>
+            <li><a href="#21-yum语法">2.1 yum语法</a></li>
+            <li><a href="#22-yum常用命令">2.2 yum常用命令</a></li>
+            <li><a href="#23-yum源">2.3 yum源</a></li>
+          </ul>
+        </li>
+        <li><a href="#3-配置环境变量">3. 配置环境变量</a>
+          <ul>
+            <li><a href="#31-配置环境变量">3.1 配置环境变量</a></li>
+            <li><a href="#32-环境变量生效">3.2 环境变量生效</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#5-shell脚本">5. shell脚本</a>
@@ -769,7 +796,7 @@ yum remove java-1.8.0-openjdk.x86_64  java-1.8.0-openjdk-headless.x86_64	卸载j
 4.仅更新指定的软件命令：yum update &lt;package_name&gt;<br>
 5.列出所有可安裝的软件清单命令：yum list<br>
 6.删除软件包命令：yum remove &lt;package_name&gt;<br>
-7.查找软件包 命令：yum search <!-- raw HTML omitted --><br>
+7.查找软件包 命令：yum search <keyword><br>
 8.清除缓存命令:<br>
 yum clean packages: 清除缓存目录下的软件包<br>
 yum clean headers: 清除缓存目录下的 headers<br>
@@ -842,7 +869,47 @@ chomd +x ./test.sh #使脚本具有执行权限<br>
         </div>
     </div>
 <h3 id="2-演示">2. 演示</h3>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash	##声明bash脚本  
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash	##声明bash脚本  
 </span><span class="cp"></span>
 <span class="c1">##demo		##注释  </span>
 <span class="nb">echo</span> <span class="nv">$PATH</span>	<span class="c1">##打印PATH环境变量  </span>
@@ -878,7 +945,9 @@ chomd +x ./test.sh #使脚本具有执行权限<br>
   
 <span class="nb">echo</span> <span class="s2">&#34;&#34;</span>  
 <span class="nb">echo</span> <span class="s2">&#34;sh arg: </span><span class="nv">$0</span><span class="s2"> </span><span class="nv">$1</span><span class="s2">&#34;</span>			<span class="c1">##sh的传参  </span>
-</code></pre></div><p>重定向：</p>
+</code></pre></td></tr></table>
+</div>
+</div><p>重定向：</p>
 <blockquote>
 <p>1、test &lsquo;aa&rsquo; -eq &ldquo;bb&rdquo; &gt; out   ##命令输出到 out文件，报错信息并不会进入out<br>
 2、test &lsquo;aa&rsquo; -eq &ldquo;bb&rdquo; &gt; out 2&gt;&amp;1  ##将stderr合并到stdout，则报错信息进入了out</p>
@@ -1176,20 +1245,20 @@ crontab文件的格式为“M H D m d cmd”，M为分钟1-59，H为小时1-24�
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">linux</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">linux</a>,&nbsp;<a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/docs/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/" class="prev" rel="prev" title="实用工具"><i class="fas fa-angle-left fa-fw"></i>实用工具</a></div>
+    <div class="post-nav"><a href="/posts/docs/%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6/" class="prev" rel="prev" title="实用工具"><i class="fas fa-angle-left fa-fw"></i>实用工具</a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://github.com/wlizhi" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="http://wlz922.top" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
                     <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号-1<a/></span></div>
         </div>
     </footer></div>
