@@ -10,6 +10,6 @@
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
     <guid>http://wlz922.top/posts/log/logback%E9%85%8D%E7%BD%AE/</guid>
-    <description><![CDATA[logback配置 此配置将不同几倍的日志归置到不同的文件中。 项目中使用，将对应的property属性值更改即可。 &lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt; &lt;!-- 日志级别从低到高分为]]></description>
+    <description><![CDATA[logback常见配置]]></description>
 </item></channel>
 </rss>

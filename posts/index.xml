@@ -38,7 +38,7 @@
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
     <guid>http://wlz922.top/posts/log/logback%E9%85%8D%E7%BD%AE/</guid>
-    <description><![CDATA[logback配置 此配置将不同几倍的日志归置到不同的文件中。 项目中使用，将对应的property属性值更改即可。 &lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt; &lt;!-- 日志级别从低到高分为]]></description>
+    <description><![CDATA[logback常见配置]]></description>
 </item><item>
     <title>Spring AOP实现原理</title>
     <link>http://wlz922.top/posts/spring/spring-aop%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
@@ -52,7 +52,7 @@
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
     <guid>http://wlz922.top/posts/spring/spring-ioc%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B/</guid>
-    <description><![CDATA[1.常见的实现类： 容器：AbstractApplicationContext抽象父类，核心(模板)方法 refresh()。 ClassPathXmlApplicationContext XML方式启动。]]></description>
+    <description><![CDATA[spring容器启动时初始化流程剖析]]></description>
 </item><item>
     <title>Spring XML解析及Beandefinition封装</title>
     <link>http://wlz922.top/posts/spring/spring-xml%E8%A7%A3%E6%9E%90%E5%8F%8Abeandefinition%E5%B0%81%E8%A3%85/</link>
