@@ -7,8 +7,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>我的博客搭建历程 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="我的博客搭建历程" />
 <meta property="og:description" content="前言
-搭建过程有些波折，好在总算完善了。目前博客采用hugo的主题。
-不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。" />
+搭建过程有些波折，好在总算完善了。目前博客采用hugo的主题。不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，
+别的没毛病。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://wlz922.top/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/" />
 <meta property="og:image" content="http://wlz922.top/logo.png"/>
@@ -19,8 +19,8 @@
 
 <meta name="twitter:title" content="我的博客搭建历程"/>
 <meta name="twitter:description" content="前言
-搭建过程有些波折，好在总算完善了。目前博客采用hugo的主题。
-不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。"/>
+搭建过程有些波折，好在总算完善了。目前博客采用hugo的主题。不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，
+别的没毛病。"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -151,13 +151,13 @@
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h3 id="前言">前言</h3>
-<p>搭建过程有些波折，好在总算完善了。目前博客采用hugo的主题。
-不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。</p>
+<p>搭建过程有些波折，好在总算完善了。目前博客采用hugo的主题。不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，
+别的没毛病。</p>
 <h3 id="起因">起因</h3>
 <p>上周听<a href="https://blog.csdn.net/luoyang_java/" title="jack老师博客" target="_blank" rel="noopener noreffer">Jack老师</a>的课，翻了某位同学博客
 （<a href="https://yangzhiwen911.github.io/" target="_blank" rel="noopener noreffer">叶良辰学习笔记</a>），陡然眼前一亮，原来笔记还可以这么搞。</p>
-<p>其实几年前我就有意搭建个人博客，一直没落实的原因：确实有些忙，偶尔闲下来时又去学习新的知识，自己写博客系统的话，
-太耗时间、精力（作为一个java程序员，前端能力有限，你懂得。），会的一堆后端技术，这里毫无用武之地。时至今日这个计划已经迟滞了三年多。</p>
+<p>其实几年前我就有意搭建个人博客，一直没落实的原因：确实有些忙，偶尔闲下来时又去学习新的知识，自己写博客系统的话，太耗时间、精力
+（作为一个java程序员，前端能力有限，你懂得。），会的一堆后端技术，这里毫无用武之地。时至今日这个计划已经迟滞了三年多。</p>
 <p>很多云笔记也有分享功能，甚至一键发布博客功能。比如有道云笔记、印象笔记、蚂蚁笔记等，都有用过。看了这位同学的笔记（博客）后，
 回想自己用云笔记的方式，决定还是研究一下博客系统。一个是私密文档，一个是公开文档。</p>
 <p><a href="https://blog.csdn.net/luoyang_java/" target="_blank" rel="noopener noreffer">Jack老师博客传送门</a></p>
@@ -180,11 +180,12 @@
 <li>jekyll优点：主题更丰富，选择性更多。</li>
 <li>jekyll缺点：使用实在太复杂，构建速度着实慢了些。</li>
 <li>hugo缺点：主题没jekyll选择性那么多，也还可以。官网上有些主题相对简陋。（注：不是简约，是简陋）</li>
-<li>hugo优点：使用真的简单，比jekyll简单太多了。构建速度真的快，比jekyll快很多很多倍。（目前没太多内容，构建后大概100多个静态文件，构建需要500ms左右）</li>
+<li>hugo优点：使用真的简单，比jekyll简单太多了。构建速度真的快，比jekyll快很多很多倍。（目前没太多内容，构建后大概100多个静态
+文件，构建需要500ms左右）</li>
 </ol>
 <p>使用jekyll时，看到一个比较喜欢的主题<a href="http://erl.im/" title="叶夕青兮" target="_blank" rel="noopener noreffer">ThemePersephone</a>，只是搞了半天，gitpages托管
-的代码是可以访问了，本地环境始终弄不好（ruby的问题，下载了最新版本不行。准备换个版本的安装包，死活下载不了，官网被墙的厉害），只好放弃。
-之后在<a href="https://themes.gohugo.io/" target="_blank" rel="noopener noreffer">HugoThemes</a>下载主题，试用。只需要下载一个二进制文件，不需要其他任何依赖。
+的代码是可以访问了，本地环境始终弄不好（ruby的问题，下载了最新版本不行。准备换个版本的安装包，死活下载不了，官网被墙的厉害），
+只好放弃。之后在<a href="https://themes.gohugo.io/" target="_blank" rel="noopener noreffer">HugoThemes</a>下载主题，试用。只需要下载一个二进制文件，不需要其他任何依赖。
 没有对比就没有伤害，最终选择Hugo</p>
 <h3 id="搭建">搭建</h3>
 <p>两款主题<a href="https://themes.gohugo.io/theme/hugo-theme-hello-friend-ng/" target="_blank" rel="noopener noreffer">hugo-theme-hello-friend-ng</a>和<a href="https://hugoloveit.com/" target="_blank" rel="noopener noreffer">loveit</a>,
