@@ -4,9 +4,16 @@
         <link>http://wlz922.top/</link>
         <description>这是我的博客</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Thu, 19 Nov 2020 22:55:42 &#43;0800</lastBuildDate>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Fri, 20 Nov 2020 09:25:28 &#43;0800</lastBuildDate>
             <atom:link href="http://wlz922.top/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>Cc</title>
+    <link>http://wlz922.top/posts/cc/</link>
+    <pubDate>Fri, 20 Nov 2020 09:25:28 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://wlz922.top/posts/cc/</guid>
+    <description><![CDATA[版本号： hello world hello world hello world]]></description>
+</item><item>
     <title>我的博客搭建历程</title>
     <link>http://wlz922.top/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/</link>
     <pubDate>Thu, 19 Nov 2020 22:55:42 &#43;0800</pubDate>
@@ -70,13 +77,6 @@
     <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
     <author>作者</author>
     <guid>http://wlz922.top/posts/spring/spring-xml%E8%A7%A3%E6%9E%90%E5%8F%8Abeandefinition%E5%B0%81%E8%A3%85/</guid>
-    <description><![CDATA[未完待续&hellip;]]></description>
-</item><item>
-    <title>SpringIOC-getBean核心流程</title>
-    <link>http://wlz922.top/posts/spring/springioc-getbean%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B/</link>
-    <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>http://wlz922.top/posts/spring/springioc-getbean%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B/</guid>
     <description><![CDATA[未完待续&hellip;]]></description>
 </item></channel>
 </rss>
