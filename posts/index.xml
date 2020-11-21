@@ -4,7 +4,14 @@
         <link>http://wlz922.top/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Sat, 21 Nov 2020 01:22:37 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Sat, 21 Nov 2020 12:20:48 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>两天后-还是决定将搜索更换为alogial</title>
+    <link>http://wlz922.top/posts/experience/%E4%B8%A4%E5%A4%A9%E5%90%8E-%E8%BF%98%E6%98%AF%E5%86%B3%E5%AE%9A%E5%B0%86%E6%90%9C%E7%B4%A2%E6%9B%B4%E6%8D%A2%E4%B8%BAalogial/</link>
+    <pubDate>Sat, 21 Nov 2020 12:20:48 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://wlz922.top/posts/experience/%E4%B8%A4%E5%A4%A9%E5%90%8E-%E8%BF%98%E6%98%AF%E5%86%B3%E5%AE%9A%E5%B0%86%E6%90%9C%E7%B4%A2%E6%9B%B4%E6%8D%A2%E4%B8%BAalogial/</guid>
+    <description><![CDATA[用了几天的lunr，还是决定换成algial，algial本身性能更高、也更加节省流量。]]></description>
+</item><item>
     <title>Memory LOL</title>
     <link>http://wlz922.top/posts/life/memory-lol/</link>
     <pubDate>Sat, 21 Nov 2020 01:22:37 &#43;0800</pubDate>
@@ -71,12 +78,5 @@
     <author>作者</author>
     <guid>http://wlz922.top/posts/spring/spring-ioc%E5%AE%B9%E5%99%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B/</guid>
     <description><![CDATA[spring容器启动时初始化流程剖析]]></description>
-</item><item>
-    <title>Spring XML解析及Beandefinition封装</title>
-    <link>http://wlz922.top/posts/spring/spring-xml%E8%A7%A3%E6%9E%90%E5%8F%8Abeandefinition%E5%B0%81%E8%A3%85/</link>
-    <pubDate>Sat, 16 Nov 2019 15:15:09 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>http://wlz922.top/posts/spring/spring-xml%E8%A7%A3%E6%9E%90%E5%8F%8Abeandefinition%E5%B0%81%E8%A3%85/</guid>
-    <description><![CDATA[未完待续&hellip;]]></description>
 </item></channel>
 </rss>
