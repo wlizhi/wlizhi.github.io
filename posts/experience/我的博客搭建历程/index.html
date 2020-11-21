@@ -33,7 +33,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/experience\/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B\/"
-        },"genre": "posts","keywords": "博客, hugo","wordcount":  2633 ,
+        },"genre": "posts","keywords": "博客, hugo","wordcount":  2596 ,
         "url": "http:\/\/wlz922.top\/posts\/experience\/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B\/","datePublished": "2020-11-19T22:55:42+08:00","dateModified": "2020-11-19T22:55:42+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -110,7 +110,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">我的博客搭建历程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2633 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2596 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/" class="leancloud_visitors" data-flag-title="我的博客搭建历程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -148,7 +148,7 @@
 回想自己用云笔记的方式，决定还是研究一下博客系统。一个存储私密文档，一个发布公开文档。</p>
 <p><a href="https://blog.csdn.net/luoyang_java" target="_blank" rel="noopener noreffer">Jack老师博客传送门</a></p>
 <h3 id="百度---货比三家">百度 - 货比三家</h3>
-<p>直接写静态页面得不偿失。页面+后端方式实现博客、管理等功能，太重，没必要。无论如何，最终内容还是要静态页面，除非你不想被搜索引擎扒到。</p>
+<p>直接写静态页面得不偿失。页面+后端方式实现博客、管理等功能，太重，且前端能力有限。无论如何，最终内容还是要静态页面，除非你不想被搜索引擎扒到。</p>
 <p>首先百度搜索静态页面生成器，很多流行的，不晓得先入手研究哪个，对比了许多帖子，决定先看看jekyll。
 然后在<a href="http://jekyllthemes.org/" target="_blank" rel="noopener noreffer">jekyll主题网站</a>选择了几个主题。</p>
 <ol>
@@ -173,40 +173,30 @@
 只好放弃。之后在<a href="https://themes.gohugo.io/" target="_blank" rel="noopener noreffer">HugoThemes</a>下载主题，试用。只需要下载一个二进制文件，不需要其他任何依赖。
 没有对比就没有伤害，最终选择Hugo</p>
 <h3 id="搭建">搭建</h3>
-<p>两款主题<a href="https://themes.gohugo.io/theme/hugo-theme-hello-friend-ng/" target="_blank" rel="noopener noreffer">hugo-theme-hello-friend-ng</a>和<a href="https://hugoloveit.com/" target="_blank" rel="noopener noreffer">loveit</a>,
-最终选择<a href="https://hugoloveit.com/" target="_blank" rel="noopener noreffer">loveit</a>这款主题，原因是，文档超级详细，功能足够丰富。支持搜索引擎（两款）、评论系统、shortcode、emoji等。
-该有的功能基本都支持。唯一不满的是md text块的背景色、字体颜色有点丑。有空再研究给换个色。</p>
+<p>两款主题 <a href="https://themes.gohugo.io/theme/hugo-theme-hello-friend-ng/" target="_blank" rel="noopener noreffer">hugo-theme-hello-friend-ng</a> 和 <a href="https://hugoloveit.com/" target="_blank" rel="noopener noreffer">loveit</a> ，最终选择<a href="https://hugoloveit.com/" target="_blank" rel="noopener noreffer">loveit</a>这款主题，原因是，文档超级详细，功能足够丰富。支持搜索引擎（两款）、评论系统、shortcode、emoji等。该有的功能基本都支持，唯一不满的是md text块的背景色、字体颜色有点丑。有空再研究给换个色。</p>
 <p>搜索引擎支持两种：</p>
 <ul>
 <li>lunr: 简单, 无需同步 index.json, 没有 contentLength 的限制, 但占用带宽大且性能低 (特别是中文需要一个较大的分词依赖库)</li>
 <li>algolia: 高性能并且占用带宽低, 但需要同步 index.json 且有 contentLength 的限制</li>
 </ul>
 <p>暂时选择lunr，原因简单，现在的访问量来看，缺点可以忽略（<del>好吧&hellip;<a href="/posts/experience/%e4%b8%a4%e5%a4%a9%e5%90%8e-%e8%bf%98%e6%98%af%e5%86%b3%e5%ae%9a%e5%b0%86%e6%90%9c%e7%b4%a2%e6%9b%b4%e6%8d%a2%e4%b8%baalogial" rel="">两天后-决定将搜索更换为Alogial</a></del>）。</p>
-<p>评论系统略有点麻烦，支持6种评论系统（disqus、gitalk、valine、facebook、telegram comments、commento、utterances）
-，挨个打开，打开valine官网速度较快，最终选择这个，不为别的，官网打开速度的印象分。</p>
-<p>评论本身配置相对简单，根据提示来就行。麻烦在邮件提醒功能，valine从v1.4.0版本后，不再支持邮件提醒功能。
-只能使用的第三方邮件提醒。自己写太费时间，我选择的<a href="https://github.com/zhaojun1998/Valine-Admin" target="_blank" rel="noopener noreffer">Valine-Admin</a>,
-部署到LeanCloud创建的应用中。部署后需要配置一些环境变量，主要是邮件发送的服务器、账号、授权码、自己网站url等。</p>
+<p>评论系统略有点麻烦，支持6种评论系统（disqus、gitalk、valine、facebook、telegram comments、commento、utterances），挨个打开，打开valine官网速度较快，最终选择这个，不为别的，官网打开速度的印象分。</p>
+<p>评论本身配置相对简单，根据提示来就行。麻烦在邮件提醒功能，valine从v1.4.0版本后，不再支持邮件提醒功能。只能使用的第三方邮件提醒。自己写太费时间，我选择的 <a href="https://github.com/zhaojun1998/Valine-Admin" target="_blank" rel="noopener noreffer">Valine-Admin</a> ，部署到LeanCloud创建的应用中。部署后需要配置一些环境变量，主要是邮件发送的服务器、账号、授权码、自己网站url等。</p>
 <h3 id="迁移---阿里云">迁移 - 阿里云</h3>
 <p>图片资源使用阿里云对象存储OSS，静态页面迁移到阿里云服务器。</p>
-<p>GitPages托管方式，访问速度有点慢，还算能接受吧。服务器有、域名有（旧的域名不太喜欢，新域名备案完成还得几天），最终决定前移到阿里云。
-部署:服务器安装docker，docker安装nginx，安装git，将hugo生成的html文件拉取到nginx路由的目录下，部署完成。</p>
+<p>GitPages托管方式，访问速度有点慢，还算能接受吧。服务器有、域名有（旧的域名不太喜欢，新域名备案完成还得几天），最终决定前移到阿里云。部署:服务器安装docker -&gt; docker安装nginx -&gt; 安装git -&gt; 将hugo生成的html文件拉取到nginx路由的目录下，部署完成。</p>
 <p>迁移到阿里云后的感受：不卡了，emm&hellip;丝滑。嗯，也收费了。</p>
 <h3 id="自动部署">自动部署</h3>
 <p>使用Github的WebHooks，服务器写一个<a href="https://github.com/wlizhi/LoveItSite" target="_blank" rel="noopener noreffer">脚本</a>即可。</p>
-<p>流程大概是这个样子：当push代码到github时，触发回调接口。在服务器上部署一个web项目（我使用的springboot），暴露一个接口供webhooks调用。
-接口内容是异步方式（一个单线程的线程池）执行shell脚本，完成自动部署。</p>
+<p>流程大概是这个样子：当push代码到github时，触发回调接口。在服务器上部署一个web项目（我使用的springboot），暴露一个接口供webhooks调用。接口内容是异步方式（一个单线程的线程池）执行shell脚本，完成自动部署。</p>
 <p>更轻量的方式，手写代码，使用socket接收请求，执行脚本更加高效。接口方式写起来比较快，十多分钟完事。</p>
 <h3 id="域名备案">域名备案</h3>
 <p><a href="http://wlz922.top" target="_blank" rel="noopener noreffer">wlz922.top</a>是我一直使用的域名，域名备案相对麻烦，思虑再三还是决定再注册一个。</p>
 <p>新域名<a href="http://wlizhi.cc" target="_blank" rel="noopener noreffer">wlizhi.cc</a>审核估计还得几天。</p>
-<p>备案流程有点麻烦，周期是比较长的（到域名服务商注册 -&gt; 阿里云初审 -&gt; 通管局审核）。首先注册域名，注册后是不能直接备案的，要等1-3天。
-然后申请备案，填一些必须的资料。阿里云上关于备案相关资料太多，没看，直接按照流程提示填写资料。之后初审驳回一次（验证资料不规范），
-按要求重新上传资料，初审通过，等待管局审核。有一点需要说明，域名备案时，解析的网站首页必须和资料填写的内容一致，页脚必须有备案号链接到
-<a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreffer">工信部域名备案管理</a>网站（<del>我上个域名备案时让填的不是这个网址，搞不懂</del>）。</p>
+<p>备案流程有点麻烦，周期是比较长的（到域名服务商注册 -&gt; 阿里云初审 -&gt; 通管局审核）。</p>
+<p>首先注册域名，注册后是不能直接备案的，要等1-3天。然后申请备案，填一些必须的资料。阿里云上关于备案相关资料太多，没看，直接按照流程提示填写资料。之后初审驳回一次（验证资料不规范），按要求重新上传资料，初审通过，等待管局审核。有一点需要说明，域名备案时，解析的网站首页必须和资料填写的内容一致，页脚必须有备案号链接到 <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreffer">工信部域名备案管理</a> 网站（<del>我上个域名备案时让填的不是这个网址，搞不懂</del>）。</p>
 <h3 id="最后">最后</h3>
-<p>看jekyll、hugo文档、选主题、读主题及主题支持各种插件文档、迁移阿里云。历时四天，博客主题基本选定（主题选了两天多，换了五六个，
-没办法，强迫症，总想找个更好的）、搭建完成。没事还是要研究一下hugo，折腾已成本能。</p></div><div class="post-footer" id="post-footer">
+<p>看jekyll、hugo文档、选主题、读主题及主题支持各种插件文档、迁移阿里云。历时四天，博客主题基本选定（主题选了两天多，换了五六个，没办法，强迫症，总想找个更好的）、搭建完成。没事还是要研究一下hugo，折腾已成本能。</p></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
