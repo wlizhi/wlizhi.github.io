@@ -1,4 +1,4 @@
-cd ../
+
 hugo
 cd public
 git add .
