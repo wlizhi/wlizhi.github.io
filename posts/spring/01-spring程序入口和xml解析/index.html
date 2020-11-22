@@ -10,8 +10,8 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://wlz922.top/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" />
 <meta property="og:image" content="http://wlz922.top/logo.png"/>
-<meta property="article:published_time" content="2019-11-16T15:15:09+08:00" />
-<meta property="article:modified_time" content="2019-11-16T15:15:09+08:00" />
+<meta property="article:published_time" content="2020-11-22T12:00:00+08:00" />
+<meta property="article:modified_time" content="2020-11-22T12:00:00+08:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://wlz922.top/logo.png"/>
 
@@ -20,7 +20,7 @@
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" /><link rel="prev" href="http://wlz922.top/posts/technology-other/logback%E9%85%8D%E7%BD%AE/" /><link rel="next" href="http://wlz922.top/posts/docs/%E5%B8%B8%E8%A7%81%E5%AE%98%E7%BD%91/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" /><link rel="prev" href="http://wlz922.top/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -30,7 +30,7 @@
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/spring\/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90\/"
         },"genre": "posts","keywords": "spring源码","wordcount":  5539 ,
-        "url": "http:\/\/wlz922.top\/posts\/spring\/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90\/","datePublished": "2019-11-16T15:15:09+08:00","dateModified": "2019-11-16T15:15:09+08:00","publisher": {
+        "url": "http:\/\/wlz922.top\/posts\/spring\/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90\/","datePublished": "2020-11-22T12:00:00+08:00","dateModified": "2020-11-22T12:00:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
                 "@type": "Person",
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[01] - Spring程序入口和XML解析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-11-16">2019-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5539 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-22">2020-11-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5539 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;<span id="/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" class="leancloud_visitors" data-flag-title="[01] - Spring程序入口和XML解析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -917,7 +917,7 @@ BeanDefinitionRegistry作为spring容器中BeanFactory的全局成员变量。�
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2019-11-16</span>
+                <span>更新于 2020-11-22</span>
             </div>
             <div class="post-info-license"></div>
         </div>
@@ -936,8 +936,7 @@ BeanDefinitionRegistry作为spring容器中BeanFactory的全局成员变量。�
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/technology-other/logback%E9%85%8D%E7%BD%AE/" class="prev" rel="prev" title="logback配置"><i class="fas fa-angle-left fa-fw"></i>logback配置</a>
-            <a href="/posts/docs/%E5%B8%B8%E8%A7%81%E5%AE%98%E7%BD%91/" class="next" rel="next" title="常见官网">常见官网<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/" class="prev" rel="prev" title="常用资料 - 转载"><i class="fas fa-angle-left fa-fw"></i>常用资料 - 转载</a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
