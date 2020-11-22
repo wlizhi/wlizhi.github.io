@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/spring\/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  5548 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  5539 ,
         "url": "http:\/\/wlz922.top\/posts\/spring\/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90\/","datePublished": "2019-11-16T15:15:09+08:00","dateModified": "2019-11-16T15:15:09+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[01] - Spring程序入口和XML解析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-11-16">2019-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5548 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-11-16">2019-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5539 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;<span id="/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" class="leancloud_visitors" data-flag-title="[01] - Spring程序入口和XML解析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -123,7 +123,8 @@
         <li><a href="#spring的历史">Spring的历史</a></li>
         <li><a href="#读源码前的准备">读源码前的准备</a></li>
         <li><a href="#spring源码下载">Spring源码下载</a></li>
-        <li><a href="#入口方法xml解析整体流程">入口方法、Xml解析整体流程</a></li>
+        <li><a href="#入口方法">入口方法</a></li>
+        <li><a href="#xml解析流程概览">Xml解析流程概览</a></li>
         <li><a href="#创建xmlbeandefinitionreader对象">创建XmlBeanDefinitionReader对象</a></li>
         <li><a href="#创建beandefinitiondocumentreader对象">创建BeanDefinitionDocumentReader对象</a></li>
         <li><a href="#标签解析入口">标签解析入口</a></li>
@@ -135,6 +136,7 @@
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h3 id="前言">前言</h3>
+<hr>
 <p><a href="https://gitee.com/wanglizhi00/spring-framework" target="_blank" rel="noopener noreffer">Spring源码Gitee传送门</a> （从Github中下载，对核心流程及主要节点做了详细的中文注释。建议下载、结合本系列笔记阅读源码）<br>
 用 <a href="https://blog.csdn.net/luoyang_java" target="_blank" rel="noopener noreffer">jack大佬</a> 的话来概括，为什么要学习Spring源码？</p>
 <ul>
@@ -170,15 +172,12 @@
 <li>把编译好的源码导入到工程中</li>
 <li>spring工程如何搭建这里不做介绍，如何将down下来的源码导入到自己的spring工程依赖库， <a href="https://gitee.com/wanglizhi00/spring-framework" target="_blank" rel="noopener noreffer">我的Gitee-Spring源码注释</a> 中有详细的介绍</li>
 </ol>
-<h3 id="入口方法xml解析整体流程">入口方法、Xml解析整体流程</h3>
-<ul>
-<li>容器：AbstractApplicationContext 抽象父类，核心(模板)方法 refresh()。
+<h3 id="入口方法">入口方法</h3>
+<p>容器：AbstractApplicationContext 抽象父类，核心(模板)方法 refresh()。</p>
 <ul>
 <li>ClassPathXmlApplicationContext XML方式启动。</li>
 <li>AnnotationConfigWebApplicationContext 注解方式启动，对局部代码进行测试时比较好用。</li>
 <li>AnnotationConfigServletWebServerApplicationContext SpringBoot启动默认使用的上下文类。</li>
-</ul>
-</li>
 </ul>
 <p>我们知道，spring容器的启动是通过构造ApplicationContext的一个实例开始的。以ClassPathXmlApplicationContext为例。
 <figure><a class="lightgallery" href="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/spring/ClassPathXmlApplicationContext.png" title="ClassPathXmlApplicationContext UML图" data-thumbnail="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/spring/ClassPathXmlApplicationContext.png" data-sub-html="<h2>ClassPathXmlApplicationContext UML图</h2><p>ClassPathXmlApplicationContext UML图</p>">
@@ -190,8 +189,9 @@
             data-sizes="auto"
             alt="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/spring/ClassPathXmlApplicationContext.png" />
     </a><figcaption class="image-caption">ClassPathXmlApplicationContext UML图</figcaption>
-    </figure>
-Xml解析概览，首先进入spring容器启动的核心方法：refresh() ，创建BeanFactory对象 obtainFreshBeanFactory()</p>
+    </figure></p>
+<h3 id="xml解析流程概览">Xml解析流程概览</h3>
+<p>首先进入spring容器启动的核心方法：refresh() ，创建BeanFactory对象 obtainFreshBeanFactory()</p>
 <ol>
 <li>创建XmlBeanDefinitionReader对象</li>
 <li>通过Reader对象加载配置文件</li>
