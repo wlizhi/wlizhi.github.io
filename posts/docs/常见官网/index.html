@@ -151,7 +151,20 @@
 <a href="https://fontawesome.dashgame.com/" target="_blank" rel="noopener noreffer">一套绝佳的图标字体库和CSS框架</a></p>
 <h2 id="其他">其他</h2>
 <hr>
-<p><a href="https://keepass.info/" title="好用的开源密码管理工具" target="_blank" rel="noopener noreffer">keepass</a></p></div><div class="post-footer" id="post-footer">
+<p><a href="https://keepass.info/" title="好用的开源密码管理工具" target="_blank" rel="noopener noreffer">keepass</a></p></div><div style="display: block;width: 100%;text-align: center;margin-top: 50px;">
+	<a id="donate" onclick="donate()">打赏</a>
+</div>
+
+        <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+        <script>
+            function donate() {
+                $('body').append('<div id="t-bei" ></div>');
+                $('body').append('<div id="t-opo"><a href="javascript:void(0)" id="tca" ><i class="fa fa-times"></i></a><div id="t-opo-title"><i class="fa fa-credit-card"></i>打赏本站</div><div id="t-opo-content"><img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/ali-pay-code.png"><img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/wechat-pay-code.png"><p>支付宝打赏</p><p>微信打赏</p></div></div>');
+                $('#tca').click(function() {
+                    $('#t-opo,#t-bei').remove();
+                });
+            };
+        </script><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">

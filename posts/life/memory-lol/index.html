@@ -132,7 +132,20 @@
 <div class="bilibili"><iframe src="//player.bilibili.com/player.html?bvid=BV1fx411T777&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe></div>
 
 <h3 id="emm那年夏天">emm&hellip;那年夏天</h3>
-<meting-js url="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/MP3/%E9%87%91%E8%8E%8E%20-%20%E8%A2%AB%E9%A3%8E%E5%90%B9%E8%BF%87%E7%9A%84%E5%A4%8F%E5%A4%A9.mp3" name="被风吹过的夏天" artist="林俊杰/金莎" cover="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/life/%E9%87%91%E8%8E%8E.png" theme="#448aff"></meting-js></div><div class="post-footer" id="post-footer">
+<meting-js url="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/MP3/%E9%87%91%E8%8E%8E%20-%20%E8%A2%AB%E9%A3%8E%E5%90%B9%E8%BF%87%E7%9A%84%E5%A4%8F%E5%A4%A9.mp3" name="被风吹过的夏天" artist="林俊杰/金莎" cover="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/life/%E9%87%91%E8%8E%8E.png" theme="#448aff"></meting-js></div><div style="display: block;width: 100%;text-align: center;margin-top: 50px;">
+	<a id="donate" onclick="donate()">打赏</a>
+</div>
+
+        <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+        <script>
+            function donate() {
+                $('body').append('<div id="t-bei" ></div>');
+                $('body').append('<div id="t-opo"><a href="javascript:void(0)" id="tca" ><i class="fa fa-times"></i></a><div id="t-opo-title"><i class="fa fa-credit-card"></i>打赏本站</div><div id="t-opo-content"><img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/ali-pay-code.png"><img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/wechat-pay-code.png"><p>支付宝打赏</p><p>微信打赏</p></div></div>');
+                $('#tca').click(function() {
+                    $('#t-opo,#t-bei').remove();
+                });
+            };
+        </script><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">

@@ -145,7 +145,20 @@
 <li>hugo项目中，配置一些必要信息（前提主题支持algolia搜索）。分别是Algolia中创建的index名称、appId、searchKey。</li>
 </ol>
 <h3 id="自动更新index">自动更新index</h3>
-<p>每次发布新内容，如果手动上传索引文件到algolia，是相当麻烦的。 <a href="https://github.com/chrisdmacrae/atomic-algolia" target="_blank" rel="noopener noreffer">Algolia Atomic</a> 是一个不错的选择。</p></div><div class="post-footer" id="post-footer">
+<p>每次发布新内容，如果手动上传索引文件到algolia，是相当麻烦的。 <a href="https://github.com/chrisdmacrae/atomic-algolia" target="_blank" rel="noopener noreffer">Algolia Atomic</a> 是一个不错的选择。</p></div><div style="display: block;width: 100%;text-align: center;margin-top: 50px;">
+	<a id="donate" onclick="donate()">打赏</a>
+</div>
+
+        <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+        <script>
+            function donate() {
+                $('body').append('<div id="t-bei" ></div>');
+                $('body').append('<div id="t-opo"><a href="javascript:void(0)" id="tca" ><i class="fa fa-times"></i></a><div id="t-opo-title"><i class="fa fa-credit-card"></i>打赏本站</div><div id="t-opo-content"><img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/ali-pay-code.png"><img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/wechat-pay-code.png"><p>支付宝打赏</p><p>微信打赏</p></div></div>');
+                $('#tca').click(function() {
+                    $('#t-opo,#t-bei').remove();
+                });
+            };
+        </script><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
