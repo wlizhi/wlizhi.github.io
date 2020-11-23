@@ -33,7 +33,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/experience\/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B\/"
-        },"genre": "posts","keywords": "博客, hugo","wordcount":  2589 ,
+        },"genre": "posts","keywords": "博客, hugo","wordcount":  2593 ,
         "url": "http:\/\/wlz922.top\/posts\/experience\/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B\/","datePublished": "2020-11-19T22:55:42+08:00","dateModified": "2020-11-19T22:55:42+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -110,7 +110,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">我的博客搭建历程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2589 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2593 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/" class="leancloud_visitors" data-flag-title="我的博客搭建历程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -184,12 +184,12 @@
 <p>评论本身配置相对简单，根据提示来就行。邮件提醒功能略麻烦点，valine从v1.4.0版本后，不再支持邮件提醒功能。只能使用的第三方邮件提醒。我选择的 <a href="https://github.com/zhaojun1998/Valine-Admin" target="_blank" rel="noopener noreffer">Valine-Admin</a> ，部署到LeanCloud创建的应用中。部署后需要配置一些环境变量，主要是邮件发送的服务器、账号、授权码、自己网站url等。</p>
 <h3 id="迁移---阿里云">迁移 - 阿里云</h3>
 <p>图片资源使用阿里云对象存储OSS，静态页面迁移到阿里云服务器。</p>
-<p>GitPages托管方式，访问速度有点慢，还算能接受吧。服务器有、域名有（旧的域名不太喜欢，新域名备案完成还得几天），最终决定前移到阿里云。部署:服务器安装docker -&gt; docker安装nginx -&gt; 安装git -&gt; 将hugo生成的html文件拉取到nginx路由的目录下，部署完成。</p>
+<p>GitPages托管方式，访问速度有点慢，还算能接受吧。服务器有、域名有（旧的域名不太喜欢，新域名备案完成还得几天），最终决定迁移到阿里云。部署:服务器安装docker -&gt; docker安装nginx -&gt; 安装git -&gt; 将hugo生成的html文件拉取到nginx路由的目录下，部署完成。</p>
 <p>迁移到阿里云后的感受：不卡了，emm&hellip;丝滑。嗯，也收费了。</p>
 <h3 id="自动部署">自动部署</h3>
 <p>使用Github的WebHooks，服务器写一个<a href="https://github.com/wlizhi/LoveItSite" target="_blank" rel="noopener noreffer">脚本</a>即可。</p>
 <p>流程大概是这个样子：当push代码到github时，触发回调接口。在服务器上部署一个web项目（我使用的springboot），暴露一个接口供webhooks调用。接口内容是异步方式（一个单线程的线程池）执行shell脚本，完成自动部署。</p>
-<p>更轻量的方式，手写代码，使用socket接收请求，执行脚本更加高效。接口方式写起来比较快，十多分钟完事。</p>
+<p>更轻量的方式，手写代码，使用socket接收请求，执行脚本更加高效。http接口方式写起来比较快，十多分钟完事。</p>
 <h3 id="域名备案">域名备案</h3>
 <p><a href="http://wlz922.top" target="_blank" rel="noopener noreffer">wlz922.top</a>是我一直使用的域名，域名备案相对麻烦，思虑再三还是决定再注册一个。</p>
 <p>新域名<a href="http://wlizhi.cc" target="_blank" rel="noopener noreffer">wlizhi.cc</a>审核估计还得几天。</p>
