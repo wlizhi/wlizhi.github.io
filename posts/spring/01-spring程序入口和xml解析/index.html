@@ -20,7 +20,7 @@
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" /><link rel="prev" href="http://wlz922.top/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" /><link rel="prev" href="http://wlz922.top/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/" /><link rel="next" href="http://wlz922.top/posts/spring/02-spring%E6%A0%87%E7%AD%BE%E8%A7%A3%E6%9E%90-beandefinitionparser%E8%A7%A3%E6%9E%90/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/spring\/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  6249 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  6280 ,
         "url": "http:\/\/wlz922.top\/posts\/spring\/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90\/","datePublished": "2020-11-22T12:00:00+08:00","dateModified": "2020-11-22T12:00:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[01] - Spring程序入口和XML解析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-22">2020-11-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6249 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-22">2020-11-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6280 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 13 分钟&nbsp;<span id="/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/" class="leancloud_visitors" data-flag-title="[01] - Spring程序入口和XML解析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -147,7 +147,9 @@
 <li>如果想成为真正的高手，Spring源码必须攻克，不是危言耸听的</li>
 <li>Spring源码这块儿，进大厂是必问的环节</li>
 </ul>
+<p>学习源码的方式：主抓脉络，后看细节。（<code>熟练使用的前提下再看源码</code>）</p>
 <h3 id="spring的历史">Spring的历史</h3>
+<hr>
 <ol>
 <li>2002年10月,Rod Johnson发布《Expert One-on-One J2EE设计和开发》一书</li>
 <li>2004年3月，Spring1.0发布</li>
@@ -157,6 +159,7 @@
 <li>2017年9月，Spring5.0发布</li>
 </ol>
 <h3 id="读源码前的准备">读源码前的准备</h3>
+<hr>
 <ol>
 <li>JDK1.8版本</li>
 <li>spring 5.1.3.RELEASE版本</li>
@@ -164,6 +167,7 @@
 <li>安装配置gradle</li>
 </ol>
 <h3 id="spring源码下载">Spring源码下载</h3>
+<hr>
 <ol>
 <li><code>git clone --branch v5.1.3.RELEASE https://gitee.com/wanglizhi00/spring-framework</code> （此链接的Spring源码，核心流程、要注意的点我都做了中文注释，非常详细。如果你的网络足够好，到github下载原版也可以）</li>
 <li>gradle下载，gradle要JDK8的版本</li>
@@ -173,6 +177,7 @@
 <li>spring工程如何搭建这里不做介绍，如何将down下来的源码导入到自己的spring工程依赖库， <a href="https://gitee.com/wanglizhi00/spring-framework" target="_blank" rel="noopener noreffer">我的Gitee-Spring源码注释</a> 中有详细的介绍</li>
 </ol>
 <h3 id="入口方法">入口方法</h3>
+<hr>
 <p>容器：AbstractApplicationContext 抽象父类，核心(模板)方法 refresh()。</p>
 <ul>
 <li>ClassPathXmlApplicationContext XML方式启动。</li>
@@ -191,6 +196,7 @@
     </a><figcaption class="image-caption">ClassPathXmlApplicationContext UML图</figcaption>
     </figure></p>
 <h3 id="xml解析流程概览">Xml解析流程概览</h3>
+<hr>
 <p>首先进入spring容器启动的核心方法：refresh() ，创建BeanFactory对象 obtainFreshBeanFactory()</p>
 <ol>
 <li>创建XmlBeanDefinitionReader对象</li>
@@ -202,6 +208,7 @@
 <li>最终解析的标签封装成BeanDefinition并缓存到容器中</li>
 </ol>
 <h3 id="创建xmlbeandefinitionreader对象">创建XmlBeanDefinitionReader对象</h3>
+<hr>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -250,6 +257,7 @@
 </div>
 </div><p>在loadBeanDefinitions方法的第一行，创建了XmlBeanDefinitionReader对象。这个类的主要作用是读取BeanDefinition，并将XML文档的读取委托给BeanDefinitionDocumentReader。</p>
 <h3 id="创建beandefinitiondocumentreader对象">创建BeanDefinitionDocumentReader对象</h3>
+<hr>
 <p>来到loadBeanDefinitions(beanDefinitionReader);这里将要读取的xml路径传递进来，循环xml路径，依次进行解析。<br>
 <font color="orange">注：看注释中的关键点</font></p>
 <div class="highlight"><div class="chroma">
@@ -350,6 +358,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="标签解析入口">标签解析入口</h3>
+<hr>
 <p>在解析标签之前、和之后，分别有一个钩子方法。这两个钩子方法分别是 解析xml并注册BeanDefinition 之前和之后的扩展方法，ClassPathXmlApplicationContext中，这两个方法体都是空的。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -494,6 +503,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="解析默认标签">解析默认标签</h3>
+<hr>
 <ol>
 <li>根据xml节点的名称，对比代码中定义的标签名称。跳转到对应的解析方法</li>
 <li>以bean标签为例，最终走到BeanDefinitionParserDelegate.parseBeanDefinitionElement()方法</li>
@@ -707,6 +717,7 @@ BeanDefinitionRegistry作为spring容器中BeanFactory的全局成员变量。�
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="解析自定义标签">解析自定义标签</h3>
+<hr>
 <p>SPI方式获取加载所有的namespaceUri（SPI这里不进行讨论），通过当前标签定义的namespaceUri，获取到初始化后（init()）的处理类。然后调用处理类的parse方法，在此方法中，完成了标签属性的解析和BeanDefinition注册</p>
 <p>在resolve方法中，调用了NamespaceHandler的init方法，init方法中注册了标签属性的处理类。</p>
 <p><strong>这些处理类都是BeanDefinitionParser的实现，在BeanDefinitionParser中，仅有一个parse方法，用来解析特定的标签属性。</strong></p>
@@ -926,8 +937,7 @@ http\://www.springframework.org/schema/cache=org.springframework.cache.config.Ca
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>回到BeanDefinitionParserDelegate.parseCustomElement方法中。</p>
-<p>最后一行handler.parse(ele, new ParserContext(this.readerContext, this, containingBd))，调用了对应的处理类的parse方法（<code>前面有提到的一个parsers成员变量，标签属性名-处理类实例映射</code>）</p>
+</div><p>回到BeanDefinitionParserDelegate.parseCustomElement方法，最后一行handler.parse(ele, new ParserContext(this.readerContext, this, containingBd))，调用了对应的处理类的parse方法（<code>前面有提到的一个parsers成员变量，标签属性名-处理类实例映射</code>）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -977,7 +987,8 @@ http\://www.springframework.org/schema/cache=org.springframework.cache.config.Ca
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="总结">总结</h3>
-<p>Spring解析XML，绕了这么一大圈。其目的就是把XML中配置的各种标签按照标签本身定义的解析方式进行处理，将处理的结果封装成BeanDefinition对象，并注入到BeanFactory的成员变量BeanDefinitionRegistry中。</p>
+<hr>
+<p>Spring解析XML，绕了这么大一圈。其目的就是把XML中配置的各种标签按照标签本身定义的解析方式进行处理，将处理的结果封装成BeanDefinition对象，并注入到<code>BeanFactory的成员变量BeanDefinitionRegistry</code>中。</p>
 <p>这是Spring容器以XML方式初始化的第一步。其实无论是XML解析方式，还是注解方式，基本思想都是一样的。Spring容器在创建任何实例前，都会先搜集这个将要创建实例的一些必要信息，然后对这些信息根据一些扩展接口中提供的方法（模板设计模式），进行处理。</p>
 <p>这些处理有一些是Spring内置的，可能也有使用者自定义的。具体的处理方式，在后面的章节体现。</p></div>
 
@@ -1005,7 +1016,8 @@ http\://www.springframework.org/schema/cache=org.springframework.cache.config.Ca
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/" class="prev" rel="prev" title="常用资料 - 转载"><i class="fas fa-angle-left fa-fw"></i>常用资料 - 转载</a></div>
+    <div class="post-nav"><a href="/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/" class="prev" rel="prev" title="常用资料 - 转载"><i class="fas fa-angle-left fa-fw"></i>常用资料 - 转载</a>
+            <a href="/posts/spring/02-spring%E6%A0%87%E7%AD%BE%E8%A7%A3%E6%9E%90-beandefinitionparser%E8%A7%A3%E6%9E%90/" class="next" rel="next" title="[02] - Spring标签解析,BeanDefinitionParser解析">[02] - Spring标签解析,BeanDefinitionParser解析<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
