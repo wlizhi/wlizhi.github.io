@@ -643,7 +643,7 @@
         <div class="details-content">
             <div class="admonition-content"><p>其他的解析类，方法都是一样的。</p>
 <ol>
-<li>首先根据标签名称找到NamespaceUri，根据SPI加载原理，到对应模块META-INF/spring.handlers文件中查找对应的NamespaceHandler实现类；</li>
+<li>首先根据标签名称找到NamespaceUri，根据SPI加载方式，到对应模块META-INF/spring.handlers文件中查找对应的NamespaceHandler实现类；</li>
 <li>然后在实现类中的init方法中，找到标签属性对应的BeanDefinitionParser实现类；</li>
 <li>最后，进入实现类的parse方法，读源码即可。结合断点调试，很容易读懂。</li>
 </ol>
