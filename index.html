@@ -103,24 +103,24 @@
         alt="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/head_portrait.png"
         title="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/head_portrait.png" /></a></div><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="links"><a href="https://github.com/@wlizhi" title="Wlizhi" target="_blank" rel="noopener noreffer me"></a><a href="https://github.com/wlizhi" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:2456767505@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a><a href="/index.xml" title="RSS" target="_blank" rel="noopener noreffer me"><i class="fas fa-rss fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/spring/04-beanpostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C/">[04] BeanPostProcessor的注册</a>
+        <a href="/posts/spring/04-registry-of-bean-post-processor/">[04] BeanPostProcessor的注册</a>
     </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-24">2020-11-24</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content"><p>spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。</p></div><div class="post-footer">
-        <a href="/posts/spring/04-beanpostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C/">阅读全文</a><div class="post-tags">
+        <a href="/posts/spring/04-registry-of-bean-post-processor/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/spring/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C/">[03] BeanFactoryPostProcessor的注册与执行</a>
+        <a href="/posts/spring/03-bean-factory-post-processor-registry-and-execute/">[03] BeanFactoryPostProcessor的注册与执行</a>
     </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-24">2020-11-24</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content"><p>spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法</p></div><div class="post-footer">
-        <a href="/posts/spring/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C/">阅读全文</a><div class="post-tags">
+        <a href="/posts/spring/03-bean-factory-post-processor-registry-and-execute/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/spring/02-spring%E6%A0%87%E7%AD%BE%E8%A7%A3%E6%9E%90-beandefinitionparser/">[02] Spring标签解析-BeanDefinitionParser</a>
+        <a href="/posts/spring/02-spring-tag-parse-bean-definition-parser/">[02] Spring标签解析-BeanDefinitionParser</a>
     </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-23">2020-11-23</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content">本章记录spring标签解析中，对标签属性解析的几个典型BeanDefinitionParser实现。</div><div class="post-footer">
-        <a href="/posts/spring/02-spring%E6%A0%87%E7%AD%BE%E8%A7%A3%E6%9E%90-beandefinitionparser/">阅读全文</a><div class="post-tags">
+        <a href="/posts/spring/02-spring-tag-parse-bean-definition-parser/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/">[01] Spring程序入口和XML解析</a>
+        <a href="/posts/spring/01-spring-entrance-and-xml-parse/">[01] Spring程序入口和XML解析</a>
     </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-22">2020-11-22</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content">本章记录了Spring源码的程序入口，和XML解析的源码流程。</div><div class="post-footer">
-        <a href="/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/">阅读全文</a><div class="post-tags">
+        <a href="/posts/spring/01-spring-entrance-and-xml-parse/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/">常用资料 - 转载</a>
@@ -129,9 +129,9 @@
         <a href="/posts/docs/%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99-%E9%93%BE%E6%8E%A5/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E9%93%BE%E6%8E%A5/">链接</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/experience/%E4%B8%A4%E5%A4%A9%E5%90%8E-%E8%BF%98%E6%98%AF%E5%86%B3%E5%AE%9A%E5%B0%86%E6%90%9C%E7%B4%A2%E6%9B%B4%E6%8D%A2%E4%B8%BAalogial/">两天后 - 还是决定将搜索更换为alogial</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-21">2020-11-21</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div><div class="content">关于站内搜索，试用两天lunr后，还是决定换成algial，algial本身性能更高、也更加节省流量。</div><div class="post-footer">
-        <a href="/posts/experience/%E4%B8%A4%E5%A4%A9%E5%90%8E-%E8%BF%98%E6%98%AF%E5%86%B3%E5%AE%9A%E5%B0%86%E6%90%9C%E7%B4%A2%E6%9B%B4%E6%8D%A2%E4%B8%BAalogial/">阅读全文</a><div class="post-tags">
+        <a href="/posts/experience/replace-the-search-with-algolia/">两天后 - 还是决定将搜索更换为algolia</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-21">2020-11-21</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div><div class="content">关于站内搜索，试用两天lunr后，还是决定换成algolia，algolia本身性能更高、也更加节省流量。</div><div class="post-footer">
+        <a href="/posts/experience/replace-the-search-with-algolia/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%8D%9A%E5%AE%A2/">博客</a>,&nbsp;<a href="/tags/hugo/">hugo</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/posts/life/memory-lol/">Memory LOL</a>
@@ -140,15 +140,15 @@
         <a href="/posts/life/memory-lol/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/lol/">LOL</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/">我的博客搭建历程</a>
+        <a href="/posts/experience/my-blog-building-process/">我的博客搭建历程</a>
     </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-19">2020-11-19</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div><div class="content"><h3 id="前言">前言</h3>
 <p>搭建过程有些波折，好在总算完成了。目前博客采用hugo的主题。不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。</p></div><div class="post-footer">
-        <a href="/posts/experience/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8E%86%E7%A8%8B/">阅读全文</a><div class="post-tags">
+        <a href="/posts/experience/my-blog-building-process/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%8D%9A%E5%AE%A2/">博客</a>,&nbsp;<a href="/tags/hugo/">hugo</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/linux/linux%E5%9F%BA%E7%A1%80/">Linux基础</a>
+        <a href="/posts/linux/linux-basics/">Linux基础</a>
     </h1><div class="post-meta"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-11-18">2020-11-18</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%B3%BB%E7%BB%9F/"><i class="far fa-folder fa-fw"></i>系统</a></span></div><div class="content">linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载</div><div class="post-footer">
-        <a href="/posts/linux/linux%E5%9F%BA%E7%A1%80/">阅读全文</a><div class="post-tags">
+        <a href="/posts/linux/linux-basics/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">linux</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/posts/docs/%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6/">工具软件</a>
