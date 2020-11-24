@@ -31,7 +31,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/spring\/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  2942 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  2913 ,
         "url": "http:\/\/wlz922.top\/posts\/spring\/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C\/","datePublished": "2020-11-24T09:14:28+08:00","dateModified": "2020-11-24T09:14:28+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -108,7 +108,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[03] BeanFactoryPostProcessor的注册与执行</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2942 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2913 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C/" class="leancloud_visitors" data-flag-title="[03] BeanFactoryPostProcessor的注册与执行">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -150,7 +150,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
 </code></pre></td></tr></table>
 </div>
 </div><h3 id="beandefinitionregistrypostprocessor">BeanDefinitionRegistryPostProcessor</h3>
-<p>BeanDefinitionRegistryPostProcessor是BeanFactoryPostProcessor的子接口，同样的，它会优先与其他常规的Bean，提前实例化、加入到IOC容器，并会调用postProcessBeanDefinitionRegistry()方法，再调用postProcessBeanFactory()方法。</p>
+<p>BeanDefinitionRegistryPostProcessor是BeanFactoryPostProcessor的子接口，同样的，它会优先与其他常规的类，提前实例化、加入到IOC容器，并会调用postProcessBeanDefinitionRegistry()方法，再调用postProcessBeanFactory()方法。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -169,7 +169,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
 <li>筛选出实现了PriorityOrdered接口的（<code>筛选过程中会调用getBean()方法</code>），并对其进行排序，然后进行遍历调用postProcessBeanDefinitionRegistry()。</li>
 <li>筛选出实现了Ordered接口的，同上，进行getBean()，并排序，然后进行遍历调用postProcessBeanDefinitionRegistry()。</li>
 <li>对没有实现PriorityOrdered接口且没有实现Ordered接口的BeanDefinitionRegistryPostProcessor进行排序、调用postProcessBeanDefinitionRegistry()。</li>
-<li>上面的每一步调用postProcessBeanDefinitionRegistry()之前，会将其实力缓存到一个名为registryProcessors的List集合中，在以上步骤执行完，会调用BeanDefinitionRegistryPostProcessor从BeanFactoryPostProcessor继承来的postProcessBeanFactory方法</li>
+<li>上面的每一步调用postProcessBeanDefinitionRegistry()之前，会将其实力缓存到一个名为registryProcessors的List集合中，在以上步骤执行完，会调用BeanDefinitionRegistryPostProcessor.postProcessBeanFactory()方法</li>
 <li>对没有实现BeanDefinitionRegistryPostProcessor但实现了BeanFactoryPostProcessor的类进行搜集。</li>
 <li>分别筛选出实现了PriorityOrdered接口、Ordered接口、没有实现接口的类，对其进行排序、getBean()操作，调用postProcessBeanFactory()方法。</li>
 </ol>
