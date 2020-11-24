@@ -33,13 +33,12 @@
     <guid>http://wlz922.top/posts/spring/01-spring-entrance-and-xml-parse/</guid>
     <description><![CDATA[本章记录了Spring源码的程序入口，和XML解析的源码流程。]]></description>
 </item><item>
-    <title>常用资料 - 转载</title>
-    <link>http://wlz922.top/posts/docs/usually-docs-link/</link>
+    <title>其他 - 转载</title>
+    <link>http://wlz922.top/posts/docs/other-blog-link/</link>
     <pubDate>Sat, 21 Nov 2020 19:16:51 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/docs/usually-docs-link/</guid>
-    <description><![CDATA[<h3 id="前言">前言</h3>
-<p>本章转载一些常用功能以及一些典型的坑，类似git常用命令、shell常用指令等。如有侵权，请 <a href="mailto:2456767505@qq.com" rel="">联系我</a> 删除。</p>]]></description>
+    <guid>http://wlz922.top/posts/docs/other-blog-link/</guid>
+    <description><![CDATA[<p>本章记录一些博客的链接，经常百度的一些内容，以链接的方式记录在这里，使用站内搜索引擎方便查找。</p>]]></description>
 </item><item>
     <title>两天后 - 还是决定将搜索更换为algolia</title>
     <link>http://wlz922.top/posts/experience/replace-the-search-with-algolia-at-two-days-later/</link>
