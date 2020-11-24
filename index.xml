@@ -4,17 +4,25 @@
         <link>http://wlz922.top/</link>
         <description>这是我的博客</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Mon, 23 Nov 2020 11:20:12 &#43;0800</lastBuildDate>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Tue, 24 Nov 2020 09:14:28 &#43;0800</lastBuildDate>
             <atom:link href="http://wlz922.top/index.xml" rel="self" type="application/rss+xml" />
         <item>
-    <title>[02] - Spring标签解析-BeanDefinitionParser</title>
+    <title>[03] BeanDefinition的后置处理BeanFactoryPostProcessor</title>
+    <link>http://wlz922.top/posts/spring/03-beandefinition%E7%9A%84%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86beanfactorypostprocessor/</link>
+    <pubDate>Tue, 24 Nov 2020 09:14:28 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>http://wlz922.top/posts/spring/03-beandefinition%E7%9A%84%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86beanfactorypostprocessor/</guid>
+    <description><![CDATA[<h3 id="前言">前言</h3>
+<p>spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor，并调用其postProcessBeanFactory()、postProcessBeanDefinitionRegistry()方法</p>]]></description>
+</item><item>
+    <title>[02] Spring标签解析-BeanDefinitionParser</title>
     <link>http://wlz922.top/posts/spring/02-spring%E6%A0%87%E7%AD%BE%E8%A7%A3%E6%9E%90-beandefinitionparser/</link>
     <pubDate>Mon, 23 Nov 2020 11:20:12 &#43;0800</pubDate>
     <author>作者</author>
     <guid>http://wlz922.top/posts/spring/02-spring%E6%A0%87%E7%AD%BE%E8%A7%A3%E6%9E%90-beandefinitionparser/</guid>
     <description><![CDATA[本章记录spring标签解析中，对标签属性解析的几个典型BeanDefinitionParser实现。]]></description>
 </item><item>
-    <title>[01] - Spring程序入口和XML解析</title>
+    <title>[01] Spring程序入口和XML解析</title>
     <link>http://wlz922.top/posts/spring/01-spring%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3%E5%92%8Cxml%E8%A7%A3%E6%9E%90/</link>
     <pubDate>Sun, 22 Nov 2020 12:00:00 &#43;0800</pubDate>
     <author>作者</author>
@@ -72,12 +80,5 @@
     <author>作者</author>
     <guid>http://wlz922.top/posts/docs/%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7/</guid>
     <description><![CDATA[与开发有关的常用在线工具。如：json解析、程序员在线工具箱等]]></description>
-</item><item>
-    <title>常见官网</title>
-    <link>http://wlz922.top/posts/docs/%E5%B8%B8%E8%A7%81%E5%AE%98%E7%BD%91/</link>
-    <pubDate>Wed, 18 Nov 2020 20:06:23 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>http://wlz922.top/posts/docs/%E5%B8%B8%E8%A7%81%E5%AE%98%E7%BD%91/</guid>
-    <description><![CDATA[<p>36</p>]]></description>
 </item></channel>
 </rss>
