@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/spring\/04-beanpostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  1436 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  1432 ,
         "url": "http:\/\/wlz922.top\/posts\/spring\/04-beanpostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C\/","datePublished": "2020-11-24T11:05:21+08:00","dateModified": "2020-11-24T11:05:21+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[04] BeanPostProcessor的注册</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1436 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1432 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id="/posts/spring/04-beanpostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C/" class="leancloud_visitors" data-flag-title="[04] BeanPostProcessor的注册">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -132,16 +132,6 @@
 <p>真正实例化bean的方法是beanFactory.getBean()方法。而在bean实例化之前、实例化之后、依赖注入、初始化方法执行之前、初始化方法执行之后等节点进行一些钩子回调。BeanPostProcessor的作用就体现于此。</p>
 <p>BeanPostProcessor接口只提供初始化方法执行前、后的节点操作。其余操作在它的子接口中定义。</p>
 <h3 id="beanpostprocessor的体系结构">BeanPostProcessor的体系结构</h3>
-<figure><a class="lightgallery" href="https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" title="https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" data-thumbnail="https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" data-sub-html="<h2>Lighthouse (image)</h2>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png"
-            data-srcset="https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png, https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png 1.5x, https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png 2x"
-            data-sizes="auto"
-            alt="https://cc.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" />
-    </a><figcaption class="image-caption">Lighthouse (<code>image</code>)</figcaption>
-    </figure>
 <p><figure><a class="lightgallery" href="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" title="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" data-thumbnail="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" data-sub-html="<h2>BeanPostProcessor及其关键子接口的方法定义-UML图</h2>">
         <img
             class="lazyload"
