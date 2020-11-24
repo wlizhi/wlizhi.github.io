@@ -6,8 +6,7 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>[03] BeanFactoryPostProcessor的注册与执行 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="[03] BeanFactoryPostProcessor的注册与执行" />
-<meta property="og:description" content="前言
-spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法" />
+<meta property="og:description" content="spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://wlz922.top/posts/spring/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C/" />
 <meta property="og:image" content="http://wlz922.top/logo.png"/>
@@ -17,8 +16,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
 <meta name="twitter:image" content="http://wlz922.top/logo.png"/>
 
 <meta name="twitter:title" content="[03] BeanFactoryPostProcessor的注册与执行"/>
-<meta name="twitter:description" content="前言
-spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法"/>
+<meta name="twitter:description" content="spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -31,7 +29,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "http:\/\/wlz922.top\/posts\/spring\/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  2913 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  2911 ,
         "url": "http:\/\/wlz922.top\/posts\/spring\/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C\/","datePublished": "2020-11-24T09:14:28+08:00","dateModified": "2020-11-24T09:14:28+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -108,7 +106,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[03] BeanFactoryPostProcessor的注册与执行</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="http://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2913 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2911 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/03-beanfactorypostprocessor%E7%9A%84%E6%B3%A8%E5%86%8C%E4%B8%8E%E6%89%A7%E8%A1%8C/" class="leancloud_visitors" data-flag-title="[03] BeanFactoryPostProcessor的注册与执行">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -121,7 +119,6 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
   <ul>
     <li>
       <ul>
-        <li><a href="#前言">前言</a></li>
         <li><a href="#beanfactorypostprocessor">BeanFactoryPostProcessor</a></li>
         <li><a href="#beandefinitionregistrypostprocessor">BeanDefinitionRegistryPostProcessor</a></li>
         <li><a href="#调用逻辑">调用逻辑</a></li>
@@ -129,8 +126,7 @@ spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinit
     </li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h3 id="前言">前言</h3>
-<p>spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法</p>
+            </div><div class="content" id="content"><p>spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法</p>
 <h3 id="beanfactorypostprocessor">BeanFactoryPostProcessor</h3>
 <p>BeanFactoryPostProcessor中只有一个方法postProcessBeanFactory，实现了这个接口的类，会优先于其他常规的类实例化，并调用postProcessBeanFactory方法。</p>
 <div class="highlight"><div class="chroma">
