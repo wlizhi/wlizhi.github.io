@@ -1,6 +1,11 @@
 window.onload = initDonate();
 
 function initDonate() {
+    let donateButton = document.getElementById("donate");
+    if (donateButton == null){
+        return;
+    }
+    donateButton.onclick = donateDisplay;
     let tBei = document.createElement("div");
     let tOpo = document.createElement("div");
     tBei.id = "t-bei";
@@ -20,8 +25,8 @@ function initDonate() {
     let body = document.getElementsByTagName("body")[0];
     body.appendChild(tBei);
     body.appendChild(tOpo);
-    document.getElementById("donate").onclick = donate;
     document.getElementById("tca").onclick = removeDonate;
+
 }
 
 function removeDonate() {
@@ -29,7 +34,7 @@ function removeDonate() {
     document.getElementById('t-opo').style.display = 'none';
 }
 
-function donate() {
+function donateDisplay() {
     document.getElementById('t-bei').style.display = 'block';
     document.getElementById('t-opo').style.display = 'block';
 }
