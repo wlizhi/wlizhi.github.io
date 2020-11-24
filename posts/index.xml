@@ -42,10 +42,10 @@
 <p>本章转载一些常用功能以及一些典型的坑，类似git常用命令、shell常用指令等。如有侵权，请 <a href="mailto:2456767505@qq.com" rel="">联系我</a> 删除。</p>]]></description>
 </item><item>
     <title>两天后 - 还是决定将搜索更换为algolia</title>
-    <link>http://wlz922.top/posts/experience/replace-the-search-with-algolia/</link>
+    <link>http://wlz922.top/posts/experience/replace-the-search-with-algolia-at-two-days-later/</link>
     <pubDate>Sat, 21 Nov 2020 12:20:48 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/experience/replace-the-search-with-algolia/</guid>
+    <guid>http://wlz922.top/posts/experience/replace-the-search-with-algolia-at-two-days-later/</guid>
     <description><![CDATA[关于站内搜索，试用两天lunr后，还是决定换成algolia，algolia本身性能更高、也更加节省流量。]]></description>
 </item><item>
     <title>Memory LOL</title>
