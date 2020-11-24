@@ -1,14 +1,14 @@
 {
-    "name": "LoveIt",
-    "short_name": "LoveIt",
+    "name": "暗夜零星",
+    "short_name": "暗夜零星",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "https://oss.wlz922.top/blog/head_portrait.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "https://oss.wlz922.top/blog/head_portrait.png",
             "sizes": "512x512",
             "type": "image/png"
         }
