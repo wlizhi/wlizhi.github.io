@@ -11,8 +11,8 @@ function initDonate() {
     let tOpoChild = '<a href="javascript:void(0)" id="tca"><i class="fa fa-times"></i></a>';
     tOpoChild += '<div id="t-opo-title"><i id="donate-title" class="fa fa-coffee"></i>&nbsp;&nbsp;请我喝杯咖啡吧~</div>';
     tOpoChild += '<div id="t-opo-content">';
-    tOpoChild += '<img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/ali-pay-code.png">';
-    tOpoChild += '<img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/wechat-pay-code.png">';
+    tOpoChild += '<img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/qr-code-ali-pay.png">';
+    tOpoChild += '<img src="https://eddie-public-img.oss-cn-hangzhou.aliyuncs.com/blog/qr-code-wechat-pay.png">';
     tOpoChild += '<p>支付宝</p>';
     tOpoChild += '<p>微信</p>';
     tOpoChild += '</div>';
