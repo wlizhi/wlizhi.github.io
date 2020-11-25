@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/experience\/my-blog-building-process\/"
-        },"genre": "posts","keywords": "博客, hugo","wordcount":  2589 ,
+        },"genre": "posts","keywords": "博客, hugo","wordcount":  2608 ,
         "url": "https:\/\/wlizhi.cc\/posts\/experience\/my-blog-building-process\/","datePublished": "2020-11-19T22:55:42+08:00","dateModified": "2020-11-19T22:55:42+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -108,7 +108,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">我的博客搭建历程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2589 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2608 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/experience/my-blog-building-process/" class="leancloud_visitors" data-flag-title="我的博客搭建历程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -172,7 +172,7 @@
 </ul>
 <p>暂时选择lunr，原因简单，现在的访问量来看，缺点可以忽略（<del>好吧&hellip;<a href="/posts/experience/%e4%b8%a4%e5%a4%a9%e5%90%8e-%e8%bf%98%e6%98%af%e5%86%b3%e5%ae%9a%e5%b0%86%e6%90%9c%e7%b4%a2%e6%9b%b4%e6%8d%a2%e4%b8%baalogial" rel="">两天后-决定将搜索更换为Alogial</a></del>）。</p>
 <p>评论系统略有点麻烦，支持6种评论系统（disqus、gitalk、valine、facebook、telegram comments、commento、utterances），挨个打开，打开valine官网速度较快，最终选择这个，不为别的，官网打开速度的印象分。</p>
-<p>评论本身配置相对简单，根据提示来就行。邮件提醒功能略麻烦点，valine从v1.4.0版本后，不再支持邮件提醒功能。只能使用的第三方邮件提醒。我选择的 <a href="https://github.com/zhaojun1998/Valine-Admin" target="_blank" rel="noopener noreffer">Valine-Admin</a> ，部署到LeanCloud创建的应用中。部署后需要配置一些环境变量，主要是邮件发送的服务器、账号、授权码、自己网站url等。</p>
+<p>评论本身配置相对简单，根据提示来就行。邮件提醒功能略麻烦点，valine从v1.4.0版本后，不再支持邮件提醒功能。只能使用的第三方邮件提醒。关于这个，github上很多开源项目。我选择的 <a href="https://github.com/DesertsP/Valine-Admin" target="_blank" rel="noopener noreffer">Valine-Admin</a> ，部署到LeanCloud创建的应用中。部署后需要配置一些环境变量，主要是邮件发送的服务器、账号、授权码、自己网站url等。</p>
 <h3 id="迁移---阿里云">迁移 - 阿里云</h3>
 <p>图片资源使用阿里云对象存储OSS，静态页面迁移到阿里云服务器。</p>
 <p>GitPages托管方式，访问速度有点慢，还算能接受吧。服务器有、域名有（旧的域名不太喜欢，新域名备案完成还得几天），最终决定迁移到阿里云。部署：服务器安装docker -&gt; docker安装nginx -&gt; 安装git -&gt; 将hugo生成的html文件拉取到nginx路由的目录下，部署完成。</p>
