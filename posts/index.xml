@@ -1,80 +1,80 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>所有文章 - 暗夜零星</title>
-        <link>http://wlz922.top/posts/</link>
+        <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Tue, 24 Nov 2020 11:05:21 &#43;0800</lastBuildDate><atom:link href="http://wlz922.top/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Tue, 24 Nov 2020 11:05:21 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
     <title>[04] BeanPostProcessor的注册</title>
-    <link>http://wlz922.top/posts/spring/04-registry-of-bean-post-processor/</link>
+    <link>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</link>
     <pubDate>Tue, 24 Nov 2020 11:05:21 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/spring/04-registry-of-bean-post-processor/</guid>
+    <guid>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</guid>
     <description><![CDATA[<p>spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。</p>]]></description>
 </item><item>
     <title>[03] BeanFactoryPostProcessor的注册与执行</title>
-    <link>http://wlz922.top/posts/spring/03-bean-factory-post-processor-registry-and-execute/</link>
+    <link>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</link>
     <pubDate>Tue, 24 Nov 2020 09:14:28 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/spring/03-bean-factory-post-processor-registry-and-execute/</guid>
+    <guid>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</guid>
     <description><![CDATA[<p>spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法</p>]]></description>
 </item><item>
     <title>[02] Spring标签解析-BeanDefinitionParser</title>
-    <link>http://wlz922.top/posts/spring/02-spring-tag-parse-bean-definition-parser/</link>
+    <link>https://wlizhi.cc/posts/spring/02-spring-tag-parse-bean-definition-parser/</link>
     <pubDate>Mon, 23 Nov 2020 11:20:12 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/spring/02-spring-tag-parse-bean-definition-parser/</guid>
+    <guid>https://wlizhi.cc/posts/spring/02-spring-tag-parse-bean-definition-parser/</guid>
     <description><![CDATA[本章记录spring标签解析中，对标签属性解析的几个典型BeanDefinitionParser实现。]]></description>
 </item><item>
     <title>[01] Spring程序入口和XML解析</title>
-    <link>http://wlz922.top/posts/spring/01-spring-entrance-and-xml-parse/</link>
+    <link>https://wlizhi.cc/posts/spring/01-spring-entrance-and-xml-parse/</link>
     <pubDate>Sun, 22 Nov 2020 12:00:00 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/spring/01-spring-entrance-and-xml-parse/</guid>
+    <guid>https://wlizhi.cc/posts/spring/01-spring-entrance-and-xml-parse/</guid>
     <description><![CDATA[本章记录了Spring源码的程序入口，和XML解析的源码流程。]]></description>
 </item><item>
     <title>其他 - 转载</title>
-    <link>http://wlz922.top/posts/docs/other-blog-link/</link>
+    <link>https://wlizhi.cc/posts/docs/other-blog-link/</link>
     <pubDate>Sat, 21 Nov 2020 19:16:51 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/docs/other-blog-link/</guid>
+    <guid>https://wlizhi.cc/posts/docs/other-blog-link/</guid>
     <description><![CDATA[<p>本章记录一些博客的链接，经常百度的一些内容，以链接的方式记录在这里，使用站内搜索引擎方便查找。</p>]]></description>
 </item><item>
     <title>两天后 - 还是决定将搜索更换为algolia</title>
-    <link>http://wlz922.top/posts/experience/replace-the-search-with-algolia-at-two-days-later/</link>
+    <link>https://wlizhi.cc/posts/experience/replace-the-search-with-algolia-at-two-days-later/</link>
     <pubDate>Sat, 21 Nov 2020 12:20:48 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/experience/replace-the-search-with-algolia-at-two-days-later/</guid>
+    <guid>https://wlizhi.cc/posts/experience/replace-the-search-with-algolia-at-two-days-later/</guid>
     <description><![CDATA[关于站内搜索，试用两天lunr后，还是决定换成algolia，algolia本身性能更高、也更加节省流量。]]></description>
 </item><item>
     <title>Memory LOL</title>
-    <link>http://wlz922.top/posts/life/memory-lol/</link>
+    <link>https://wlizhi.cc/posts/life/memory-lol/</link>
     <pubDate>Sat, 21 Nov 2020 01:22:37 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/life/memory-lol/</guid>
+    <guid>https://wlizhi.cc/posts/life/memory-lol/</guid>
     <description><![CDATA[<h3 id="回忆">回忆</h3>
 <p>六年前的一个LOL视频，当初也是实锤的电竞粉额。2015年夏天也是拿这个英雄打了一个月排位，网一区一路从白银打到钻二，排行榜3000多名（<del>据说这区活跃用户大概50万</del>），之后便不怎么玩儿了。</p>]]></description>
 </item><item>
     <title>我的博客搭建历程</title>
-    <link>http://wlz922.top/posts/experience/my-blog-building-process/</link>
+    <link>https://wlizhi.cc/posts/experience/my-blog-building-process/</link>
     <pubDate>Thu, 19 Nov 2020 22:55:42 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/experience/my-blog-building-process/</guid>
+    <guid>https://wlizhi.cc/posts/experience/my-blog-building-process/</guid>
     <description><![CDATA[<h3 id="前言">前言</h3>
 <p>搭建过程有些波折，好在总算完成了。目前博客采用hugo的主题。不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。</p>]]></description>
 </item><item>
     <title>Linux基础</title>
-    <link>http://wlz922.top/posts/linux/linux-basics/</link>
+    <link>https://wlizhi.cc/posts/linux/linux-basics/</link>
     <pubDate>Wed, 18 Nov 2020 20:59:11 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/linux/linux-basics/</guid>
+    <guid>https://wlizhi.cc/posts/linux/linux-basics/</guid>
     <description><![CDATA[linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载]]></description>
 </item><item>
     <title>工具软件</title>
-    <link>http://wlz922.top/posts/docs/software-tools/</link>
+    <link>https://wlizhi.cc/posts/docs/software-tools/</link>
     <pubDate>Wed, 18 Nov 2020 20:34:49 &#43;0800</pubDate>
     <author>作者</author>
-    <guid>http://wlz922.top/posts/docs/software-tools/</guid>
+    <guid>https://wlizhi.cc/posts/docs/software-tools/</guid>
     <description><![CDATA[比较使用的工具软件/插件。例：密码管理器、谷歌浏览器常用插件等。]]></description>
 </item></channel>
 </rss>

@@ -9,12 +9,12 @@
 <meta property="og:description" content="前言
 搭建过程有些波折，好在总算完成了。目前博客采用hugo的主题。不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://wlz922.top/posts/experience/my-blog-building-process/" />
-<meta property="og:image" content="http://wlz922.top/logo.png"/>
+<meta property="og:url" content="https://wlizhi.cc/posts/experience/my-blog-building-process/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
 <meta property="article:published_time" content="2020-11-19T22:55:42+08:00" />
 <meta property="article:modified_time" content="2020-11-19T22:55:42+08:00" />
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://wlz922.top/logo.png"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
 
 <meta name="twitter:title" content="我的博客搭建历程"/>
 <meta name="twitter:description" content="前言
@@ -22,7 +22,7 @@
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/experience/my-blog-building-process/" /><link rel="prev" href="http://wlz922.top/posts/linux/linux-basics/" /><link rel="next" href="http://wlz922.top/posts/life/memory-lol/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/experience/my-blog-building-process/" /><link rel="prev" href="https://wlizhi.cc/posts/linux/linux-basics/" /><link rel="next" href="https://wlizhi.cc/posts/life/memory-lol/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -30,9 +30,9 @@
         "inLanguage": "",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http:\/\/wlz922.top\/posts\/experience\/my-blog-building-process\/"
+            "@id": "https:\/\/wlizhi.cc\/posts\/experience\/my-blog-building-process\/"
         },"genre": "posts","keywords": "博客, hugo","wordcount":  2589 ,
-        "url": "http:\/\/wlz922.top\/posts\/experience\/my-blog-building-process\/","datePublished": "2020-11-19T22:55:42+08:00","dateModified": "2020-11-19T22:55:42+08:00","publisher": {
+        "url": "https:\/\/wlizhi.cc\/posts\/experience\/my-blog-building-process\/","datePublished": "2020-11-19T22:55:42+08:00","dateModified": "2020-11-19T22:55:42+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
                 "@type": "Person",
@@ -107,7 +107,7 @@
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">我的博客搭建历程</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="https://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div>
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2589 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/experience/my-blog-building-process/" class="leancloud_visitors" data-flag-title="我的博客搭建历程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
@@ -182,8 +182,8 @@
 <p>流程大概是这个样子：当push代码到github时，触发回调接口。在服务器上部署一个web项目（我使用的springboot），暴露一个接口供webhooks调用。接口内容是异步方式（一个单线程的线程池）执行shell脚本，完成自动部署。</p>
 <p>更轻量的方式，手写代码，使用socket接收请求，执行脚本更加高效。http接口方式写起来比较快，十多分钟完事。</p>
 <h3 id="域名备案">域名备案</h3>
-<p><a href="http://wlz922.top" target="_blank" rel="noopener noreffer">wlz922.top</a>是我一直使用的域名，域名备案相对麻烦，思虑再三还是决定再注册一个。</p>
-<p>新域名<a href="http://wlizhi.cc" target="_blank" rel="noopener noreffer">wlizhi.cc</a>审核估计还得几天。</p>
+<p><a href="https://wlz922.top" target="_blank" rel="noopener noreffer">wlz922.top</a>是我一直使用的域名，域名备案相对麻烦，思虑再三还是决定再注册一个。</p>
+<p>新域名<a href="https://wlizhi.cc" target="_blank" rel="noopener noreffer">wlizhi.cc</a>审核估计还得几天。</p>
 <p>备案流程有点麻烦，周期是比较长的（到域名服务商注册 -&gt; 阿里云初审 -&gt; 通管局审核）。</p>
 <p>首先注册域名，注册后是不能直接备案的，要等1-3天。然后申请备案，填一些必须的资料。阿里云关于备案相关资料太多，没看，直接按照流程提示填写资料。之后初审驳回一次（验证资料不规范），按要求重新上传资料，初审通过，等待管局审核。</p>
 <p>有一点需要说明，域名备案时，解析的网站首页必须和资料填写的内容一致，页脚必须有备案号链接到 <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreffer">工信部域名备案管理</a> 网站（<del>我上个域名备案时让填的不是这个网址，搞不懂</del>）。</p>
@@ -222,7 +222,7 @@
             </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlz922.top" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
                     <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
         </div>
     </footer></div>

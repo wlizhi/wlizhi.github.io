@@ -8,19 +8,19 @@
         <title>[04] BeanPostProcessor的注册 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="[04] BeanPostProcessor的注册" />
 <meta property="og:description" content="spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://wlz922.top/posts/spring/04-registry-of-bean-post-processor/" />
-<meta property="og:image" content="http://wlz922.top/logo.png"/>
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
 <meta property="article:published_time" content="2020-11-24T11:05:21+08:00" />
 <meta property="article:modified_time" content="2020-11-24T11:05:21+08:00" />
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://wlz922.top/logo.png"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
 
 <meta name="twitter:title" content="[04] BeanPostProcessor的注册"/>
 <meta name="twitter:description" content="spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://wlz922.top/posts/spring/04-registry-of-bean-post-processor/" /><link rel="prev" href="http://wlz922.top/posts/spring/03-bean-factory-post-processor-registry-and-execute/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -28,9 +28,9 @@
         "inLanguage": "",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "http:\/\/wlz922.top\/posts\/spring\/04-registry-of-bean-post-processor\/"
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/04-registry-of-bean-post-processor\/"
         },"genre": "posts","keywords": "spring源码","wordcount":  1432 ,
-        "url": "http:\/\/wlz922.top\/posts\/spring\/04-registry-of-bean-post-processor\/","datePublished": "2020-11-24T11:05:21+08:00","dateModified": "2020-11-24T11:05:21+08:00","publisher": {
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/04-registry-of-bean-post-processor\/","datePublished": "2020-11-24T11:05:21+08:00","dateModified": "2020-11-24T11:05:21+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
                 "@type": "Person",
@@ -105,7 +105,7 @@
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[04] BeanPostProcessor的注册</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="https://wlz922.top" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1432 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id="/posts/spring/04-registry-of-bean-post-processor/" class="leancloud_visitors" data-flag-title="[04] BeanPostProcessor的注册">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
@@ -132,14 +132,14 @@
 <p>真正实例化bean的方法是beanFactory.getBean()方法。而在bean实例化之前、实例化之后、依赖注入、初始化方法执行之前、初始化方法执行之后等节点进行一些钩子回调。BeanPostProcessor的作用就体现于此。</p>
 <p>BeanPostProcessor接口只提供初始化方法执行前、后的节点操作。其余操作在它的子接口中定义。</p>
 <h3 id="beanpostprocessor的体系结构">BeanPostProcessor的体系结构</h3>
-<p><figure><a class="lightgallery" href="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" title="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" data-thumbnail="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" data-sub-html="<h2>BeanPostProcessor及其关键子接口的方法定义-UML图</h2>">
+<p><figure><a class="lightgallery" href="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png" title="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png" data-thumbnail="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png" data-sub-html="<h2>BeanPostProcessor及其关键子接口的方法定义-UML图</h2>">
         <img
             class="lazyload"
             src="/svg/loading.min.svg"
-            data-src="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png"
-            data-srcset="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png, https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png 1.5x, https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png 2x"
+            data-src="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png"
+            data-srcset="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png, https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png 1.5x, https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png 2x"
             data-sizes="auto"
-            alt="https://oss.wlz922.top/blog/spring/BeanPostProcessor-inheritance-structure.png" />
+            alt="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png" />
     </a><figcaption class="image-caption">BeanPostProcessor及其关键子接口的方法定义-UML图</figcaption>
     </figure></p>
 <p>从BeanPostProcessor接口继承体系可以看出，BeanPostProcessor贯穿整个Spring容器中Bean的实例化流程。可以说，在Spring容器中，任何一个Bean的实例化，在其关键节点，都有BeanPostProcessor的存在。</p>
@@ -346,7 +346,7 @@
             </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlz922.top" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
                     <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
         </div>
     </footer></div>
