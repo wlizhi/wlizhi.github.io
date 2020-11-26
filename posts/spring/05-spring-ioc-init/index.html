@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  13079 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  13108 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/","datePublished": "2020-11-26T12:26:00+08:00","dateModified": "2020-11-26T12:26:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[05] Bean实例化流程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13079 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13108 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 27 分钟&nbsp;<span id="/posts/spring/05-spring-ioc-init/" class="leancloud_visitors" data-flag-title="[05] Bean实例化流程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -119,7 +119,7 @@
   <ul>
     <li><a href="#1常见的applicationcontext实现类">1.常见的ApplicationContext实现类：</a></li>
     <li><a href="#2-核心方法refresh-">2. 核心方法refresh() 。</a></li>
-    <li><a href="#3-bean实例化getbean">3. Bean实例化：getBean()</a>
+    <li><a href="#3-bean实例化---getbean">3. Bean实例化 - getBean()</a>
       <ul>
         <li><a href="#入口">入口</a></li>
         <li><a href="#实例化主流程">实例化主流程</a></li>
@@ -138,7 +138,7 @@
           </ul>
         </li>
         <li><a href="#aop事务支持---initializebean">AOP、事务支持 - initializeBean</a></li>
-        <li><a href="#临终方法---registerdisposablebeanifnecessary">临终方法 - registerDisposableBeanIfNecessary</a></li>
+        <li><a href="#临终方法注册---registerdisposablebeanifnecessary">临终方法注册 - registerDisposableBeanIfNecessary</a></li>
       </ul>
     </li>
   </ul>
@@ -282,7 +282,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h2 id="3-bean实例化getbean">3. Bean实例化：getBean()</h2>
+</div><h2 id="3-bean实例化---getbean">3. Bean实例化 - getBean()</h2>
 <hr>
 <h3 id="入口">入口</h3>
 <p>bean实例化的入口是getBean()。对于单例Bean（实际开发中大多数都是单例），在初始化过程中，是从refresh()中，调用到finishBeanFactoryInitialization()，然后调用到preInstantiateSingletons()。</p>
@@ -327,42 +327,48 @@
 </span><span class="lnt">36
 </span><span class="lnt">37
 </span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultListableBeanFactory</span> <span class="kd">extends</span> <span class="n">AbstractAutowireCapableBeanFactory</span>
 		<span class="kd">implements</span> <span class="n">ConfigurableListableBeanFactory</span><span class="o">,</span> <span class="n">BeanDefinitionRegistry</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
-    <span class="c1">// 容器中所有的beanName，循环、实例化
-</span><span class="c1"></span>    <span class="c1">// Iterate over a copy to allow for init methods which in turn register new bean definitions.
-</span><span class="c1"></span>    <span class="c1">// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
-</span><span class="c1"></span>    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">beanNames</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="k">this</span><span class="o">.</span><span class="na">beanDefinitionNames</span><span class="o">);</span>
-
-    <span class="c1">// 循环调用，进行实例化
-</span><span class="c1"></span>    <span class="c1">// Trigger initialization of all non-lazy singleton beans...
-</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">beanName</span> <span class="o">:</span> <span class="n">beanNames</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">RootBeanDefinition</span> <span class="n">bd</span> <span class="o">=</span> <span class="n">getMergedLocalBeanDefinition</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
-        <span class="c1">// 非抽象的、单例的、并且非懒加载的，才会在容器启动时就实例化。
-</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">bd</span><span class="o">.</span><span class="na">isAbstract</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">bd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">bd</span><span class="o">.</span><span class="na">isLazyInit</span><span class="o">())</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="n">isFactoryBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
-                <span class="n">Object</span> <span class="n">bean</span> <span class="o">=</span> <span class="n">getBean</span><span class="o">(</span><span class="n">FACTORY_BEAN_PREFIX</span> <span class="o">+</span> <span class="n">beanName</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">bean</span> <span class="k">instanceof</span> <span class="n">FactoryBean</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="kd">final</span> <span class="n">FactoryBean</span><span class="o">&lt;?&gt;</span> <span class="n">factory</span> <span class="o">=</span> <span class="o">(</span><span class="n">FactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">bean</span><span class="o">;</span>
-                    <span class="kt">boolean</span> <span class="n">isEagerInit</span><span class="o">;</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">getSecurityManager</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">factory</span> <span class="k">instanceof</span> <span class="n">SmartFactoryBean</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="n">isEagerInit</span> <span class="o">=</span> <span class="n">AccessController</span><span class="o">.</span><span class="na">doPrivileged</span><span class="o">((</span><span class="n">PrivilegedAction</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;)</span>
-                                        <span class="o">((</span><span class="n">SmartFactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">factory</span><span class="o">)::</span><span class="n">isEagerInit</span><span class="o">,</span>
-                                <span class="n">getAccessControlContext</span><span class="o">());</span>
-                    <span class="o">}</span>
-                    <span class="k">else</span> <span class="o">{</span>
-                        <span class="n">isEagerInit</span> <span class="o">=</span> <span class="o">(</span><span class="n">factory</span> <span class="k">instanceof</span> <span class="n">SmartFactoryBean</span> <span class="o">&amp;&amp;</span>
-                                <span class="o">((</span><span class="n">SmartFactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">factory</span><span class="o">).</span><span class="na">isEagerInit</span><span class="o">());</span>
-                    <span class="o">}</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="n">isEagerInit</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="n">getBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">preInstantiateSingletons</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">BeansException</span> <span class="o">{</span>
+        <span class="c1">// 容器中所有的beanName，循环、实例化
+</span><span class="c1"></span>        <span class="c1">// Iterate over a copy to allow for init methods which in turn register new bean definitions.
+</span><span class="c1"></span>        <span class="c1">// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+</span><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">beanNames</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="k">this</span><span class="o">.</span><span class="na">beanDefinitionNames</span><span class="o">);</span>
+    
+        <span class="c1">// 循环调用，进行实例化
+</span><span class="c1"></span>        <span class="c1">// Trigger initialization of all non-lazy singleton beans...
+</span><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">beanName</span> <span class="o">:</span> <span class="n">beanNames</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">RootBeanDefinition</span> <span class="n">bd</span> <span class="o">=</span> <span class="n">getMergedLocalBeanDefinition</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+            <span class="c1">// 非抽象的、单例的、并且非懒加载的，才会在容器启动时就实例化。
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(!</span><span class="n">bd</span><span class="o">.</span><span class="na">isAbstract</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">bd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">bd</span><span class="o">.</span><span class="na">isLazyInit</span><span class="o">())</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">isFactoryBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="n">Object</span> <span class="n">bean</span> <span class="o">=</span> <span class="n">getBean</span><span class="o">(</span><span class="n">FACTORY_BEAN_PREFIX</span> <span class="o">+</span> <span class="n">beanName</span><span class="o">);</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">bean</span> <span class="k">instanceof</span> <span class="n">FactoryBean</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="kd">final</span> <span class="n">FactoryBean</span><span class="o">&lt;?&gt;</span> <span class="n">factory</span> <span class="o">=</span> <span class="o">(</span><span class="n">FactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">bean</span><span class="o">;</span>
+                        <span class="kt">boolean</span> <span class="n">isEagerInit</span><span class="o">;</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">getSecurityManager</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">factory</span> <span class="k">instanceof</span> <span class="n">SmartFactoryBean</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="n">isEagerInit</span> <span class="o">=</span> <span class="n">AccessController</span><span class="o">.</span><span class="na">doPrivileged</span><span class="o">((</span><span class="n">PrivilegedAction</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;)</span>
+                                            <span class="o">((</span><span class="n">SmartFactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">factory</span><span class="o">)::</span><span class="n">isEagerInit</span><span class="o">,</span>
+                                    <span class="n">getAccessControlContext</span><span class="o">());</span>
+                        <span class="o">}</span>
+                        <span class="k">else</span> <span class="o">{</span>
+                            <span class="n">isEagerInit</span> <span class="o">=</span> <span class="o">(</span><span class="n">factory</span> <span class="k">instanceof</span> <span class="n">SmartFactoryBean</span> <span class="o">&amp;&amp;</span>
+                                    <span class="o">((</span><span class="n">SmartFactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">factory</span><span class="o">).</span><span class="na">isEagerInit</span><span class="o">());</span>
+                        <span class="o">}</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">isEagerInit</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="n">getBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="k">else</span> <span class="o">{</span>
-                <span class="n">getBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+                <span class="k">else</span> <span class="o">{</span>
+                    <span class="n">getBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+                <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">}</span>
     <span class="o">}</span>
@@ -411,37 +417,43 @@
 </span><span class="lnt">28
 </span><span class="lnt">29
 </span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractBeanFactory</span> <span class="kd">extends</span> <span class="n">FactoryBeanRegistrySupport</span> <span class="kd">implements</span> <span class="n">ConfigurableBeanFactory</span> <span class="o">{</span>
-
-    <span class="cm">/*
-</span><span class="cm">      TODO 重要程度 5
-</span><span class="cm">        单例实例第一次创建bean入口，这里的getSingleton方法中，调用了参数中匿名对象的getObject()
-</span><span class="cm">        在bean创建完成后，将bean放入到一级缓存，并从二三级缓存中移除:addSingleton(beanName, singletonObject);
-</span><span class="cm">     */</span>
-    <span class="c1">// Create bean instance.
-</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">sharedInstance</span> <span class="o">=</span> <span class="n">getSingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="o">{</span>
-            <span class="k">try</span> <span class="o">{</span>
-                <span class="c1">//创建Bean实例
-</span><span class="c1"></span>                <span class="k">return</span> <span class="n">createBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">BeansException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c1">// Explicitly remove instance from singleton cache: It might have been put there
-</span><span class="c1"></span>                <span class="c1">// eagerly by the creation process, to allow for circular reference resolution.
-</span><span class="c1"></span>                <span class="c1">// Also remove any beans that received a temporary reference to the bean.
-</span><span class="c1"></span>                <span class="n">destroySingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
-                <span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
+    <span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">&#34;unchecked&#34;</span><span class="o">)</span>
+    <span class="kd">protected</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">doGetBean</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">requiredType</span><span class="o">,</span>
+                              <span class="nd">@Nullable</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">typeCheckOnly</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">BeansException</span> <span class="o">{</span>
         <span class="cm">/*
-</span><span class="cm">        TODO 重要程度 5
-</span><span class="cm">            如果bean不是FactoryBean类型或者beanName以&amp;开头，则直接返回。
-</span><span class="cm">            否则调用FactoryBean的getObject(),且将返回的bean替换为getObject()的返回值。
-</span><span class="cm">            FactoryBean接口很重要，具体应用场景见FactoryBean接口注释。
+</span><span class="cm">          TODO 重要程度 5
+</span><span class="cm">            单例实例第一次创建bean入口，这里的getSingleton方法中，调用了参数中匿名对象的getObject()
+</span><span class="cm">            在bean创建完成后，将bean放入到一级缓存，并从二三级缓存中移除:addSingleton(beanName, singletonObject);
 </span><span class="cm">         */</span>
-        <span class="n">bean</span> <span class="o">=</span> <span class="n">getObjectForBeanInstance</span><span class="o">(</span><span class="n">sharedInstance</span><span class="o">,</span> <span class="n">name</span><span class="o">,</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
-    <span class="o">}</span> 
+        <span class="c1">// Create bean instance.
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">sharedInstance</span> <span class="o">=</span> <span class="n">getSingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="c1">//创建Bean实例
+</span><span class="c1"></span>                    <span class="k">return</span> <span class="n">createBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">BeansException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c1">// Explicitly remove instance from singleton cache: It might have been put there
+</span><span class="c1"></span>                    <span class="c1">// eagerly by the creation process, to allow for circular reference resolution.
+</span><span class="c1"></span>                    <span class="c1">// Also remove any beans that received a temporary reference to the bean.
+</span><span class="c1"></span>                    <span class="n">destroySingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+                    <span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="cm">/*
+</span><span class="cm">            TODO 重要程度 5
+</span><span class="cm">                如果bean不是FactoryBean类型或者beanName以&amp;开头，则直接返回。
+</span><span class="cm">                否则调用FactoryBean的getObject(),且将返回的bean替换为getObject()的返回值。
+</span><span class="cm">                FactoryBean接口很重要，具体应用场景见FactoryBean接口注释。
+</span><span class="cm">             */</span>
+            <span class="n">bean</span> <span class="o">=</span> <span class="n">getObjectForBeanInstance</span><span class="o">(</span><span class="n">sharedInstance</span><span class="o">,</span> <span class="n">name</span><span class="o">,</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+        <span class="o">}</span> 
+    <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
@@ -2020,7 +2032,7 @@
             <div class="admonition-content">由于篇幅原因，这里只做initializeBean()方法的执行流程描述。关于SpringAop执行链的封装和动态代理生成以及执行原理，事务的支持、事务的七种传播属性实现原理及其表现形式。在别的文章中分析。</div>
         </div>
     </div>
-<h3 id="临终方法---registerdisposablebeanifnecessary">临终方法 - registerDisposableBeanIfNecessary</h3>
+<h3 id="临终方法注册---registerdisposablebeanifnecessary">临终方法注册 - registerDisposableBeanIfNecessary</h3>
 <p>beanFactory中有一个成员变量disposableBeans，这是一个map集合，里面就封装了bean销毁前需要调用的对象映射。键时beanName，值是DisposableBeanAdapter</p>
 <p>DisposableBeanAdapter中封装了destroyMethod以及List<DestructionAwareBeanPostProcessor>，没错，是一个list列表。因为可以设置多个销毁方法，且设置的方式也是有很多种，可以实现DisposableBean，或者注解方式，或者名称为close的无参数公共方法</p>
 <p>ban的销毁前调用方法的注册，相对简单，这里贴两段代码：</p>
