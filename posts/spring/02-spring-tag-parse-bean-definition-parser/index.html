@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/02-spring-tag-parse-bean-definition-parser\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  3771 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  3746 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/02-spring-tag-parse-bean-definition-parser\/","datePublished": "2020-11-23T11:20:12+08:00","dateModified": "2020-11-23T11:20:12+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[02] Spring标签解析-BeanDefinitionParser</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-23">2020-11-23</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3771 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-23">2020-11-23</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3746 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;<span id="/posts/spring/02-spring-tag-parse-bean-definition-parser/" class="leancloud_visitors" data-flag-title="[02] Spring标签解析-BeanDefinitionParser">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -117,22 +117,22 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#1-beandefinitionparser接口的定义">[1] BeanDefinitionParser接口的定义</a></li>
-    <li><a href="#2-componentscanbeandefinitionparser实现流程解析">[2] ComponentScanBeanDefinitionParser实现流程解析</a>
+    <li><a href="#1-beandefinitionparser接口的定义">1 BeanDefinitionParser接口的定义</a></li>
+    <li><a href="#2-componentscanbeandefinitionparser实现流程解析">2 ComponentScanBeanDefinitionParser实现流程解析</a>
       <ul>
-        <li><a href="#1componentscanbeandefinitionparser中的属性">（1）ComponentScanBeanDefinitionParser中的属性</a></li>
-        <li><a href="#2主流程方法parse">（2）主流程方法parse()</a></li>
-        <li><a href="#3configurescanner方法">（3）configureScanner方法</a></li>
-        <li><a href="#4核心方法doscan">（4）核心方法doScan</a></li>
-        <li><a href="#5findcandidatecomponents原理解析">（5）findCandidateComponents原理解析</a></li>
+        <li><a href="#21-componentscanbeandefinitionparser中的属性">2.1 ComponentScanBeanDefinitionParser中的属性</a></li>
+        <li><a href="#22-主流程方法parse">2.2 主流程方法parse()</a></li>
+        <li><a href="#23-configurescanner">2.3 configureScanner()</a></li>
+        <li><a href="#24-核心方法doscan">2.4 核心方法doScan()</a></li>
+        <li><a href="#25-findcandidatecomponents原理解析">2.5 findCandidateComponents原理解析</a></li>
       </ul>
     </li>
-    <li><a href="#3-aspectjautoproxybeandefinitionparser">[3] AspectJAutoProxyBeanDefinitionParser</a></li>
-    <li><a href="#4-总结">[4] 总结</a></li>
+    <li><a href="#3-aspectjautoproxybeandefinitionparser">3 AspectJAutoProxyBeanDefinitionParser</a></li>
+    <li><a href="#4-总结">4 总结</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><p>本篇是对 <a href="/posts/spring/01-spring%e7%a8%8b%e5%ba%8f%e5%85%a5%e5%8f%a3%e5%92%8cxml%e8%a7%a3%e6%9e%90" rel="">Spring程序入口和XML解析</a> 的扩展，详细解析其中提到的BeanDefinitionParser的作用，以及一些典型的XML方式解析的实现类。</p>
-<h2 id="1-beandefinitionparser接口的定义">[1] BeanDefinitionParser接口的定义</h2>
+<h2 id="1-beandefinitionparser接口的定义">1 BeanDefinitionParser接口的定义</h2>
 <hr>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -159,9 +159,9 @@
         </div>
     </div></p>
 <p>关于此类的实例从哪里注册、parse方法从哪里调入进来的， <a href="/posts/spring/01-spring%e7%a8%8b%e5%ba%8f%e5%85%a5%e5%8f%a3%e5%92%8cxml%e8%a7%a3%e6%9e%90" rel="">Spring程序入口和XML解析</a> 中有结尾处有详细说明。</p>
-<h2 id="2-componentscanbeandefinitionparser实现流程解析">[2] ComponentScanBeanDefinitionParser实现流程解析</h2>
+<h2 id="2-componentscanbeandefinitionparser实现流程解析">2 ComponentScanBeanDefinitionParser实现流程解析</h2>
 <hr>
-<h3 id="1componentscanbeandefinitionparser中的属性">（1）ComponentScanBeanDefinitionParser中的属性</h3>
+<h3 id="21-componentscanbeandefinitionparser中的属性">2.1 ComponentScanBeanDefinitionParser中的属性</h3>
 <p>ComponentScanBeanDefinitionParser是BeanDefinitionParser的一个实现，用于解析<code>&lt;context:component-scan/&gt;</code>标签的属性。</p>
 <p>这个类中定义了一些常量，这些常量是<code>&lt;context:component-scan/&gt;</code>中所有可能用到的属性。比如最常用到的<code>base-package</code>属性。</p>
 <p>前面有提到，parse方法的参数中有Element。在解析Element时，会对Element的多个属性进行识别及处理。这些常量的作用就在于此，用来区分Element的不同属性，并做特定的处理。
@@ -220,7 +220,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id="2主流程方法parse">（2）主流程方法parse()</h3>
+</div><h3 id="22-主流程方法parse">2.2 主流程方法parse()</h3>
 <p>步骤：</p>
 <ol>
 <li>获取到标签中<code>base-package</code>属性的值，这个值是必须的。（否则会抛出异常，异常信息<code>At least one base package must be specified</code>）。</li>
@@ -268,7 +268,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id="3configurescanner方法">（3）configureScanner方法</h3>
+</div><h3 id="23-configurescanner">2.3 configureScanner()</h3>
 <p>从以下源码可以看到，首先设置是否使用默认过滤器，然后创建扫描器ComponentScanBeanDefinitionParser，之后对其他属性进行一些设置。（<code>关注源码中关键点就好，不然会越陷越深</code>）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -350,7 +350,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id="4核心方法doscan">（4）核心方法doScan</h3>
+</div><h3 id="24-核心方法doscan">2.4 核心方法doScan()</h3>
 <ol>
 <li>扫描出所有满足条件的类，并封装成BeanDefinition</li>
 <li>循环扫描到的BeanDefinition集合，依次执行操作。
@@ -440,7 +440,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h3 id="5findcandidatecomponents原理解析">（5）findCandidateComponents原理解析</h3>
+</div><h3 id="25-findcandidatecomponents原理解析">2.5 findCandidateComponents原理解析</h3>
 <p>最终会执行到scanCandidateComponents()方法。从下面源码中可以看到，实际上就是根据<code>&lt;context:component-scan/&gt;</code>标签配置的<code>base-package</code>来扫描对应路径下的文件输入流，读取类文件信息。进而拿到Class对象，封装成BeanDefinition对象。然后向上返回，直到注册到BeanDefinitionRegistry中。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -570,7 +570,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><h2 id="3-aspectjautoproxybeandefinitionparser">[3] AspectJAutoProxyBeanDefinitionParser</h2>
+</div><h2 id="3-aspectjautoproxybeandefinitionparser">3 AspectJAutoProxyBeanDefinitionParser</h2>
 <hr>
 <p>AspectJAutoProxyBeanDefinitionParser是对aop标签的<a href="aop:aspectj-autoproxy/">aop:aspectj-autoproxy/</a>的支持<br>
 源码：</p>
@@ -630,7 +630,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary()方法中，注册了AnnotationAwareAspectJAutoProxyCreator的支持，<code>这个类会在AOP知识点中详细阐述</code>。</p>
-<h2 id="4-总结">[4] 总结</h2>
+<h2 id="4-总结">4 总结</h2>
 <hr>
 <p>spring对XML的解析，就是通过NameSpaceHandler中注册的BeanDefinitionParser进行处理的。通过SPI的方式，很容易对标签解析功能进行扩展。
 <div class="details admonition tip open">

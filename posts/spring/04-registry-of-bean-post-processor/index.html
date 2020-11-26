@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/04-registry-of-bean-post-processor\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  1580 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  1583 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/04-registry-of-bean-post-processor\/","datePublished": "2020-11-24T11:05:21+08:00","dateModified": "2020-11-24T11:05:21+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[04] BeanPostProcessor的注册</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1580 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1583 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;<span id="/posts/spring/04-registry-of-bean-post-processor/" class="leancloud_visitors" data-flag-title="[04] BeanPostProcessor的注册">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -117,21 +117,17 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li><a href="#beanpostprocessor的作用">BeanPostProcessor的作用</a></li>
-        <li><a href="#beanpostprocessor的体系结构">BeanPostProcessor的体系结构</a></li>
-        <li><a href="#beanpostprocessor的注册流程">BeanPostProcessor的注册流程</a></li>
-      </ul>
-    </li>
+    <li><a href="#1-beanpostprocessor的作用">1 BeanPostProcessor的作用</a></li>
+    <li><a href="#2-beanpostprocessor的体系结构">2 BeanPostProcessor的体系结构</a></li>
+    <li><a href="#3-beanpostprocessor的注册流程">3 BeanPostProcessor的注册流程</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><p>spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。</p>
-<h3 id="beanpostprocessor的作用">BeanPostProcessor的作用</h3>
+<h2 id="1-beanpostprocessor的作用">1 BeanPostProcessor的作用</h2>
 <p>BeanPostProcessor是对SpringIOC容器中bean实例化的一些扩展，在bean实例化的关键节点进行了一些插桩。</p>
 <p>真正实例化bean的方法是beanFactory.getBean()方法。而在bean实例化之前、实例化之后、依赖注入、初始化方法执行之前、初始化方法执行之后等节点进行一些钩子回调。BeanPostProcessor的作用就体现于此。</p>
 <p>BeanPostProcessor接口只提供初始化方法执行前、后的节点操作。其余操作在它的子接口中定义。</p>
-<h3 id="beanpostprocessor的体系结构">BeanPostProcessor的体系结构</h3>
+<h2 id="2-beanpostprocessor的体系结构">2 BeanPostProcessor的体系结构</h2>
 <p><figure><a class="lightgallery" href="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png" title="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png" data-thumbnail="https://oss.wlizhi.cc/blog/spring/BeanPostProcessor-inheritance-structure.png" data-sub-html="<h2>BeanPostProcessor及其关键子接口的方法定义-UML图</h2>">
         <img
             class="lazyload"
@@ -143,7 +139,7 @@
     </a><figcaption class="image-caption">BeanPostProcessor及其关键子接口的方法定义-UML图</figcaption>
     </figure></p>
 <p>上图详细注释了BeanPostProcessor及其子接口每个方法的作用节点，从BeanPostProcessor接口继承体系可以看出，BeanPostProcessor贯穿整个Spring容器中Bean的实例化流程。可以说，在Spring容器中，任何一个Bean的实例化，在其关键节点，都有BeanPostProcessor的存在。甚至可以说它是SpringIOC容器组成部分中最重要的一个类。</p>
-<h3 id="beanpostprocessor的注册流程">BeanPostProcessor的注册流程</h3>
+<h2 id="3-beanpostprocessor的注册流程">3 BeanPostProcessor的注册流程</h2>
 <p>以下是spring中BeanPostProcessor的源码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
