@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/01-spring-entrance-and-xml-parse\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  6450 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  6446 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/01-spring-entrance-and-xml-parse\/","datePublished": "2020-11-22T12:00:00+08:00","dateModified": "2020-11-22T12:00:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[01] Spring程序入口和XML解析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-22">2020-11-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6450 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-22">2020-11-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6446 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 13 分钟&nbsp;<span id="/posts/spring/01-spring-entrance-and-xml-parse/" class="leancloud_visitors" data-flag-title="[01] Spring程序入口和XML解析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -178,11 +178,11 @@
 <li>到下载的spring源码路径执行gradle命令，gradlew :spring-oxm:compileTestJava</li>
 <li>用idea打开spring源码工程。（<del>在idea中安装插件kotlin，重启idea，跟IDEA版本有关较新版本不用安装</del>）</li>
 <li>把编译好的源码导入到工程中</li>
-<li>spring工程如何搭建这里不做介绍，如何将down下来的源码导入到自己的spring工程依赖库， <a href="https://gitee.com/wanglizhi00/spring-framework" target="_blank" rel="noopener noreffer">我的Gitee-Spring源码注释</a> 中有详细的介绍</li>
+<li>spring工程如何搭建这里不做介绍，如何将down下来的源码导入到自己的spring工程依赖库， <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">我的Gitee-Spring源码注释</a> 中有详细的介绍</li>
 </ol>
 <h3 id="入口方法">入口方法</h3>
 <hr>
-<p>容器：AbstractApplicationContext 抽象父类，核心(模板)方法 refresh()。</p>
+<p>容器：AbstractApplicationContext 抽象父类，核心方法 refresh()。</p>
 <ul>
 <li>ClassPathXmlApplicationContext XML方式启动。</li>
 <li>AnnotationConfigWebApplicationContext 注解方式启动，对局部代码进行测试时比较好用。</li>
