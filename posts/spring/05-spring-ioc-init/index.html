@@ -2023,7 +2023,7 @@
 <h3 id="临终方法---registerdisposablebeanifnecessary">临终方法 - registerDisposableBeanIfNecessary</h3>
 <p>beanFactory中有一个成员变量disposableBeans，这是一个map集合，里面就封装了bean销毁前需要调用的对象映射。键时beanName，值是DisposableBeanAdapter</p>
 <p>DisposableBeanAdapter中封装了destroyMethod以及List<DestructionAwareBeanPostProcessor>，没错，是一个list列表。因为可以设置多个销毁方法，且设置的方式也是有很多种，可以实现DisposableBean，或者注解方式，或者名称为close的无参数公共方法</p>
-<p>ban的销毁前调用方法的注册，相对简单，这里贴两端代码：</p>
+<p>ban的销毁前调用方法的注册，相对简单，这里贴两段代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
