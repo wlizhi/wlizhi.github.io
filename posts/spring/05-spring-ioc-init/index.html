@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  13077 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  13079 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/","datePublished": "2020-11-26T12:26:00+08:00","dateModified": "2020-11-26T12:26:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[05] Bean实例化流程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13077 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13079 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 27 分钟&nbsp;<span id="/posts/spring/05-spring-ioc-init/" class="leancloud_visitors" data-flag-title="[05] Bean实例化流程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -2012,7 +2012,14 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>由于篇幅原因，这里只做initializeBean()方法的执行流程描述。关于SpringAop执行链的封装和动态代理生成以及执行原理，事务的支持、事务的七种传播属性实现原理及其表现形式。在别的文章中解析。</p>
+</div><div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">由于篇幅原因，这里只做initializeBean()方法的执行流程描述。关于SpringAop执行链的封装和动态代理生成以及执行原理，事务的支持、事务的七种传播属性实现原理及其表现形式。在别的文章中分析。</div>
+        </div>
+    </div>
 <h3 id="临终方法---registerdisposablebeanifnecessary">临终方法 - registerDisposableBeanIfNecessary</h3>
 <p>beanFactory中有一个成员变量disposableBeans，这是一个map集合，里面就封装了bean销毁前需要调用的对象映射。键时beanName，值是DisposableBeanAdapter</p>
 <p>DisposableBeanAdapter中封装了destroyMethod以及List<DestructionAwareBeanPostProcessor>，没错，是一个list列表。因为可以设置多个销毁方法，且设置的方式也是有很多种，可以实现DisposableBean，或者注解方式，或者名称为close的无参数公共方法</p>
