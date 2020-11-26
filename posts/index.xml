@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Tue, 24 Nov 2020 11:05:21 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Thu, 26 Nov 2020 12:26:00 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>[05] Bean实例化流程</title>
+    <link>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</link>
+    <pubDate>Thu, 26 Nov 2020 12:26:00 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>[04] BeanPostProcessor的注册</title>
     <link>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</link>
     <pubDate>Tue, 24 Nov 2020 11:05:21 &#43;0800</pubDate>
@@ -69,12 +76,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/linux/linux-basics/</guid>
     <description><![CDATA[linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载]]></description>
-</item><item>
-    <title>工具软件</title>
-    <link>https://wlizhi.cc/posts/docs/software-tools/</link>
-    <pubDate>Wed, 18 Nov 2020 20:34:49 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/docs/software-tools/</guid>
-    <description><![CDATA[比较使用的工具软件/插件。例：密码管理器、谷歌浏览器常用插件等。]]></description>
 </item></channel>
 </rss>

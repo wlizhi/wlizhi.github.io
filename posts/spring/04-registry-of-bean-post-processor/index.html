@@ -20,7 +20,7 @@
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/" /><link rel="next" href="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/04-registry-of-bean-post-processor\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  1502 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  1580 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/04-registry-of-bean-post-processor\/","datePublished": "2020-11-24T11:05:21+08:00","dateModified": "2020-11-24T11:05:21+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[04] BeanPostProcessor的注册</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1502 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id="/posts/spring/04-registry-of-bean-post-processor/" class="leancloud_visitors" data-flag-title="[04] BeanPostProcessor的注册">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-24">2020-11-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1580 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;<span id="/posts/spring/04-registry-of-bean-post-processor/" class="leancloud_visitors" data-flag-title="[04] BeanPostProcessor的注册">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -313,7 +313,8 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>从上面代码可以看出，BeanPostProcessor的注册流程和BeanFactoryPostProcessor的注册流程类似。获取到BeanFactory中存储的BeanPostProcessor类型的beanName，然后对实现了不同排序接口的类、及没有实现排序接口的类分别进行getBean()操作、排序和注册。</p></div>
+</div><p>从上面代码可以看出，BeanPostProcessor的注册流程和BeanFactoryPostProcessor的注册流程类似。获取到BeanFactory中存储的BeanPostProcessor类型的beanName，然后对实现了不同排序接口的类、及没有实现排序接口的类分别进行getBean()操作、排序和注册。</p>
+<p>spring会在不同的流程节点执行BeanPostProcessor及其子接口对应的方法。具体的实现类在后面的spring容器bean的实例化相关文章描述。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
@@ -339,7 +340,8 @@
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/spring/03-bean-factory-post-processor-registry-and-execute/" class="prev" rel="prev" title="[03] BeanFactoryPostProcessor的注册与执行"><i class="fas fa-angle-left fa-fw"></i>[03] BeanFactoryPostProcessor的注册与执行</a></div>
+    <div class="post-nav"><a href="/posts/spring/03-bean-factory-post-processor-registry-and-execute/" class="prev" rel="prev" title="[03] BeanFactoryPostProcessor的注册与执行"><i class="fas fa-angle-left fa-fw"></i>[03] BeanFactoryPostProcessor的注册与执行</a>
+            <a href="/posts/spring/05-spring-ioc-init/" class="next" rel="next" title="[05] Bean实例化流程">[05] Bean实例化流程<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.

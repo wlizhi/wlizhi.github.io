@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>[05] Bean实例化流程 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="[05] Bean实例化流程" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-11-26T12:26:00+08:00" />
+<meta property="article:modified_time" content="2020-11-26T12:26:00+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="[05] Bean实例化流程"/>
+<meta name="twitter:description" content=""/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "[05] Bean实例化流程",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  10457 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/","datePublished": "2020-11-26T12:26:00+08:00","dateModified": "2020-11-26T12:26:00+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">[05] Bean实例化流程</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 10457 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 21 分钟&nbsp;<span id="/posts/spring/05-spring-ioc-init/" class="leancloud_visitors" data-flag-title="[05] Bean实例化流程">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1常见的applicationcontext实现类">1.常见的ApplicationContext实现类：</a></li>
+    <li><a href="#2-核心方法refresh-">2. 核心方法refresh() 。</a></li>
+    <li><a href="#3-bean实例化---getbean">3. Bean实例化 - getBean()</a>
+      <ul>
+        <li><a href="#入口">入口</a></li>
+        <li><a href="#主流程">主流程</a></li>
+        <li><a href="#主流程---createbeaninstance">主流程 - createBeanInstance</a></li>
+        <li><a href="#主流程---applymergedbeandefinitionpostprocessors">主流程 - applyMergedBeanDefinitionPostProcessors</a>
+          <ul>
+            <li><a href="#典型实现类---autowiredannotationbeanpostprocessor">典型实现类 - AutowiredAnnotationBeanPostProcessor</a></li>
+            <li><a href="#典型实现类---commonannotationbeanpostprocessor">典型实现类 - CommonAnnotationBeanPostProcessor</a></li>
+          </ul>
+        </li>
+        <li><a href="#主流程---populatebean">主流程 - populateBean</a>
+          <ul>
+            <li><a href="#依赖注入-autowired">依赖注入-Autowired</a></li>
+          </ul>
+        </li>
+        <li><a href="#主流程---initializebean">主流程 - initializeBean</a></li>
+        <li><a href="#主流程---registerdisposablebeanifnecessary">主流程 - registerDisposableBeanIfNecessary</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="1常见的applicationcontext实现类">1.常见的ApplicationContext实现类：</h2>
+<hr>
+<p>spring容器都是从构造一个ApplicationContext对象开始的，以下是spring中常见的ApplicationContext实现。</p>
+<ul>
+<li>容器：AbstractApplicationContext 抽象父类，核心(模板)方法 refresh()。
+<ul>
+<li>ClassPathXmlApplicationContext XML方式启动。</li>
+<li>AnnotationConfigWebApplicationContext 注解方式启动，对局部代码进行测试时比较好用。</li>
+<li>AnnotationConfigServletWebServerApplicationContext SpringBoot启动默认使用的上下文类。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-核心方法refresh-">2. 核心方法refresh() 。</h2>
+<hr>
+<p>在spring容器启动时，会调用到核心方法refrsh()。这个方法定义了spring容器初始化执行流程的总体骨架。包含了创建beanFactory、XML解析、注解支持、后置处理器注册执行、BeanPostProcessor注册、Bean实例化等流程节点。</p>
+<p>以下是spring中refresh()源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractApplicationContext</span> <span class="kd">extends</span> <span class="n">DefaultResourceLoader</span>
+		<span class="kd">implements</span> <span class="n">ConfigurableApplicationContext</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">refresh</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">BeansException</span><span class="o">,</span> <span class="n">IllegalStateException</span> <span class="o">{</span>
+        <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">startupShutdownMonitor</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">// Prepare this context for refreshing.
+</span><span class="c1"></span>            <span class="c1">// 不太重要，预刷新，做一些准备工作。记录了启动时间戳，标记为活动，非关闭状态。
+</span><span class="c1"></span>            <span class="n">prepareRefresh</span><span class="o">();</span>
+    
+            <span class="cm">/**
+</span><span class="cm">             * TODO 重点：解析xml配置文件，创建beanFactory，包装BeanDefinition
+</span><span class="cm">             */</span>
+            <span class="c1">// Tell the subclass to refresh the internal bean factory.
+</span><span class="c1"></span>            <span class="n">ConfigurableListableBeanFactory</span> <span class="n">beanFactory</span> <span class="o">=</span> <span class="n">obtainFreshBeanFactory</span><span class="o">();</span>
+    
+            <span class="c1">// Prepare the bean factory for use in this context.
+</span><span class="c1"></span>            <span class="c1">// 注册一些对事件、监听器等的支持
+</span><span class="c1"></span>            <span class="n">prepareBeanFactory</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+            
+            <span class="c1">// 钩子方法，BeanFactory创建后，对BeanFactory的自定义操作。
+</span><span class="c1"></span>            <span class="c1">// Allows post-processing of the bean factory in context subclasses.
+</span><span class="c1"></span>            <span class="n">postProcessBeanFactory</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+
+            <span class="c1">// TODO 重点：这里调用了postProcessBeanDefinitionRegistry(registry);springboot中很多激活自动配置的注解都是通过这里导入的。
+</span><span class="c1"></span>            <span class="c1">// Invoke factory processors registered as beans in the context.
+</span><span class="c1"></span>            <span class="n">invokeBeanFactoryPostProcessors</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+
+            <span class="c1">// TODO 重点：从beanFactory中获取所有的BeanPostProcessor，优先进行getBean操作，实例化
+</span><span class="c1"></span>            <span class="c1">// Register bean processors that intercept bean creation.
+</span><span class="c1"></span>            <span class="n">registerBeanPostProcessors</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+
+            <span class="c1">// 国际化支持
+</span><span class="c1"></span>            <span class="c1">// Initialize message source for this context.
+</span><span class="c1"></span>            <span class="n">initMessageSource</span><span class="o">();</span>
+
+            <span class="c1">// 初始化ApplicationEventMulticaster。 如果上下文中未定义，则使用SimpleApplicationEventMulticaster。
+</span><span class="c1"></span>            <span class="c1">// Initialize event multicaster for this context.
+</span><span class="c1"></span>            <span class="n">initApplicationEventMulticaster</span><span class="o">();</span>
+
+            <span class="c1">// 钩子方法，springBoot中的嵌入式tomcat就是通过此方法实现的
+</span><span class="c1"></span>            <span class="c1">// Initialize other special beans in specific context subclasses.
+</span><span class="c1"></span>            <span class="n">onRefresh</span><span class="o">();</span>
+
+            <span class="c1">// 监听器注册
+</span><span class="c1"></span>            <span class="c1">// Check for listener beans and register them.
+</span><span class="c1"></span>            <span class="n">registerListeners</span><span class="o">();</span>
+
+            <span class="c1">// TODO 重点方法：完成容器中bean的实例化，及代理的生成等操作。
+</span><span class="c1"></span>            <span class="c1">// Instantiate all remaining (non-lazy-init) singletons.
+</span><span class="c1"></span>            <span class="n">finishBeanFactoryInitialization</span><span class="o">(</span><span class="n">beanFactory</span><span class="o">);</span>
+
+            <span class="c1">// 完成此上下文的刷新，调用LifecycleProcessor的onRefresh（）方法并发布
+</span><span class="c1"></span>            <span class="c1">// Last step: publish corresponding event.
+</span><span class="c1"></span>            <span class="n">finishRefresh</span><span class="o">();</span>
+            <span class="c1">// ... 省略无关代码
+</span><span class="c1"></span>        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="3-bean实例化---getbean">3. Bean实例化 - getBean()</h2>
+<hr>
+<h3 id="入口">入口</h3>
+<p>bean实例化的入口是getBean()。对于单例Bean（实际开发中大多数都是单例），在初始化过程中，是从refresh()中，调用到finishBeanFactoryInitialization()，然后调用到preInstantiateSingletons()。</p>
+<p>在preInstantiateSingletons()中（DefaultListableBeanFactory类中），调用到了getBean()，源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultListableBeanFactory</span> <span class="kd">extends</span> <span class="n">AbstractAutowireCapableBeanFactory</span>
+		<span class="kd">implements</span> <span class="n">ConfigurableListableBeanFactory</span><span class="o">,</span> <span class="n">BeanDefinitionRegistry</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="c1">// 容器中所有的beanName，循环、实例化
+</span><span class="c1"></span>    <span class="c1">// Iterate over a copy to allow for init methods which in turn register new bean definitions.
+</span><span class="c1"></span>    <span class="c1">// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+</span><span class="c1"></span>    <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">beanNames</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="k">this</span><span class="o">.</span><span class="na">beanDefinitionNames</span><span class="o">);</span>
+
+    <span class="c1">// 循环调用，进行实例化
+</span><span class="c1"></span>    <span class="c1">// Trigger initialization of all non-lazy singleton beans...
+</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">beanName</span> <span class="o">:</span> <span class="n">beanNames</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">RootBeanDefinition</span> <span class="n">bd</span> <span class="o">=</span> <span class="n">getMergedLocalBeanDefinition</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+        <span class="c1">// 非抽象的、单例的、并且非懒加载的，才会在容器启动时就实例化。
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(!</span><span class="n">bd</span><span class="o">.</span><span class="na">isAbstract</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">bd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">bd</span><span class="o">.</span><span class="na">isLazyInit</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">isFactoryBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">Object</span> <span class="n">bean</span> <span class="o">=</span> <span class="n">getBean</span><span class="o">(</span><span class="n">FACTORY_BEAN_PREFIX</span> <span class="o">+</span> <span class="n">beanName</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">bean</span> <span class="k">instanceof</span> <span class="n">FactoryBean</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="kd">final</span> <span class="n">FactoryBean</span><span class="o">&lt;?&gt;</span> <span class="n">factory</span> <span class="o">=</span> <span class="o">(</span><span class="n">FactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">bean</span><span class="o">;</span>
+                    <span class="kt">boolean</span> <span class="n">isEagerInit</span><span class="o">;</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">getSecurityManager</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">factory</span> <span class="k">instanceof</span> <span class="n">SmartFactoryBean</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">isEagerInit</span> <span class="o">=</span> <span class="n">AccessController</span><span class="o">.</span><span class="na">doPrivileged</span><span class="o">((</span><span class="n">PrivilegedAction</span><span class="o">&lt;</span><span class="n">Boolean</span><span class="o">&gt;)</span>
+                                        <span class="o">((</span><span class="n">SmartFactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">factory</span><span class="o">)::</span><span class="n">isEagerInit</span><span class="o">,</span>
+                                <span class="n">getAccessControlContext</span><span class="o">());</span>
+                    <span class="o">}</span>
+                    <span class="k">else</span> <span class="o">{</span>
+                        <span class="n">isEagerInit</span> <span class="o">=</span> <span class="o">(</span><span class="n">factory</span> <span class="k">instanceof</span> <span class="n">SmartFactoryBean</span> <span class="o">&amp;&amp;</span>
+                                <span class="o">((</span><span class="n">SmartFactoryBean</span><span class="o">&lt;?&gt;)</span> <span class="n">factory</span><span class="o">).</span><span class="na">isEagerInit</span><span class="o">());</span>
+                    <span class="o">}</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">isEagerInit</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">getBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">else</span> <span class="o">{</span>
+                <span class="n">getBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">从以上源码中可以看到，在已经收集好的BeanDefinition集合中，只有非抽象的、单例的、并且非懒加载的，才会在容器启动时就实例化。</div>
+        </div>
+    </div>
+<h3 id="主流程">主流程</h3>
+<p>暂且忽略这个方法中的其他逻辑，仅关注单例情况下，spring容器启动过程中bean的实例化。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractBeanFactory</span> <span class="kd">extends</span> <span class="n">FactoryBeanRegistrySupport</span> <span class="kd">implements</span> <span class="n">ConfigurableBeanFactory</span> <span class="o">{</span>
+
+    <span class="cm">/*
+</span><span class="cm">      TODO 重要程度 5
+</span><span class="cm">        单例实例第一次创建bean入口，这里的getSingleton方法中，调用了参数中匿名对象的getObject()
+</span><span class="cm">        在bean创建完成后，将bean放入到一级缓存，并从二三级缓存中移除:addSingleton(beanName, singletonObject);
+</span><span class="cm">     */</span>
+    <span class="c1">// Create bean instance.
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">sharedInstance</span> <span class="o">=</span> <span class="n">getSingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="c1">//创建Bean实例
+</span><span class="c1"></span>                <span class="k">return</span> <span class="n">createBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">BeansException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// Explicitly remove instance from singleton cache: It might have been put there
+</span><span class="c1"></span>                <span class="c1">// eagerly by the creation process, to allow for circular reference resolution.
+</span><span class="c1"></span>                <span class="c1">// Also remove any beans that received a temporary reference to the bean.
+</span><span class="c1"></span>                <span class="n">destroySingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+                <span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+        <span class="cm">/*
+</span><span class="cm">        TODO 重要程度 5
+</span><span class="cm">            如果bean不是FactoryBean类型或者beanName以&amp;开头，则直接返回。
+</span><span class="cm">            否则调用FactoryBean的getObject(),且将返回的bean替换为getObject()的返回值。
+</span><span class="cm">            FactoryBean接口很重要，具体应用场景见FactoryBean接口注释。
+</span><span class="cm">         */</span>
+        <span class="n">bean</span> <span class="o">=</span> <span class="n">getObjectForBeanInstance</span><span class="o">(</span><span class="n">sharedInstance</span><span class="o">,</span> <span class="n">name</span><span class="o">,</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+    <span class="o">}</span> 
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其中有三个关键的方法，分别是getSingleton()、函数接口（ObjectFactory）中的createBean()、以及最后调用的getObjectForBeanInstance()。</p>
+<p>getSingleton()中调用到了匿名函数中的getObject()，这个getObject就是外围方法中的lambda表达式中的方法，这里面调用了createBean()。</p>
+<p>来到createBean():</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutowireCapableBeanFactory</span> <span class="kd">extends</span> <span class="n">AbstractBeanFactory</span>
+		<span class="kd">implements</span> <span class="n">AutowireCapableBeanFactory</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+	<span class="kd">protected</span> <span class="n">Object</span> <span class="nf">createBean</span><span class="o">(</span><span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">RootBeanDefinition</span> <span class="n">mbd</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span>
+			<span class="kd">throws</span> <span class="n">BeanCreationException</span> <span class="o">{</span>
+        <span class="c1">// ...省略无关代码
+</span><span class="c1"></span>        <span class="c1">// 这里如果满足条件，会调用 InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()和
+</span><span class="c1"></span>        <span class="c1">// BeanPostProcessor.postProcessAfterInitialization()，直接返回。
+</span><span class="c1"></span>        <span class="c1">// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+</span><span class="c1"></span>        <span class="n">Object</span> <span class="n">bean</span> <span class="o">=</span> <span class="n">resolveBeforeInstantiation</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbdToUse</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">bean</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">bean</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// ...省略无关代码
+</span><span class="c1"></span>        <span class="c1">//创建Bean实例
+</span><span class="c1"></span>        <span class="n">Object</span> <span class="n">beanInstance</span> <span class="o">=</span> <span class="n">doCreateBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbdToUse</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isTraceEnabled</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Finished creating instance of bean &#39;&#34;</span> <span class="o">+</span> <span class="n">beanName</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">beanInstance</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在createBean中，doCreateBean()是真正创建Bean实例的方法。在此之前，spring预留了一个扩展点，通过实现InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()方法，可以通过BeanPostProcessor返回一个实例，这时候就不会再调用doCreateBean了。</p>
+<p>InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()的调用逻辑（源码中文注释中，详细描述了它的调用过程）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutowireCapableBeanFactory</span> <span class="kd">extends</span> <span class="n">AbstractBeanFactory</span>
+		<span class="kd">implements</span> <span class="n">AutowireCapableBeanFactory</span> <span class="o">{</span>
+    <span class="nd">@Nullable</span>
+	<span class="kd">protected</span> <span class="n">Object</span> <span class="nf">resolveBeforeInstantiation</span><span class="o">(</span><span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">RootBeanDefinition</span> <span class="n">mbd</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">Object</span> <span class="n">bean</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="c1">// 如果满足条件，会在这里通过InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()进行实例化。
+</span><span class="c1"></span>		<span class="c1">// 如果此方法最终返回的值不为空，则会调用所有BeanPostProcessor的postProcessAfterInitialization()，
+</span><span class="c1"></span>		<span class="c1">// 标记是否已经提前实例化了bean，然后返回。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(!</span><span class="n">Boolean</span><span class="o">.</span><span class="na">FALSE</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">beforeInstantiationResolved</span><span class="o">))</span> <span class="o">{</span>
+			<span class="c1">// Make sure bean class is actually resolved at this point.
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(!</span><span class="n">mbd</span><span class="o">.</span><span class="na">isSynthetic</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">hasInstantiationAwareBeanPostProcessors</span><span class="o">())</span> <span class="o">{</span>
+				<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetType</span> <span class="o">=</span> <span class="n">determineTargetType</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">targetType</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">bean</span> <span class="o">=</span> <span class="n">applyBeanPostProcessorsBeforeInstantiation</span><span class="o">(</span><span class="n">targetType</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">bean</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+						<span class="n">bean</span> <span class="o">=</span> <span class="n">applyBeanPostProcessorsAfterInitialization</span><span class="o">(</span><span class="n">bean</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+			<span class="n">mbd</span><span class="o">.</span><span class="na">beforeInstantiationResolved</span> <span class="o">=</span> <span class="o">(</span><span class="n">bean</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">bean</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在doCreateBean中，经历了以下调用流程。</p>
+<ol>
+<li>createBeanInstance：创建bean实例，这里真正创建了bean的实例。</li>
+<li>applyMergedBeanDefinitionPostProcessors：这里是BeanPostProcessor的一个扩展点，添加了PostConstruct、PreDestroy、Autowired、Value、Inject注解的支持。官方注释是：将MergedBeanDefinitionPostProcessors应用于指定的bean定义，调用其{@code postProcessMergedBeanDefinition}方法。</li>
+<li>populateBean：完成了依赖注入。其原理是通过调用InstantiationAwareBeanPostProcessor.postProcessProperties()（spring5.1版本开始）、InstantiationAwareBeanPostProcessor.postProcessPropertyValues()（spring5.1版本之前）。也是一个BeanPostProcessor扩展点。</li>
+<li>initializeBean：初始化bean。bean的init方法、Aop、事务扩展操作就是在这里处理的。</li>
+<li>registerDisposableBeanIfNecessary。注册bean的销毁方法。</li>
+</ol>
+<p>其中每一步都涉及到了spring中核心的一些扩展点，源码相对比较深。这里挑选节点流程的关键点代码。</p>
+<p>doCreateBean()源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutowireCapableBeanFactory</span> <span class="kd">extends</span> <span class="n">AbstractBeanFactory</span>
+		<span class="kd">implements</span> <span class="n">AutowireCapableBeanFactory</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">Object</span> <span class="nf">doCreateBean</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="kd">final</span> <span class="n">RootBeanDefinition</span> <span class="n">mbd</span><span class="o">,</span> <span class="kd">final</span> <span class="nd">@Nullable</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span>
+			<span class="kd">throws</span> <span class="n">BeanCreationException</span> <span class="o">{</span>
+
+		<span class="c1">// Instantiate the bean.
+</span><span class="c1"></span>		<span class="n">BeanWrapper</span> <span class="n">instanceWrapper</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">())</span> <span class="o">{</span>
+ 			<span class="n">instanceWrapper</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">factoryBeanInstanceCache</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 创建bean实例
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">instanceWrapper</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">instanceWrapper</span> <span class="o">=</span> <span class="n">createBeanInstance</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>
+		<span class="c1">// Allow post-processors to modify the merged bean definition.
+</span><span class="c1"></span>		<span class="kd">synchronized</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">postProcessingLock</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(!</span><span class="n">mbd</span><span class="o">.</span><span class="na">postProcessed</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">applyMergedBeanDefinitionPostProcessors</span><span class="o">(</span><span class="n">mbd</span><span class="o">,</span> <span class="n">beanType</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+				<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>				<span class="n">mbd</span><span class="o">.</span><span class="na">postProcessed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+
+		<span class="c1">// Eagerly cache singletons to be able to resolve circular references
+</span><span class="c1"></span>		<span class="c1">// even when triggered by lifecycle interfaces like BeanFactoryAware.
+</span><span class="c1"></span>		<span class="kt">boolean</span> <span class="n">earlySingletonExposure</span> <span class="o">=</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">isSingleton</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="na">allowCircularReferences</span> <span class="o">&amp;&amp;</span>
+				<span class="n">isSingletonCurrentlyInCreation</span><span class="o">(</span><span class="n">beanName</span><span class="o">));</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">earlySingletonExposure</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>			<span class="n">addSingletonFactory</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">getEarlyBeanReference</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">bean</span><span class="o">));</span>
+		<span class="o">}</span>
+
+		<span class="c1">// Initialize the bean instance.
+</span><span class="c1"></span>		<span class="n">Object</span> <span class="n">exposedObject</span> <span class="o">=</span> <span class="n">bean</span><span class="o">;</span>
+		
+        <span class="c1">// 依赖注入，类似属性上带有@Autowired注解的，都会在这里进行依赖注入
+</span><span class="c1"></span>        <span class="n">populateBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">instanceWrapper</span><span class="o">);</span>
+        <span class="c1">// 初始化bean
+</span><span class="c1"></span>        <span class="n">exposedObject</span> <span class="o">=</span> <span class="n">initializeBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">exposedObject</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+	    <span class="c1">// 省略无关代码...
+</span><span class="c1"></span>        <span class="c1">//注册bean的销毁方法
+</span><span class="c1"></span>        <span class="n">registerDisposableBeanIfNecessary</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">bean</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+		<span class="k">return</span> <span class="n">exposedObject</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="主流程---createbeaninstance">主流程 - createBeanInstance</h3>
+<p>在创建bean实例中，主要经历了一下流程：</p>
+<ol>
+<li>判断，只有public修饰的类，才可以被创建，否则直接抛出异常。</li>
+<li>通过BeanDefinition中的回调，来创建Bean实例。</li>
+<li>使用FactoryMethod来创建实例，factory-method标签属性，或者@bean注解。</li>
+<li>重新创建相同的Bean。</li>
+<li>通过构造函数注入参数。</li>
+<li>使用无参构造函数。（这里是重点，大多数情况下，都是使用的无参构造。）</li>
+</ol>
+<p>任何一个流程有结果，就会直接创建bean的实例，并返回。</p>
+<p>从源码中可以清晰的看出以上结论：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutowireCapableBeanFactory</span> <span class="kd">extends</span> <span class="n">AbstractBeanFactory</span>
+		<span class="kd">implements</span> <span class="n">AutowireCapableBeanFactory</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">BeanWrapper</span> <span class="nf">createBeanInstance</span><span class="o">(</span><span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">RootBeanDefinition</span> <span class="n">mbd</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// Make sure bean class is actually resolved at this point.
+</span><span class="c1"></span>		<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">beanClass</span> <span class="o">=</span> <span class="n">resolveBeanClass</span><span class="o">(</span><span class="n">mbd</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+
+		<span class="c1">// 只有public修饰的class才可以被创建
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">beanClass</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">Modifier</span><span class="o">.</span><span class="na">isPublic</span><span class="o">(</span><span class="n">beanClass</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">())</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">mbd</span><span class="o">.</span><span class="na">isNonPublicAccessAllowed</span><span class="o">())</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="n">BeanCreationException</span><span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">getResourceDescription</span><span class="o">(),</span> <span class="n">beanName</span><span class="o">,</span>
+					<span class="s">&#34;Bean class isn&#39;t public, and non-public access not allowed: &#34;</span> <span class="o">+</span> <span class="n">beanClass</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 通过BeanDefinition中的回调，来创建bean实例。一般不会走到这个条件里。
+</span><span class="c1"></span>		<span class="n">Supplier</span><span class="o">&lt;?&gt;</span> <span class="n">instanceSupplier</span> <span class="o">=</span> <span class="n">mbd</span><span class="o">.</span><span class="na">getInstanceSupplier</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">instanceSupplier</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="n">obtainFromSupplier</span><span class="o">(</span><span class="n">instanceSupplier</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 使用FactoryMethod创建bean实例。factory-method标签属性，或者@Bean注解标注的方法，会从这里创建实例。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">getFactoryMethodName</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="n">instantiateUsingFactoryMethod</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 重新创建相同bean，会走到这里。
+</span><span class="c1"></span>		<span class="c1">// Shortcut when re-creating the same bean...
+</span><span class="c1"></span>		<span class="kt">boolean</span> <span class="n">resolved</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+		<span class="kt">boolean</span> <span class="n">autowireNecessary</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">args</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="kd">synchronized</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">constructorArgumentLock</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">mbd</span><span class="o">.</span><span class="na">resolvedConstructorOrFactoryMethod</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">resolved</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+					<span class="n">autowireNecessary</span> <span class="o">=</span> <span class="n">mbd</span><span class="o">.</span><span class="na">constructorArgumentsResolved</span><span class="o">;</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">resolved</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">autowireNecessary</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">autowireConstructor</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">else</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">instantiateBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 判断是否是通过构造函数注入参数，如果是，则通过@Autowired标注的构造函数实例化。
+</span><span class="c1"></span>		<span class="c1">// Candidate constructors for autowiring?
+</span><span class="c1"></span>		<span class="n">Constructor</span><span class="o">&lt;?&gt;[]</span> <span class="n">ctors</span> <span class="o">=</span> <span class="n">determineConstructorsFromBeanPostProcessors</span><span class="o">(</span><span class="n">beanClass</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">ctors</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">mbd</span><span class="o">.</span><span class="na">getResolvedAutowireMode</span><span class="o">()</span> <span class="o">==</span> <span class="n">AUTOWIRE_CONSTRUCTOR</span> <span class="o">||</span>
+				<span class="n">mbd</span><span class="o">.</span><span class="na">hasConstructorArgumentValues</span><span class="o">()</span> <span class="o">||</span> <span class="o">!</span><span class="n">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">args</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="n">autowireConstructor</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">ctors</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 默认构造的首选函数
+</span><span class="c1"></span>		<span class="c1">// Preferred constructors for default construction?
+</span><span class="c1"></span>		<span class="n">ctors</span> <span class="o">=</span> <span class="n">mbd</span><span class="o">.</span><span class="na">getPreferredConstructors</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">ctors</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="n">autowireConstructor</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">ctors</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 使用无参构造实例化bean，实际大多数bean的实例化，都是走的这个方法。
+</span><span class="c1"></span>		<span class="c1">// No special handling: simply use no-arg constructor.
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">instantiateBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>记录一下无参构造函数创建实例的过程：</p>
+<ol>
+<li>getInstantiationStrategy()：获取bean的实例化策略对象，默认使用的CglibSubclassingInstantiationStrategy。</li>
+<li>instantiate(mbd, beanName, parent)：实例化bean。</li>
+<li>instantiate -&gt; BeanUtils.instantiateClass() -&gt; ctor.newInstance()。反射调用无参构造函数，创建对象。</li>
+</ol>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleInstantiationStrategy</span> <span class="kd">implements</span> <span class="n">InstantiationStrategy</span> <span class="o">{</span>
+    <span class="c1">// 第一步
+</span><span class="c1"></span>    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">instantiate</span><span class="o">(</span><span class="n">RootBeanDefinition</span> <span class="n">bd</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">BeanFactory</span> <span class="n">owner</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// Don&#39;t override the class with CGLIB if no overrides.
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(!</span><span class="n">bd</span><span class="o">.</span><span class="na">hasMethodOverrides</span><span class="o">())</span> <span class="o">{</span>
+			<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>            <span class="c1">// 获取无参构造函数
+</span><span class="c1"></span>            <span class="n">constructorToUse</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getDeclaredConstructor</span><span class="o">();</span>
+            <span class="n">bd</span><span class="o">.</span><span class="na">resolvedConstructorOrFactoryMethod</span> <span class="o">=</span> <span class="n">constructorToUse</span><span class="o">;</span>
+			<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>			<span class="c1">// TODO 实例化bean
+</span><span class="c1"></span>			<span class="k">return</span> <span class="n">BeanUtils</span><span class="o">.</span><span class="na">instantiateClass</span><span class="o">(</span><span class="n">constructorToUse</span><span class="o">);</span>
+		<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+			<span class="c1">// Must generate CGLIB subclass.
+</span><span class="c1"></span>			<span class="k">return</span> <span class="n">instantiateWithMethodInjection</span><span class="o">(</span><span class="n">bd</span><span class="o">,</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">owner</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">BeanUtils</span> <span class="o">{</span>
+    <span class="c1">// 第二步
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">instantiateClass</span><span class="o">(</span><span class="n">Constructor</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">ctor</span><span class="o">,</span> <span class="n">Object</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">BeanInstantiationException</span> <span class="o">{</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">notNull</span><span class="o">(</span><span class="n">ctor</span><span class="o">,</span> <span class="s">&#34;Constructor must not be null&#34;</span><span class="o">);</span>
+        <span class="c1">// 设置构造函数setAccessible=true
+</span><span class="c1"></span>        <span class="c1">// newInstance:反射调用构造函数，创建bean对象。
+</span><span class="c1"></span>        <span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">makeAccessible</span><span class="o">(</span><span class="n">ctor</span><span class="o">);</span>
+        <span class="k">return</span> <span class="o">(</span><span class="n">KotlinDetector</span><span class="o">.</span><span class="na">isKotlinReflectPresent</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">KotlinDetector</span><span class="o">.</span><span class="na">isKotlinType</span><span class="o">(</span><span class="n">ctor</span><span class="o">.</span><span class="na">getDeclaringClass</span><span class="o">())</span> <span class="o">?</span>
+                <span class="n">KotlinDelegate</span><span class="o">.</span><span class="na">instantiateClass</span><span class="o">(</span><span class="n">ctor</span><span class="o">,</span> <span class="n">args</span><span class="o">)</span> <span class="o">:</span> <span class="n">ctor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">args</span><span class="o">));</span>
+		<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>源码中最后一行 <code>ctor.newInstance(args)</code> 创建了bean实例。然后逐层向上返回。</p>
+<h3 id="主流程---applymergedbeandefinitionpostprocessors">主流程 - applyMergedBeanDefinitionPostProcessors</h3>
+<p>这里执行了MergedBeanDefinitionPostProcessor.postProcessMergedBeanDefinition()方法。spring会加载在之前的流程中注册的MergedBeanDefinitionPostProcessor（BeanPostProcessor的子接口），并对其进行调用。比较典型的两个类，完成了@Autowried、@Value、@Injected、@PostConstruct、@PreDestroy等注解的支持</p>
+<p>调用入口源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutowireCapableBeanFactory</span> <span class="kd">extends</span> <span class="n">AbstractBeanFactory</span>
+		<span class="kd">implements</span> <span class="n">AutowireCapableBeanFactory</span> <span class="o">{</span>
+	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">applyMergedBeanDefinitionPostProcessors</span><span class="o">(</span><span class="n">RootBeanDefinition</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">beanType</span><span class="o">,</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">for</span> <span class="o">(</span><span class="n">BeanPostProcessor</span> <span class="n">bp</span> <span class="o">:</span> <span class="n">getBeanPostProcessors</span><span class="o">())</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">bp</span> <span class="k">instanceof</span> <span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">MergedBeanDefinitionPostProcessor</span> <span class="n">bdp</span> <span class="o">=</span> <span class="o">(</span><span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">)</span> <span class="n">bp</span><span class="o">;</span>
+				<span class="n">bdp</span><span class="o">.</span><span class="na">postProcessMergedBeanDefinition</span><span class="o">(</span><span class="n">mbd</span><span class="o">,</span> <span class="n">beanType</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>两个比较典型的实现：AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor</p>
+<h4 id="典型实现类---autowiredannotationbeanpostprocessor">典型实现类 - AutowiredAnnotationBeanPostProcessor</h4>
+<p>AutowiredAnnotationBeanPostProcessor中存储了需要@Autowired注入的一些信息映射。</p>
+<p>构造函数中添加了对应注解的支持，postProcessMergedBeanDefinition()中查找带有Autowired注解的成员的属性信息信息，并将搜集结果封装缓存起来。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AutowiredAnnotationBeanPostProcessor</span> <span class="kd">extends</span> <span class="n">InstantiationAwareBeanPostProcessorAdapter</span>
+		<span class="kd">implements</span> <span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">,</span> <span class="n">PriorityOrdered</span><span class="o">,</span> <span class="n">BeanFactoryAware</span> <span class="o">{</span>
+    <span class="cm">/**
+</span><span class="cm">	 * 在依赖注入之前，调用此方法搜集需要依赖注入的类的信息，并封装成InjectionMetadata对象，缓存到当前BeanPostProcessor实例中。
+</span><span class="cm">	 *
+</span><span class="cm">	 * @param beanDefinition the merged bean definition for the bean
+</span><span class="cm">	 * @param beanType       the actual type of the managed bean instance
+</span><span class="cm">	 * @param beanName       the name of the bean
+</span><span class="cm">	 */</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">postProcessMergedBeanDefinition</span><span class="o">(</span><span class="n">RootBeanDefinition</span> <span class="n">beanDefinition</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">beanType</span><span class="o">,</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 查找带有Autowired注解的成员的属性信息信息。
+</span><span class="c1"></span>		<span class="n">InjectionMetadata</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">findAutowiringMetadata</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">beanType</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+		<span class="n">metadata</span><span class="o">.</span><span class="na">checkConfigMembers</span><span class="o">(</span><span class="n">beanDefinition</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>此类完成了对@AutoWried、@Value、@Injected注解的支持。</p>
+<p>执行buildAutowiringMetadata方法，完成的注解支持，之后会把结果缓存到injectionMetadataCache变量中。</p>
+<p>构建元数据的过程：</p>
+<ol>
+<li>循环目标Class的所有字段，查找@Autowired注解。如果查找到，将注解属性封装成AutowiredFieldElement，并封装到一个list中。</li>
+<li>循环目标Class的所有方法，查找@Autowired注解，如果找到，将注解属性封装成AutowiredMethodElement，并封装到一个list中。</li>
+<li>将以上两个步骤得到的结果，封装为InjectionMetadata，返回。即InjectionMetadata中包含了需要@Autowired的字段和方法。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AutowiredAnnotationBeanPostProcessor</span> <span class="kd">extends</span> <span class="n">InstantiationAwareBeanPostProcessorAdapter</span>
+		<span class="kd">implements</span> <span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">,</span> <span class="n">PriorityOrdered</span><span class="o">,</span> <span class="n">BeanFactoryAware</span> <span class="o">{</span>
+    <span class="c1">// 无参构造函数中添加了对应注解的支持
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="nf">AutowiredAnnotationBeanPostProcessor</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// 初始化autowiredAnnotationTypes，这里添加了Autowired Value Inject注解的支持
+</span><span class="c1"></span>		<span class="k">this</span><span class="o">.</span><span class="na">autowiredAnnotationTypes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Autowired</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">autowiredAnnotationTypes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">Value</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="k">this</span><span class="o">.</span><span class="na">autowiredAnnotationTypes</span><span class="o">.</span><span class="na">add</span><span class="o">((</span><span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Annotation</span><span class="o">&gt;)</span>
+					<span class="n">ClassUtils</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">&#34;javax.inject.Inject&#34;</span><span class="o">,</span> <span class="n">AutowiredAnnotationBeanPostProcessor</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">()));</span>
+			<span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;JSR-330 &#39;javax.inject.Inject&#39; annotation found and supported for autowiring&#34;</span><span class="o">);</span>
+		<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ClassNotFoundException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// JSR-330 API not available - simply skip.
+</span><span class="c1"></span>		<span class="o">}</span>
+	<span class="o">}</span>
+
+    <span class="kd">private</span> <span class="n">InjectionMetadata</span> <span class="nf">buildAutowiringMetadata</span><span class="o">(</span><span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">InjectionMetadata</span><span class="o">.</span><span class="na">InjectedElement</span><span class="o">&gt;</span> <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">;</span>
+
+		<span class="k">do</span> <span class="o">{</span>
+			<span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">InjectionMetadata</span><span class="o">.</span><span class="na">InjectedElement</span><span class="o">&gt;</span> <span class="n">currElements</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+			<span class="c1">// 循环所有的字段，并以此字段为参数，执行回调。
+</span><span class="c1"></span>			<span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">doWithLocalFields</span><span class="o">(</span><span class="n">targetClass</span><span class="o">,</span> <span class="n">field</span> <span class="o">-&gt;</span> <span class="o">{</span>
+				<span class="c1">// 查找当前带有autowiredAnnotationTypes中支持的注解的字段。
+</span><span class="c1"></span>				<span class="n">AnnotationAttributes</span> <span class="n">ann</span> <span class="o">=</span> <span class="n">findAutowiredAnnotation</span><span class="o">(</span><span class="n">field</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">ann</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">Modifier</span><span class="o">.</span><span class="na">isStatic</span><span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">()))</span> <span class="o">{</span>
+						<span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isInfoEnabled</span><span class="o">())</span> <span class="o">{</span>
+							<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Autowired annotation is not supported on static fields: &#34;</span> <span class="o">+</span> <span class="n">field</span><span class="o">);</span>
+						<span class="o">}</span>
+						<span class="k">return</span><span class="o">;</span>
+					<span class="o">}</span>
+					<span class="kt">boolean</span> <span class="n">required</span> <span class="o">=</span> <span class="n">determineRequiredStatus</span><span class="o">(</span><span class="n">ann</span><span class="o">);</span>
+					<span class="n">currElements</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">AutowiredFieldElement</span><span class="o">(</span><span class="n">field</span><span class="o">,</span> <span class="n">required</span><span class="o">));</span>
+				<span class="o">}</span>
+			<span class="o">});</span>
+
+			<span class="c1">// 循环所有的方法，并以此方法为参数，执行回调。
+</span><span class="c1"></span>			<span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">doWithLocalMethods</span><span class="o">(</span><span class="n">targetClass</span><span class="o">,</span> <span class="n">method</span> <span class="o">-&gt;</span> <span class="o">{</span>
+				<span class="n">Method</span> <span class="n">bridgedMethod</span> <span class="o">=</span> <span class="n">BridgeMethodResolver</span><span class="o">.</span><span class="na">findBridgedMethod</span><span class="o">(</span><span class="n">method</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(!</span><span class="n">BridgeMethodResolver</span><span class="o">.</span><span class="na">isVisibilityBridgeMethodPair</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">bridgedMethod</span><span class="o">))</span> <span class="o">{</span>
+					<span class="k">return</span><span class="o">;</span>
+				<span class="o">}</span>
+				<span class="c1">// 查找当前带有autowiredAnnotationTypes中支持的注解的方法。
+</span><span class="c1"></span>				<span class="n">AnnotationAttributes</span> <span class="n">ann</span> <span class="o">=</span> <span class="n">findAutowiredAnnotation</span><span class="o">(</span><span class="n">bridgedMethod</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">ann</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">method</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">ClassUtils</span><span class="o">.</span><span class="na">getMostSpecificMethod</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">clazz</span><span class="o">)))</span> <span class="o">{</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">Modifier</span><span class="o">.</span><span class="na">isStatic</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">()))</span> <span class="o">{</span>
+						<span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isInfoEnabled</span><span class="o">())</span> <span class="o">{</span>
+							<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Autowired annotation is not supported on static methods: &#34;</span> <span class="o">+</span> <span class="n">method</span><span class="o">);</span>
+						<span class="o">}</span>
+						<span class="k">return</span><span class="o">;</span>
+					<span class="o">}</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getParameterCount</span><span class="o">()</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+						<span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isInfoEnabled</span><span class="o">())</span> <span class="o">{</span>
+							<span class="n">logger</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Autowired annotation should only be used on methods with parameters: &#34;</span> <span class="o">+</span>
+									<span class="n">method</span><span class="o">);</span>
+						<span class="o">}</span>
+					<span class="o">}</span>
+					<span class="kt">boolean</span> <span class="n">required</span> <span class="o">=</span> <span class="n">determineRequiredStatus</span><span class="o">(</span><span class="n">ann</span><span class="o">);</span>
+					<span class="n">PropertyDescriptor</span> <span class="n">pd</span> <span class="o">=</span> <span class="n">BeanUtils</span><span class="o">.</span><span class="na">findPropertyForMethod</span><span class="o">(</span><span class="n">bridgedMethod</span><span class="o">,</span> <span class="n">clazz</span><span class="o">);</span>
+					<span class="n">currElements</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">AutowiredMethodElement</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">required</span><span class="o">,</span> <span class="n">pd</span><span class="o">));</span>
+				<span class="o">}</span>
+			<span class="o">});</span>
+
+			<span class="n">elements</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">currElements</span><span class="o">);</span>
+			<span class="n">targetClass</span> <span class="o">=</span> <span class="n">targetClass</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">targetClass</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">targetClass</span> <span class="o">!=</span> <span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+		<span class="k">return</span> <span class="k">new</span> <span class="n">InjectionMetadata</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="n">elements</span><span class="o">);</span>
+	<span class="o">}</span>
+
+    <span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">AnnotationAttributes</span> <span class="nf">findAutowiredAnnotation</span><span class="o">(</span><span class="n">AccessibleObject</span> <span class="n">ao</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">ao</span><span class="o">.</span><span class="na">getAnnotations</span><span class="o">().</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>  <span class="c1">// autowiring annotations have to be local
+</span><span class="c1"></span>            <span class="c1">// autowiredAnnotationTypes中的注解值，是在无参构造函数中设置的。
+</span><span class="c1"></span>			<span class="k">for</span> <span class="o">(</span><span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Annotation</span><span class="o">&gt;</span> <span class="n">type</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">autowiredAnnotationTypes</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">AnnotationAttributes</span> <span class="n">attributes</span> <span class="o">=</span> <span class="n">AnnotatedElementUtils</span><span class="o">.</span><span class="na">getMergedAnnotationAttributes</span><span class="o">(</span><span class="n">ao</span><span class="o">,</span> <span class="n">type</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">attributes</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="k">return</span> <span class="n">attributes</span><span class="o">;</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><ul>
+<li>
+<p><code>构造函数中注入了对注解的支持</code>，将其设置到了<code>autowiredAnnotationTypes</code>成员变量。在findAutowiredAnnotation()方法中。（<code>上面源码中有体现</code>）</p>
+</li>
+<li>
+<p>查找匹配字段、方法上的注解时，用的就是<code>autowiredAnnotationTypes</code>变量。</p>
+</li>
+<li>
+<p>其中在findAutowiredAnnotation()方法中的参数AccessibleObject是Constructor、Field、Method的超类。</p>
+</li>
+</ul>
+</div>
+        </div>
+    </div>
+<p>其中有几个关键封装数据的类。</p>
+<ol>
+<li>InjectionMetadata -&gt; <code>用于管理注入元数据</code>
+<ul>
+<li>targetClass -&gt; <code>目标类的Class对象</code></li>
+<li>injectedElements -&gt; <code>需要注入的元素</code></li>
+<li>checkedElements -&gt; <code>系统内置的元素会放到这里面，因为是一个Set集合，constains方法效率比较高，用于校验是否包含某个元素</code></li>
+</ul>
+</li>
+<li>InjectedElement -&gt; 注入元素，它是一个抽象类，包含了注入字段、方法、LookupMethod、@Resource注解标注的字段等等注入元素类的抽象。这里列举几个比较关键的。
+<ol>
+<li>AutowiredFieldElement -&gt; 表示带@Autowired注解的字段注入信息。
+<ul>
+<li>required -&gt; 是否必须</li>
+<li>cached</li>
+<li>cachedFieldValue -&gt;见名知意，缓存的字段值</li>
+</ul>
+</li>
+<li>AutowiredMethodElement -&gt; 表示带有@Autowired注解的方法注入信息。
+<ul>
+<li>required -&gt; 是否必须</li>
+<li>cached</li>
+<li>cachedMethodArguments -&gt; 缓存的方法参数值</li>
+</ul>
+</li>
+<li>ResourceElement -&gt; 表示有关带注释的字段或setter方法的注入信息的类，支持@Resource注解。
+<ul>
+<li>lazyLookup -&gt; 懒加载，@Lazy注解信息的封装</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="典型实现类---commonannotationbeanpostprocessor">典型实现类 - CommonAnnotationBeanPostProcessor</h4>
+<p>CommonAnnotationBeanPostProcessor是InitDestroyAnnotationBeanPostProcessor的子类，也是一个BeanPostProcessor。设置了@PostConstruct、@PreDestroy、@Resource注解的支持。</p>
+<div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><ul>
+<li>两个比较重要的成员变量（初始化、销毁方法）是在InitDestroyAnnotationBeanPostProcessor定义的。</li>
+<li>@PostConstruct、@PreDestroy注解支持是在CommonAnnotationBeanPostProcessor的无参构造函数中设置的。</li>
+</ul>
+</div>
+        </div>
+    </div>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">InitDestroyAnnotationBeanPostProcessor</span>
+		<span class="kd">implements</span> <span class="n">DestructionAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">,</span> <span class="n">PriorityOrdered</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Annotation</span><span class="o">&gt;</span> <span class="n">initAnnotationType</span><span class="o">;</span>
+
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Annotation</span><span class="o">&gt;</span> <span class="n">destroyAnnotationType</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CommonAnnotationBeanPostProcessor</span> <span class="kd">extends</span> <span class="n">InitDestroyAnnotationBeanPostProcessor</span>
+		<span class="kd">implements</span> <span class="n">InstantiationAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">BeanFactoryAware</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="nf">CommonAnnotationBeanPostProcessor</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// 这里设置了PostConstruct、PreDestroy注解的支持。
+</span><span class="c1"></span>		<span class="n">setOrder</span><span class="o">(</span><span class="n">Ordered</span><span class="o">.</span><span class="na">LOWEST_PRECEDENCE</span> <span class="o">-</span> <span class="n">3</span><span class="o">);</span>
+		<span class="n">setInitAnnotationType</span><span class="o">(</span><span class="n">PostConstruct</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="n">setDestroyAnnotationType</span><span class="o">(</span><span class="n">PreDestroy</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="n">ignoreResourceType</span><span class="o">(</span><span class="s">&#34;javax.xml.ws.WebServiceContext&#34;</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>搜集支持的元素并封装的流程：</p>
+<ol>
+<li>先执行父类的搜集逻辑，这里设置了@PostConstruct、@PreDestroy注解的支持。</li>
+<li>执行本类中的搜集逻辑，这里设置了@Resource注解的支持。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CommonAnnotationBeanPostProcessor</span> <span class="kd">extends</span> <span class="n">InitDestroyAnnotationBeanPostProcessor</span>
+		<span class="kd">implements</span> <span class="n">InstantiationAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">BeanFactoryAware</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">postProcessMergedBeanDefinition</span><span class="o">(</span><span class="n">RootBeanDefinition</span> <span class="n">beanDefinition</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">beanType</span><span class="o">,</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 先调用父类的方法，查找支持的元素，进行封装
+</span><span class="c1"></span>		<span class="kd">super</span><span class="o">.</span><span class="na">postProcessMergedBeanDefinition</span><span class="o">(</span><span class="n">beanDefinition</span><span class="o">,</span> <span class="n">beanType</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+		<span class="c1">// 在调用本类中的方法，也是查找支持的元素，进行封装
+</span><span class="c1"></span>		<span class="n">InjectionMetadata</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">findResourceMetadata</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">beanType</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+		<span class="n">metadata</span><span class="o">.</span><span class="na">checkConfigMembers</span><span class="o">(</span><span class="n">beanDefinition</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<p>在真正执行搜集注解逻辑之前，有一个锁的使用方式。父类和子类此方法中都有体现。先不加锁获取，如果为空，再加锁，尝试获取，如果加锁下获取还是空，则执行搜集逻辑，搜集完之后会放入缓存。缓存的map是非线程安全的。</p>
+<p>如果我们存储一组数据，这组数据只需要存储一次，后面全部都是get操作，那么就可以使用这种非线程安全的集合（非线程安全的集合的get操作性能远高于线程安全集合）。在存储的时候，以先重试，再加锁的方式进行处理。更多关于线程安全的问题，在并发编程的知识模块里记录。</p>
+<p>这里列举一个父类中的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">InitDestroyAnnotationBeanPostProcessor</span>
+		<span class="kd">implements</span> <span class="n">DestructionAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">,</span> <span class="n">PriorityOrdered</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">LifecycleMetadata</span> <span class="nf">findLifecycleMetadata</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">lifecycleMetadataCache</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// Happens after deserialization, during destruction...
+</span><span class="c1"></span>			<span class="k">return</span> <span class="n">buildLifecycleMetadata</span><span class="o">(</span><span class="n">clazz</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// Quick check on the concurrent map first, with minimal locking.
+</span><span class="c1"></span>		<span class="n">LifecycleMetadata</span> <span class="n">metadata</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">lifecycleMetadataCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">clazz</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">metadata</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">lifecycleMetadataCache</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">metadata</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">lifecycleMetadataCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">clazz</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">metadata</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="c1">// 上面代码是缓存，这里加锁的技巧，先无锁尝试，尝试失败再加锁。
+</span><span class="c1"></span>					<span class="c1">// 细节：加锁中需要再次尝试获取一次。
+</span><span class="c1"></span>					<span class="n">metadata</span> <span class="o">=</span> <span class="n">buildLifecycleMetadata</span><span class="o">(</span><span class="n">clazz</span><span class="o">);</span>
+					<span class="k">this</span><span class="o">.</span><span class="na">lifecycleMetadataCache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="n">metadata</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="k">return</span> <span class="n">metadata</span><span class="o">;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">metadata</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>InitDestroyAnnotationBeanPostProcessor中搜集初始化、销毁方法的逻辑：根据成员变量（赋值的逻辑前文中有）initAnnotationType、destroyAnnotationType的类型，循环判断方法中是否有对应注解，有就缓存到对应集合中。遍历完所有方法之后将最终的结果封装成LifecycleMetadata</p>
+<p>代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">InitDestroyAnnotationBeanPostProcessor</span>
+		<span class="kd">implements</span> <span class="n">DestructionAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">,</span> <span class="n">PriorityOrdered</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="n">LifecycleMetadata</span> <span class="nf">buildLifecycleMetadata</span><span class="o">(</span><span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">LifecycleElement</span><span class="o">&gt;</span> <span class="n">initMethods</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">LifecycleElement</span><span class="o">&gt;</span> <span class="n">destroyMethods</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">;</span>
+
+		<span class="k">do</span> <span class="o">{</span>
+			<span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">LifecycleElement</span><span class="o">&gt;</span> <span class="n">currInitMethods</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+			<span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">LifecycleElement</span><span class="o">&gt;</span> <span class="n">currDestroyMethods</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+			<span class="c1">// 循环遍历所有的方法，查找初始化、销毁方法，如果查找到，就封装为LifecycleMetadata返回。
+</span><span class="c1"></span>			<span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">doWithLocalMethods</span><span class="o">(</span><span class="n">targetClass</span><span class="o">,</span> <span class="n">method</span> <span class="o">-&gt;</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">initAnnotationType</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">method</span><span class="o">.</span><span class="na">isAnnotationPresent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">initAnnotationType</span><span class="o">))</span> <span class="o">{</span>
+					<span class="n">LifecycleElement</span> <span class="n">element</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LifecycleElement</span><span class="o">(</span><span class="n">method</span><span class="o">);</span>
+					<span class="n">currInitMethods</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">element</span><span class="o">);</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isTraceEnabled</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Found init method on class [&#34;</span> <span class="o">+</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;]: &#34;</span> <span class="o">+</span> <span class="n">method</span><span class="o">);</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+				<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">destroyAnnotationType</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">method</span><span class="o">.</span><span class="na">isAnnotationPresent</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">destroyAnnotationType</span><span class="o">))</span> <span class="o">{</span>
+					<span class="n">currDestroyMethods</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">LifecycleElement</span><span class="o">(</span><span class="n">method</span><span class="o">));</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isTraceEnabled</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Found destroy method on class [&#34;</span> <span class="o">+</span> <span class="n">clazz</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;]: &#34;</span> <span class="o">+</span> <span class="n">method</span><span class="o">);</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+			<span class="o">});</span>
+
+			<span class="c1">// 添加初始化、销毁方法
+</span><span class="c1"></span>			<span class="n">initMethods</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">currInitMethods</span><span class="o">);</span>
+			<span class="n">destroyMethods</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">currDestroyMethods</span><span class="o">);</span>
+			<span class="n">targetClass</span> <span class="o">=</span> <span class="n">targetClass</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">targetClass</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">targetClass</span> <span class="o">!=</span> <span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+		<span class="c1">// 将上面步骤收集到的初始化、销毁方法封装起来返回。
+</span><span class="c1"></span>		<span class="k">return</span> <span class="k">new</span> <span class="n">LifecycleMetadata</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="n">initMethods</span><span class="o">,</span> <span class="n">destroyMethods</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<p>CommonAnnotationBeanPostProcessor中的搜集方法逻辑：</p>
+<ol>
+<li>搜集带有@Resource注解的字段，封装成ResourceElement，最后封装到InjectionMetadata。</li>
+<li>搜集带有@Resource注解的方法，封装成ResourceElement，最后封装到InjectionMetadata。</li>
+</ol>
+<p>这个方法中也有两个其他支持（webservice、ejb），不常用，这里不列举。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CommonAnnotationBeanPostProcessor</span> <span class="kd">extends</span> <span class="n">InitDestroyAnnotationBeanPostProcessor</span>
+		<span class="kd">implements</span> <span class="n">InstantiationAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">BeanFactoryAware</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="n">InjectionMetadata</span> <span class="nf">buildResourceMetadata</span><span class="o">(</span><span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">InjectionMetadata</span><span class="o">.</span><span class="na">InjectedElement</span><span class="o">&gt;</span> <span class="n">elements</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span> <span class="o">=</span> <span class="n">clazz</span><span class="o">;</span>
+
+		<span class="k">do</span> <span class="o">{</span>
+			<span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">InjectionMetadata</span><span class="o">.</span><span class="na">InjectedElement</span><span class="o">&gt;</span> <span class="n">currElements</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+			<span class="c1">// 查找带有@Resource的字段，有的话就封装到InjectedElement中。
+</span><span class="c1"></span>			<span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">doWithLocalFields</span><span class="o">(</span><span class="n">targetClass</span><span class="o">,</span> <span class="n">field</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                <span class="c1">// 省略无关代码...
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">isAnnotationPresent</span><span class="o">(</span><span class="n">Resource</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+					<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>					<span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">ignoredResourceTypes</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">field</span><span class="o">.</span><span class="na">getType</span><span class="o">().</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+						<span class="n">currElements</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">ResourceElement</span><span class="o">(</span><span class="n">field</span><span class="o">,</span> <span class="n">field</span><span class="o">,</span> <span class="kc">null</span><span class="o">));</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+			<span class="o">});</span>
+
+			<span class="c1">// 查找@Resource注解的方法，查找到就封装到InjectedElement
+</span><span class="c1"></span>			<span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">doWithLocalMethods</span><span class="o">(</span><span class="n">targetClass</span><span class="o">,</span> <span class="n">method</span> <span class="o">-&gt;</span> <span class="o">{</span>
+				<span class="n">Method</span> <span class="n">bridgedMethod</span> <span class="o">=</span> <span class="n">BridgeMethodResolver</span><span class="o">.</span><span class="na">findBridgedMethod</span><span class="o">(</span><span class="n">method</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(!</span><span class="n">BridgeMethodResolver</span><span class="o">.</span><span class="na">isVisibilityBridgeMethodPair</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">bridgedMethod</span><span class="o">))</span> <span class="o">{</span>
+					<span class="k">return</span><span class="o">;</span>
+				<span class="o">}</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">bridgedMethod</span><span class="o">.</span><span class="na">isAnnotationPresent</span><span class="o">(</span><span class="n">Resource</span><span class="o">.</span><span class="na">class</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="c1">// 省略无关代码...
+</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">ignoredResourceTypes</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">paramTypes</span><span class="o">[</span><span class="n">0</span><span class="o">].</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+                        <span class="n">PropertyDescriptor</span> <span class="n">pd</span> <span class="o">=</span> <span class="n">BeanUtils</span><span class="o">.</span><span class="na">findPropertyForMethod</span><span class="o">(</span><span class="n">bridgedMethod</span><span class="o">,</span> <span class="n">clazz</span><span class="o">);</span>
+                        <span class="n">currElements</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">ResourceElement</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">bridgedMethod</span><span class="o">,</span> <span class="n">pd</span><span class="o">));</span>
+                    <span class="o">}</span>
+				<span class="o">}</span>
+			<span class="o">});</span>
+
+			<span class="n">elements</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">currElements</span><span class="o">);</span>
+			<span class="n">targetClass</span> <span class="o">=</span> <span class="n">targetClass</span><span class="o">.</span><span class="na">getSuperclass</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">while</span> <span class="o">(</span><span class="n">targetClass</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">targetClass</span> <span class="o">!=</span> <span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+		<span class="k">return</span> <span class="k">new</span> <span class="n">InjectionMetadata</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="n">elements</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<p>几个关键的封装数据的类：</p>
+<ul>
+<li>LookupElement -&gt; 表示有关带注释的字段或setter方法的一般注入信息的类，支持@Resource和相关注释。
+<ul>
+<li>name 成员变量</li>
+<li>isDefaultName 成员变量</li>
+<li>lookupType 成员变量</li>
+<li>mappedName 成员变量</li>
+</ul>
+</li>
+<li>ResourceElement -&gt; LookupElement的子类。对Resource注解信息的封装。
+<ul>
+<li>lazyLookup 成员变量</li>
+</ul>
+</li>
+<li>LifecycleElement -&gt; 表示有关带注释方法的注入信息的类，支持初始化、销毁方法。
+<ul>
+<li>method 成员变量</li>
+<li>identifier 成员变量</li>
+</ul>
+</li>
+</ul>
+<h3 id="主流程---populatebean">主流程 - populateBean</h3>
+<p>populateBean的作用是完成bean属性的依赖注入。</p>
+<ol>
+<li>依赖注入之前，如果BeanDefinition是合成的，有InstantiationAwareBeanPostProcessor实例存在于ioc容器，那么将会执行容器中所有InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation()，如果有一个方法返回false，则直接中断并返回。依赖注入不再进行。（<code>它的用途暂时未知，如果这里返回false导致了一些问题，那么排查起来也是比较困难的，因为它没有任何提示信息输出</code>）</li>
+<li>通过调用InstantiationAwareBeanPostProcessor.postProcessProperties()完成属性的依赖注入（spring5.1之前的版本调用的postProcessPropertyValues()）。</li>
+</ol>
+<p>由于是遍历容器中注册的BeanPostProcessor，找出是InstantiationAwareBeanPostProcessor类型的，这里不同的注入方式会有不同的实现类。与前文中说明的搜集依赖注入有关注解的方法是一样的，实现类也是同一个。遍历过程中会一个个的调用。由于这些BeanPostProcessor中在前面流程中已经缓存了需要依赖注入的内容。这里就可以根据缓存的内容进行获取，依次设置值到对应属性中了。</p>
+<p>这里列举几个常见的注入流程</p>
+<h4 id="依赖注入-autowired">依赖注入-Autowired</h4>
+<p>在前文中postProcessMergedBeanDefinition流程节点，添加@Autowired注解支持的时候，就把对应数据放入到了缓存中，成员变量injectionMetadataCache就是对应的缓存。</p>
+<p>首先会调用findAutowiringMetadata()方法，获取元数据，这里直接从缓存injectionMetadataCache中拿的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AutowiredAnnotationBeanPostProcessor</span> <span class="kd">extends</span> <span class="n">InstantiationAwareBeanPostProcessorAdapter</span>
+		<span class="kd">implements</span> <span class="n">MergedBeanDefinitionPostProcessor</span><span class="o">,</span> <span class="n">PriorityOrdered</span><span class="o">,</span> <span class="n">BeanFactoryAware</span> <span class="o">{</span>
+    <span class="c1">// 这两个成员变量中，在前面执行postProcessMergedBeanDefinition时，已经缓存了需要注入的元数据。
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">InjectionMetadata</span><span class="o">&gt;</span> <span class="n">injectionMetadataCache</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcurrentHashMap</span><span class="o">&lt;&gt;(</span><span class="n">256</span><span class="o">);</span>
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">PropertyValues</span> <span class="nf">postProcessProperties</span><span class="o">(</span><span class="n">PropertyValues</span> <span class="n">pvs</span><span class="o">,</span> <span class="n">Object</span> <span class="n">bean</span><span class="o">,</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 找到Autowiring注解标注的属性和方法，并封装为InjectionMetadata返回。
+</span><span class="c1"></span>		<span class="n">InjectionMetadata</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">findAutowiringMetadata</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">bean</span><span class="o">.</span><span class="na">getClass</span><span class="o">(),</span> <span class="n">pvs</span><span class="o">);</span>
+        <span class="c1">// TODO 依赖注入的具体逻辑，重点看
+</span><span class="c1"></span>		<span class="n">metadata</span><span class="o">.</span><span class="na">inject</span><span class="o">(</span><span class="n">bean</span><span class="o">,</span> <span class="n">beanName</span><span class="o">,</span> <span class="n">pvs</span><span class="o">);</span>
+		<span class="c1">// 省略无关代码...
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">pvs</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="主流程---initializebean">主流程 - initializeBean</h3>
+<h3 id="主流程---registerdisposablebeanifnecessary">主流程 - registerDisposableBeanIfNecessary</h3></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-11-26</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/04-registry-of-bean-post-processor/" class="prev" rel="prev" title="[04] BeanPostProcessor的注册"><i class="fas fa-angle-left fa-fw"></i>[04] BeanPostProcessor的注册</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>

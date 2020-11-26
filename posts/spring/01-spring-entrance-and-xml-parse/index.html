@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/01-spring-entrance-and-xml-parse\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  6280 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  6377 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/01-spring-entrance-and-xml-parse\/","datePublished": "2020-11-22T12:00:00+08:00","dateModified": "2020-11-22T12:00:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[01] Spring程序入口和XML解析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-22">2020-11-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6280 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-22">2020-11-22</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6377 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 13 分钟&nbsp;<span id="/posts/spring/01-spring-entrance-and-xml-parse/" class="leancloud_visitors" data-flag-title="[01] Spring程序入口和XML解析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -137,8 +137,10 @@
 </nav></div>
             </div><div class="content" id="content"><h3 id="前言">前言</h3>
 <hr>
-<p><a href="https://gitee.com/wanglizhi00/spring-framework" target="_blank" rel="noopener noreffer">Spring源码Gitee传送门</a> （从Github中下载，对核心流程及主要节点做了详细的中文注释。建议下载、结合本系列笔记阅读源码）<br>
-用 <a href="https://blog.csdn.net/luoyang_java" target="_blank" rel="noopener noreffer">jack大佬</a> 的话来概括，为什么要学习Spring源码？</p>
+<p><a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">Spring源码Gitee传送门</a> （本人从Github中下载，然后以自身理解对核心流程及主要节点做了详细的中文注释。建议下载、结合本系列笔记阅读源码）</p>
+<p>spring分类中源码系列文章，示例代码的中文注释，均是copy的上面链接中的源码。</p>
+<p>spring源码相关大部分知识点，于2019年学自 <a href="https://blog.csdn.net/luoyang_java" target="_blank" rel="noopener noreffer">jack大佬</a> ，感谢 <a href="https://blog.csdn.net/luoyang_java" target="_blank" rel="noopener noreffer">jack大佬</a> 的授业解惑。</p>
+<p>用 <a href="https://blog.csdn.net/luoyang_java" target="_blank" rel="noopener noreffer">jack大佬</a> 的话来概括，为什么要学习Spring源码？</p>
 <ul>
 <li>提高自己的写代码能力</li>
 <li>从全局考虑如何使代码变得灵活可扩展</li>
