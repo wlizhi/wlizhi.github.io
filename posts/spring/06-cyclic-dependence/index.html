@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4450 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  4529 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/","datePublished": "2020-11-27T19:23:40+08:00","dateModified": "2020-11-27T19:23:40+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">06 循环依赖的实现原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4450 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;<span id="/posts/spring/06-cyclic-dependence/" class="leancloud_visitors" data-flag-title="06 循环依赖的实现原理">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4529 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/posts/spring/06-cyclic-dependence/" class="leancloud_visitors" data-flag-title="06 循环依赖的实现原理">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -130,15 +130,39 @@
 <p>在我们日常开发中，肯定存在这种情况：bean A 某个成员是 bean B，bean B 中某个属性是 bean A。那A类和B类就是相互依赖的关系，也叫循环依赖。</p>
 <p>当然，也可以是这种情况 A -&gt; B -&gt; C -&gt; D -&gt; E -&gt; A。这种关系也是循环依赖。</p>
 <h2 id="2-循环依赖在spring中的实现原理">2 循环依赖在spring中的实现原理</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Service</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CyclicGoodsServiceImpl</span> <span class="kd">implements</span> <span class="n">CyclicGoodsService</span> <span class="o">{</span>
+	<span class="nd">@Autowired</span>
+	<span class="kd">private</span> <span class="n">CyclicOrderService</span> <span class="n">cyclicOrderService</span><span class="o">;</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">CyclicOrderService</span> <span class="nf">getCyclicOrderService</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">cyclicOrderService</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
 <h3 id="21-源码分析">2.1 源码分析</h3>
-<p><span id='ciclic-demo'>在这之前，先看一个简单的循环依赖代码案例</span>：</p>
+<p><span id='ciclic-demo'>在这之前，先看一个简单的循环依赖代码案例</span>：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
+</span><span class="hl"><span class="lnt"> 3
+</span></span><span class="hl"><span class="lnt"> 4
+</span></span><span class="lnt"> 5
 </span><span class="lnt"> 6
 </span><span class="lnt"> 7
 </span><span class="lnt"> 8
@@ -147,9 +171,9 @@
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
+</span><span class="hl"><span class="lnt">14
+</span></span><span class="hl"><span class="lnt">15
+</span></span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
 </span><span class="lnt">19
@@ -171,9 +195,9 @@
 <td class="lntd">
 <pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Service</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">CyclicGoodsServiceImpl</span> <span class="kd">implements</span> <span class="n">CyclicGoodsService</span> <span class="o">{</span>
-	<span class="nd">@Autowired</span>
-	<span class="kd">private</span> <span class="n">CyclicOrderService</span> <span class="n">cyclicOrderService</span><span class="o">;</span>
-
+<span class="hl">	<span class="nd">@Autowired</span>
+</span><span class="hl">	<span class="kd">private</span> <span class="n">CyclicOrderService</span> <span class="n">cyclicOrderService</span><span class="o">;</span>
+</span>
 	<span class="nd">@Override</span>
 	<span class="kd">public</span> <span class="n">CyclicOrderService</span> <span class="nf">getCyclicOrderService</span><span class="o">()</span> <span class="o">{</span>
 		<span class="k">return</span> <span class="n">cyclicOrderService</span><span class="o">;</span>
@@ -182,9 +206,9 @@
 
 <span class="nd">@Service</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">CyclicOrderServiceImpl</span> <span class="kd">implements</span> <span class="n">CyclicOrderService</span> <span class="o">{</span>
-	<span class="nd">@Autowired</span>
-	<span class="kd">private</span> <span class="n">CyclicGoodsService</span> <span class="n">cyclicGoodsService</span><span class="o">;</span>
-
+<span class="hl">	<span class="nd">@Autowired</span>
+</span><span class="hl">	<span class="kd">private</span> <span class="n">CyclicGoodsService</span> <span class="n">cyclicGoodsService</span><span class="o">;</span>
+</span>
 	<span class="nd">@Override</span>
 	<span class="kd">public</span> <span class="n">CyclicGoodsService</span> <span class="nf">getCyclicGoodsService</span><span class="o">()</span> <span class="o">{</span>
 		<span class="k">return</span> <span class="n">cyclicGoodsService</span><span class="o">;</span>
@@ -201,10 +225,10 @@
         <span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="n">goodsService</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
         <span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="n">orderService</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
     <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>只是简单的打印一下这个bean是否成功注入到对应的bean属性中了，很明显是注入成功了。</p>
+</div>
+只是简单的打印一下这个bean是否成功注入到对应的bean属性中了，很明显是注入成功了。</p>
 <p>以下是打印的内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -279,7 +303,7 @@
 </div>
 </div><p>先跳过无关代码，看关键点。从上面代码中可以看到，在doGetBean()中先调用了getSingleton()，如果这个值不为空就调用getObjectForBeanInstance()，经过一定的处理（先不要关心具体处理了什么），返回这个bean实例。</p>
 <p>可以先分析，从接收变量的变量名sharedInstance就可以看出来，这是一个bean实例。关键点就在getSingleton()方法，这里可能会获取到一个bean实例。</p>
-<p>下面是getSingleton方法源码：</p>
+<p>下面是getSingleton方法源码：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -306,13 +330,13 @@
 </span><span class="lnt">22
 </span><span class="lnt">23
 </span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
+</span><span class="hl"><span class="lnt">25
+</span></span><span class="lnt">26
 </span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
+</span><span class="hl"><span class="lnt">28
+</span></span><span class="lnt">29
+</span><span class="hl"><span class="lnt">30
+</span></span><span class="lnt">31
 </span><span class="lnt">32
 </span><span class="lnt">33
 </span><span class="lnt">34
@@ -349,13 +373,13 @@
 </span><span class="cm">		 * 从一级缓存中取，如果有值，则返回。否则依次查找二级、三级缓存，如果最终从三级缓存中拿到值，
 </span><span class="cm">		 * 则将bean对象升级到二级缓存，并把原值从三级缓存中移除。
 </span><span class="cm"> 		 */</span>
-		<span class="n">Object</span> <span class="n">singletonObject</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">singletonObjects</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
-		<span class="k">if</span> <span class="o">(</span><span class="n">singletonObject</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">isSingletonCurrentlyInCreation</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
+<span class="hl">		<span class="n">Object</span> <span class="n">singletonObject</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">singletonObjects</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+</span>		<span class="k">if</span> <span class="o">(</span><span class="n">singletonObject</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">isSingletonCurrentlyInCreation</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
 			<span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">singletonObjects</span><span class="o">)</span> <span class="o">{</span>
-				<span class="n">singletonObject</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">earlySingletonObjects</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
-				<span class="k">if</span> <span class="o">(</span><span class="n">singletonObject</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">allowEarlyReference</span><span class="o">)</span> <span class="o">{</span>
-					<span class="n">ObjectFactory</span><span class="o">&lt;?&gt;</span> <span class="n">singletonFactory</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">singletonFactories</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
-					<span class="k">if</span> <span class="o">(</span><span class="n">singletonFactory</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+<span class="hl">				<span class="n">singletonObject</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">earlySingletonObjects</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+</span>				<span class="k">if</span> <span class="o">(</span><span class="n">singletonObject</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">allowEarlyReference</span><span class="o">)</span> <span class="o">{</span>
+<span class="hl">					<span class="n">ObjectFactory</span><span class="o">&lt;?&gt;</span> <span class="n">singletonFactory</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">singletonFactories</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+</span>					<span class="k">if</span> <span class="o">(</span><span class="n">singletonFactory</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
 						<span class="n">singletonObject</span> <span class="o">=</span> <span class="n">singletonFactory</span><span class="o">.</span><span class="na">getObject</span><span class="o">();</span>
 						<span class="k">this</span><span class="o">.</span><span class="na">earlySingletonObjects</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">singletonObject</span><span class="o">);</span>
 						<span class="k">this</span><span class="o">.</span><span class="na">singletonFactories</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
@@ -365,10 +389,10 @@
 		<span class="o">}</span>
 		<span class="k">return</span> <span class="n">singletonObject</span><span class="o">;</span>
 	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>从源码添加的中文注释中可以看出，BeanFactory有这么三个关键成员。分别是一、二、三级缓存。</p>
+</div>
+从源码添加的中文注释中可以看出，BeanFactory有这么三个关键成员。分别是一、二、三级缓存。</p>
 <blockquote>
 <p>一级缓存 singletonObjects：封装了最终完成了所有处理流程的Bean。<br>
 二级缓存 earlySingletonObjects：封装了通过ObjectFactory.getObject()处理过后的对象。<br>
@@ -376,7 +400,7 @@
 </blockquote>
 <p>暂且记着这三个缓存的作用，来找bean被存储到三级缓存的源头。</p>
 <p>在一个bean刚刚创建的时候，会调用到doCreateBean方法，在这个方法中真正实例化了bean，那么实例化完成之后，紧接着就会将其包装成ObjectFactory对象，存储到三级缓存。来到这块代码。</p>
-<div class="highlight"><div class="chroma">
+<p><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -385,8 +409,8 @@
 </span><span class="lnt"> 5
 </span><span class="lnt"> 6
 </span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
+</span><span class="hl"><span class="lnt"> 8
+</span></span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
 </span><span class="lnt">12
@@ -399,8 +423,8 @@
 </span><span class="lnt">19
 </span><span class="lnt">20
 </span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
+</span><span class="hl"><span class="lnt">22
+</span></span><span class="lnt">23
 </span><span class="lnt">24
 </span><span class="lnt">25
 </span></code></pre></td>
@@ -412,8 +436,8 @@
 		<span class="c1">// 省略无关代码...
 </span><span class="c1"></span>        <span class="c1">// 创建bean实例
 </span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">instanceWrapper</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">instanceWrapper</span> <span class="o">=</span> <span class="n">createBeanInstance</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
-        <span class="o">}</span>
+<span class="hl">            <span class="n">instanceWrapper</span> <span class="o">=</span> <span class="n">createBeanInstance</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</span>        <span class="o">}</span>
         <span class="kd">final</span> <span class="n">Object</span> <span class="n">bean</span> <span class="o">=</span> <span class="n">instanceWrapper</span><span class="o">.</span><span class="na">getWrappedInstance</span><span class="o">();</span>
         <span class="c1">// 省略代码：对一些注解支持的扫描、合并到BeanDefinition...
 </span><span class="c1"></span>        <span class="c1">// Eagerly cache singletons to be able to resolve circular references
@@ -426,14 +450,14 @@
                         <span class="s">&#34;&#39; to allow for resolving potential circular references&#34;</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="c1">// 提前暴露bean实例的引用，这时候的bean是刚刚创建完成的，还没有进行属性的依赖注入、等流程处理。
-</span><span class="c1"></span>            <span class="n">addSingletonFactory</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">getEarlyBeanReference</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">bean</span><span class="o">));</span>
-        <span class="o">}</span>
+</span><span class="hl"><span class="c1"></span>            <span class="n">addSingletonFactory</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">getEarlyBeanReference</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">mbd</span><span class="o">,</span> <span class="n">bean</span><span class="o">));</span>
+</span>        <span class="o">}</span>
     <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>从上面列出的spring源码中可以看到，当一个bean创建完实例后，会调用addSingletonFactory()，这个方法的第二个参数，传递了一个匿名对象，这个对象就是ObjectFactory类型的。</p>
-<p>来到addSingletonFactory()源码：</p>
+</div>
+从上面列出的spring源码中可以看到，当一个bean创建完实例后，会调用addSingletonFactory()，这个方法的第二个参数，传递了一个匿名对象，这个对象就是ObjectFactory类型的。</p>
+<p>来到addSingletonFactory()源码：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -442,8 +466,8 @@
 </span><span class="lnt"> 4
 </span><span class="lnt"> 5
 </span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
+</span><span class="hl"><span class="lnt"> 7
+</span></span><span class="lnt"> 8
 </span><span class="lnt"> 9
 </span><span class="lnt">10
 </span><span class="lnt">11
@@ -457,18 +481,18 @@
 		<span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">singletonObjects</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">singletonObjects</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
 				<span class="c1">// 将这个bean，和匿名对象，存储到三级缓存。匿名对象中封装了一个扩展点的操作。
-</span><span class="c1"></span>				<span class="k">this</span><span class="o">.</span><span class="na">singletonFactories</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">singletonFactory</span><span class="o">);</span>
-				<span class="k">this</span><span class="o">.</span><span class="na">earlySingletonObjects</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+</span><span class="hl"><span class="c1"></span>				<span class="k">this</span><span class="o">.</span><span class="na">singletonFactories</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">singletonFactory</span><span class="o">);</span>
+</span>				<span class="k">this</span><span class="o">.</span><span class="na">earlySingletonObjects</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
 				<span class="k">this</span><span class="o">.</span><span class="na">registeredSingletons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
 			<span class="o">}</span>
 		<span class="o">}</span>
 	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>可以看到，在bean刚刚创建完成，就把其封装到了ObjectFactory中，存储到了三级缓存singletonFactories（一个Map）。</p>
+</div>
+可以看到，在bean刚刚创建完成，就把其封装到了ObjectFactory中，存储到了三级缓存singletonFactories（一个Map）。</p>
 <p>从调用这个方法的地方（addSingletonFactory()），可以看到，这个匿名函数的内容：() -&gt; getEarlyBeanReference(beanName, mbd, bean)</p>
-<p>来看一下这个匿名对象中具体操作了什么：</p>
+<p>来看一下这个匿名对象中具体操作了什么：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -479,11 +503,11 @@
 </span><span class="lnt"> 6
 </span><span class="lnt"> 7
 </span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
+</span><span class="hl"><span class="lnt"> 9
+</span></span><span class="lnt">10
 </span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
+</span><span class="hl"><span class="lnt">12
+</span></span><span class="lnt">13
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
@@ -499,19 +523,19 @@
 </span><span class="c1"></span>		<span class="c1">// 在这里获取引用时，支持一些扩展操作，其扩展内容是通过 getEarlyBeanReference() 实现的。
 </span><span class="c1"></span>		<span class="c1">// getEarlyBeanReference() 来自 BeanPostProcessor 的子接口 SmartInstantiationAwareBeanPostProcessor。
 </span><span class="c1"></span>		<span class="k">if</span> <span class="o">(!</span><span class="n">mbd</span><span class="o">.</span><span class="na">isSynthetic</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">hasInstantiationAwareBeanPostProcessors</span><span class="o">())</span> <span class="o">{</span>
-			<span class="k">for</span> <span class="o">(</span><span class="n">BeanPostProcessor</span> <span class="n">bp</span> <span class="o">:</span> <span class="n">getBeanPostProcessors</span><span class="o">())</span> <span class="o">{</span>
-				<span class="k">if</span> <span class="o">(</span><span class="n">bp</span> <span class="k">instanceof</span> <span class="n">SmartInstantiationAwareBeanPostProcessor</span><span class="o">)</span> <span class="o">{</span>
+<span class="hl">			<span class="k">for</span> <span class="o">(</span><span class="n">BeanPostProcessor</span> <span class="n">bp</span> <span class="o">:</span> <span class="n">getBeanPostProcessors</span><span class="o">())</span> <span class="o">{</span>
+</span>				<span class="k">if</span> <span class="o">(</span><span class="n">bp</span> <span class="k">instanceof</span> <span class="n">SmartInstantiationAwareBeanPostProcessor</span><span class="o">)</span> <span class="o">{</span>
 					<span class="n">SmartInstantiationAwareBeanPostProcessor</span> <span class="n">ibp</span> <span class="o">=</span> <span class="o">(</span><span class="n">SmartInstantiationAwareBeanPostProcessor</span><span class="o">)</span> <span class="n">bp</span><span class="o">;</span>
-					<span class="n">exposedObject</span> <span class="o">=</span> <span class="n">ibp</span><span class="o">.</span><span class="na">getEarlyBeanReference</span><span class="o">(</span><span class="n">exposedObject</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
-				<span class="o">}</span>
+<span class="hl">					<span class="n">exposedObject</span> <span class="o">=</span> <span class="n">ibp</span><span class="o">.</span><span class="na">getEarlyBeanReference</span><span class="o">(</span><span class="n">exposedObject</span><span class="o">,</span> <span class="n">beanName</span><span class="o">);</span>
+</span>				<span class="o">}</span>
 			<span class="o">}</span>
 		<span class="o">}</span>
 		<span class="k">return</span> <span class="n">exposedObject</span><span class="o">;</span>
 	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>从源码中可以看出：在返回早期暴露的Bean实例引用之前，会通过 BeanPostProcessor 进行一些处理。</p>
+</div>
+从源码中可以看出：在返回早期暴露的Bean实例引用之前，会通过 BeanPostProcessor 进行一些处理。</p>
 <p>处理内容：
 <div class="details admonition abstract open">
         <div class="details-summary admonition-title">
@@ -530,7 +554,7 @@
 <p>回到文章开头部分，依次从一、二、三级缓存中获取实例，在执行三级缓存获取操作时，就会调用这个方法，拿到Bean提前暴露的引用。拿到之后从三级缓存中移除，放入二级缓存。然后返回。</p>
 <p>这也解释了为什么多个实例之间相互依赖，spring依然能够将依赖实例注入到对应成员中。</p>
 <p>还有一个点，在哪里放入到一级缓存的？前面的文章中，有列出创建bean实例的入口，createBean方法是在一个函数式接口方法中调用的，它的上层方法是getSingleton()。</p>
-<p>来到getSingleton()源码。</p>
+<p>来到getSingleton()源码。
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -546,8 +570,8 @@
 </span><span class="lnt">11
 </span><span class="lnt">12
 </span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
+</span><span class="hl"><span class="lnt">14
+</span></span><span class="lnt">15
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
@@ -567,17 +591,17 @@
             <span class="c1">// 省略无关代码...
 </span><span class="c1"></span>            <span class="c1">// 加入一级缓存
 </span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">newSingleton</span><span class="o">)</span> <span class="o">{</span>
-                <span class="n">addSingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">singletonObject</span><span class="o">);</span>
-            <span class="o">}</span>
+<span class="hl">                <span class="n">addSingleton</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">singletonObject</span><span class="o">);</span>
+</span>            <span class="o">}</span>
 		<span class="o">}</span>
 		<span class="k">return</span> <span class="n">singletonObject</span><span class="o">;</span>
 	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>singletonFactory.getObject();中调用了createBean，这里完成了bean的实例化、依赖注入、代理生成等等操作。</p>
+</div>
+singletonFactory.getObject();中调用了createBean，这里完成了bean的实例化、依赖注入、代理生成等等操作。</p>
 <p>在createBean所有操作完成之后，最后调用了addSingleton()方法，这里就把bean实例加入到了一级缓存，并从二级缓存中移除。</p>
-<p>来到addSingleton()源码：</p>
+<p>来到addSingleton()源码：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -603,10 +627,10 @@
 			<span class="k">this</span><span class="o">.</span><span class="na">registeredSingletons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
 		<span class="o">}</span>
 	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>很简单的逻辑，只是把一个对象放入到一级缓存，并从二级、三级缓存中移除。最后一个是已注册的单例bean容器，暂不讨论。</p>
+</div>
+很简单的逻辑，只是把一个对象放入到一级缓存，并从二级、三级缓存中移除。最后一个是已注册的单例bean容器，暂不讨论。</p>
 <div class="details admonition note open">
         <div class="details-summary admonition-title">
             <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
@@ -624,7 +648,7 @@
 </div>
         </div>
     </div>
-<p>多例情况，如果有循环依赖，会抛出异常，源码如下：</p>
+<p>多例情况，如果有循环依赖，会抛出异常，源码如下：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -650,14 +674,30 @@
             <span class="k">throw</span> <span class="k">new</span> <span class="n">BeanCurrentlyInCreationException</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>构造函数中如果有循环依赖，源码ConstructorResolver类中有这段代码，抛出异常：
-<div class="typeit"><div id="id-1" class=" highlight"></div></div>
-</p>
+</div></p>
+<p>构造函数中如果有循环依赖，源码ConstructorResolver类中有这段代码，抛出异常：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="k">try</span> <span class="o">{</span>
+    <span class="c1">// 省略无关代码，如果这里有构造函数中的循环依赖，则抛出异常
+</span><span class="c1"></span><span class="o">}</span><span class="k">catch</span> <span class="o">(</span><span class="n">BeansException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="n">UnsatisfiedDependencyException</span><span class="o">(</span>
+            <span class="n">mbd</span><span class="o">.</span><span class="na">getResourceDescription</span><span class="o">(),</span> <span class="n">beanName</span><span class="o">,</span> <span class="k">new</span> <span class="n">InjectionPoint</span><span class="o">(</span><span class="n">methodParam</span><span class="o">),</span> <span class="n">ex</span><span class="o">);</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div></p>
 <h3 id="22-流程梳理">2.2 流程梳理</h3>
-<p>例如有A、B两个类进行实例化，分别将对方的实例注入到自身成员中，代码如下（<a href="#ciclic-demo" rel="">前文中类似案例</a>）：</p>
+<p>例如有A、B两个类进行实例化，分别将对方的实例注入到自身成员中，代码如下（<a href="#ciclic-demo" rel="">前文中类似案例</a>）：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -683,10 +723,10 @@
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">B</span> <span class="o">{</span>
 	<span class="nd">@Autowired</span>
 	<span class="kd">private</span> <span class="n">A</span> <span class="n">a</span><span class="o">;</span>
-<span class="o">}</span>
-</code></pre></td></tr></table>
+<span class="o">}</span></code></pre></td></tr></table>
 </div>
-</div><p>分析上面代码的执行流程：</p>
+</div></p>
+<p>分析上面代码的执行流程：</p>
 <ol>
 <li>A 类无参构造函数实例化后， 设置三级缓存。</li>
 <li>A 类 populateBean 进行依赖注入， 这里触发了属性 B 的 getBean 操作。</li>
@@ -739,5 +779,5 @@
             </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
                 <i class="fas fa-comment fa-fw"></i>
             </a>
-        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/typeit/typeit.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"data":{"id-1":"\u003cspan class=\"k\"\u003etry\u003c/span\u003e\u0026nbsp;\u003cspan class=\"o\"\u003e{\u003c/span\u003e\u003cbr /\u003e\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u003cspan class=\"c1\"\u003e//\u0026nbsp;省略无关代码，如果这里有构造函数中的循环依赖，则抛出异常\u003c/span\u003e\u003cbr /\u003e\u003cspan class=\"c1\"\u003e\u003c/span\u003e\u003cspan class=\"o\"\u003e}\u003c/span\u003e\u003cspan class=\"k\"\u003ecatch\u003c/span\u003e\u0026nbsp;\u003cspan class=\"o\"\u003e(\u003c/span\u003e\u003cspan class=\"n\"\u003eBeansException\u003c/span\u003e\u0026nbsp;\u003cspan class=\"n\"\u003eex\u003c/span\u003e\u003cspan class=\"o\"\u003e)\u003c/span\u003e\u0026nbsp;\u003cspan class=\"o\"\u003e{\u003c/span\u003e\u003cbr /\u003e\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u003cspan class=\"k\"\u003ethrow\u003c/span\u003e\u0026nbsp;\u003cspan class=\"k\"\u003enew\u003c/span\u003e\u0026nbsp;\u003cspan class=\"n\"\u003eUnsatisfiedDependencyException\u003c/span\u003e\u003cspan class=\"o\"\u003e(\u003c/span\u003e\u003cbr /\u003e\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u0026nbsp;\u003cspan class=\"n\"\u003embd\u003c/span\u003e\u003cspan class=\"o\"\u003e.\u003c/span\u003e\u003cspan class=\"na\"\u003egetResourceDescription\u003c/span\u003e\u003cspan class=\"o\"\u003e(),\u003c/span\u003e\u0026nbsp;\u003cspan class=\"n\"\u003ebeanName\u003c/span\u003e\u003cspan class=\"o\"\u003e,\u003c/span\u003e\u0026nbsp;\u003cspan class=\"k\"\u003enew\u003c/span\u003e\u0026nbsp;\u003cspan class=\"n\"\u003eInjectionPoint\u003c/span\u003e\u003cspan class=\"o\"\u003e(\u003c/span\u003e\u003cspan class=\"n\"\u003emethodParam\u003c/span\u003e\u003cspan class=\"o\"\u003e),\u003c/span\u003e\u0026nbsp;\u003cspan class=\"n\"\u003eex\u003c/span\u003e\u003cspan class=\"o\"\u003e);\u003c/span\u003e\u003cbr /\u003e\u003cspan class=\"o\"\u003e}\u003c/span\u003e"},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"typeit":{"cursorChar":"|","cursorSpeed":1000,"data":{"id-1":["id-1"]},"duration":-1,"speed":50}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
 </html>
