@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4441 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  4450 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/","datePublished": "2020-11-27T19:23:40+08:00","dateModified": "2020-11-27T19:23:40+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">06 循环依赖的实现原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4441 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4450 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;<span id="/posts/spring/06-cyclic-dependence/" class="leancloud_visitors" data-flag-title="06 循环依赖的实现原理">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -131,7 +131,7 @@
 <p>当然，也可以是这种情况 A -&gt; B -&gt; C -&gt; D -&gt; E -&gt; A。这种关系也是循环依赖。</p>
 <h2 id="2-循环依赖在spring中的实现原理">2 循环依赖在spring中的实现原理</h2>
 <h3 id="21-源码分析">2.1 源码分析</h3>
-<p>在这之前，先看一个简单的循环依赖代码案例：</p>
+<p><span id='ciclic-demo'>在这之前，先看一个简单的循环依赖代码案例</span>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -657,7 +657,7 @@
 <div class="typeit"><div id="id-1" class=" highlight"></div></div>
 </p>
 <h3 id="22-流程梳理">2.2 流程梳理</h3>
-<p>例如有A、B两个类进行实例化，分别将对方的实例注入到自身成员中，代码如下：</p>
+<p>例如有A、B两个类进行实例化，分别将对方的实例注入到自身成员中，代码如下（<a href="#ciclic-demo" rel="">前文中类似案例</a>）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
