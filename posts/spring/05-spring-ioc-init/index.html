@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>[05] Bean实例化流程 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="[05] Bean实例化流程" />
+        <title>05 Bean实例化流程 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="05 Bean实例化流程" />
 <meta property="og:description" content="本章中详细解读了spring中bean的实例化流程，由于篇幅原因，循环依赖、以及一些流程节点的更细致的问题在别的文章中讨论。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" />
@@ -15,16 +15,16 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
 
-<meta name="twitter:title" content="[05] Bean实例化流程"/>
+<meta name="twitter:title" content="05 Bean实例化流程"/>
 <meta name="twitter:description" content="本章中详细解读了spring中bean的实例化流程，由于篇幅原因，循环依赖、以及一些流程节点的更细致的问题在别的文章中讨论。"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/" /><link rel="next" href="https://wlizhi.cc/posts/spring/06-cyclic-dependence/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "[05] Bean实例化流程",
+        "headline": "05 Bean实例化流程",
         "inLanguage": "",
         "mainEntityOfPage": {
             "@type": "WebPage",
@@ -104,10 +104,10 @@
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">[05] Bean实例化流程</h1><div class="post-meta">
+        </div><article class="page single"><h1 class="single-title animated flipInX">05 Bean实例化流程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13186 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 27 分钟&nbsp;<span id="/posts/spring/05-spring-ioc-init/" class="leancloud_visitors" data-flag-title="[05] Bean实例化流程">
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 27 分钟&nbsp;<span id="/posts/spring/05-spring-ioc-init/" class="leancloud_visitors" data-flag-title="05 Bean实例化流程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -2124,7 +2124,8 @@
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/spring/04-registry-of-bean-post-processor/" class="prev" rel="prev" title="[04] BeanPostProcessor的注册"><i class="fas fa-angle-left fa-fw"></i>[04] BeanPostProcessor的注册</a></div>
+    <div class="post-nav"><a href="/posts/spring/04-registry-of-bean-post-processor/" class="prev" rel="prev" title="04 BeanPostProcessor的注册"><i class="fas fa-angle-left fa-fw"></i>04 BeanPostProcessor的注册</a>
+            <a href="/posts/spring/06-cyclic-dependence/" class="next" rel="next" title="06 循环依赖的实现原理">06 循环依赖的实现原理<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.

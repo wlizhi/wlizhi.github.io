@@ -4,36 +4,43 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>2456767505@qq.com (Wlizhi)</managingEditor>
-            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Thu, 26 Nov 2020 12:26:00 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
-    <title>[05] Bean实例化流程</title>
+            <webMaster>2456767505@qq.com (Wlizhi)</webMaster><lastBuildDate>Fri, 27 Nov 2020 19:23:40 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>06 循环依赖的实现原理</title>
+    <link>https://wlizhi.cc/posts/spring/06-cyclic-dependence/</link>
+    <pubDate>Fri, 27 Nov 2020 19:23:40 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/06-cyclic-dependence/</guid>
+    <description><![CDATA[本章着重介绍了spring中在多个bean有相互依赖关系时，是怎么样进行依赖注入的。]]></description>
+</item><item>
+    <title>05 Bean实例化流程</title>
     <link>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</link>
     <pubDate>Thu, 26 Nov 2020 12:26:00 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</guid>
     <description><![CDATA[<p>本章中详细解读了spring中bean的实例化流程，由于篇幅原因，循环依赖、以及一些流程节点的更细致的问题在别的文章中讨论。</p>]]></description>
 </item><item>
-    <title>[04] BeanPostProcessor的注册</title>
+    <title>04 BeanPostProcessor的注册</title>
     <link>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</link>
     <pubDate>Tue, 24 Nov 2020 11:05:21 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</guid>
     <description><![CDATA[<p>spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。</p>]]></description>
 </item><item>
-    <title>[03] BeanFactoryPostProcessor的注册与执行</title>
+    <title>03 BeanFactoryPostProcessor的注册与执行</title>
     <link>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</link>
     <pubDate>Tue, 24 Nov 2020 09:14:28 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</guid>
     <description><![CDATA[<p>spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法</p>]]></description>
 </item><item>
-    <title>[02] Spring标签解析-BeanDefinitionParser</title>
+    <title>02 Spring标签解析-BeanDefinitionParser</title>
     <link>https://wlizhi.cc/posts/spring/02-spring-tag-parse-bean-definition-parser/</link>
     <pubDate>Mon, 23 Nov 2020 11:20:12 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/02-spring-tag-parse-bean-definition-parser/</guid>
     <description><![CDATA[本章记录spring标签解析中，对标签属性解析的几个典型BeanDefinitionParser实现。]]></description>
 </item><item>
-    <title>[01] Spring程序入口和XML解析</title>
+    <title>01 Spring程序入口和XML解析</title>
     <link>https://wlizhi.cc/posts/spring/01-spring-entrance-and-xml-parse/</link>
     <pubDate>Sun, 22 Nov 2020 12:00:00 &#43;0800</pubDate>
     <author>作者</author>
@@ -69,12 +76,5 @@
     <guid>https://wlizhi.cc/posts/experience/my-blog-building-process/</guid>
     <description><![CDATA[<h3 id="前言">前言</h3>
 <p>搭建过程有些波折，好在总算完成了。目前博客采用hugo的主题。不得不说，hugo使用起来相较于jekyll简单了许多，除了主题生态没有jekyll的丰富，别的没毛病。</p>]]></description>
-</item><item>
-    <title>Linux基础</title>
-    <link>https://wlizhi.cc/posts/linux/linux-basics/</link>
-    <pubDate>Wed, 18 Nov 2020 20:59:11 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/linux/linux-basics/</guid>
-    <description><![CDATA[linux 基础概念、文件系统组成、常用命令、应用安装 - 卸载]]></description>
 </item></channel>
 </rss>
