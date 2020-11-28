@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4529 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  4492 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/","datePublished": "2020-11-27T19:23:40+08:00","dateModified": "2020-11-27T19:23:40+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">06 循环依赖的实现原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4529 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/posts/spring/06-cyclic-dependence/" class="leancloud_visitors" data-flag-title="06 循环依赖的实现原理">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4492 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;<span id="/posts/spring/06-cyclic-dependence/" class="leancloud_visitors" data-flag-title="06 循环依赖的实现原理">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -121,7 +121,8 @@
     <li><a href="#2-循环依赖在spring中的实现原理">2 循环依赖在spring中的实现原理</a>
       <ul>
         <li><a href="#21-源码分析">2.1 源码分析</a></li>
-        <li><a href="#22-流程梳理">2.2 流程梳理</a></li>
+        <li><a href="#22-源码中要注意的细节">2.2 源码中要注意的细节</a></li>
+        <li><a href="#23-流程梳理">2.3 流程梳理</a></li>
       </ul>
     </li>
   </ul>
@@ -228,7 +229,7 @@
 <span class="o">}</span></code></pre></td></tr></table>
 </div>
 </div>
-只是简单的打印一下这个bean是否成功注入到对应的bean属性中了，很明显是注入成功了。</p>
+只是简单的打印一下两个Service类中属性的值，很明显是注入成功了。</p>
 <p>以下是打印的内容：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -241,7 +242,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><hr>
-<p>前面的文章中已经分析过，spring中获取bean实例的方法是getBean()。在容器启动的时候，会调用这些方法，去实例化一些必须的单例bean实例。</p>
+<p>前面的文章中已经分析过，spring中获取bean实例的方法是getBean()。在容器启动的时候，会调用这些方法，实例化单例bean实例。</p>
 <p>直接来到doGetBean()，看以下代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -301,7 +302,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>先跳过无关代码，看关键点。从上面代码中可以看到，在doGetBean()中先调用了getSingleton()，如果这个值不为空就调用getObjectForBeanInstance()，经过一定的处理（先不要关心具体处理了什么），返回这个bean实例。</p>
+</div><p>先跳过无关代码，看关键点。从上面代码中可以看出，在doGetBean()中先调用了getSingleton()，如果这个值不为空就调用getObjectForBeanInstance()，经过一定的处理（先不要关心具体处理了什么），返回这个bean实例。</p>
 <p>可以先分析，从接收变量的变量名sharedInstance就可以看出来，这是一个bean实例。关键点就在getSingleton()方法，这里可能会获取到一个bean实例。</p>
 <p>下面是getSingleton方法源码：
 <div class="highlight"><div class="chroma">
@@ -399,7 +400,7 @@
 三级缓存 singletonFactories：Bean刚刚创建完实例后，将Bean实例封装成ObjectFactory对象，存储到这里。</p>
 </blockquote>
 <p>暂且记着这三个缓存的作用，来找bean被存储到三级缓存的源头。</p>
-<p>在一个bean刚刚创建的时候，会调用到doCreateBean方法，在这个方法中真正实例化了bean，那么实例化完成之后，紧接着就会将其包装成ObjectFactory对象，存储到三级缓存。来到这块代码。</p>
+<p>在一个bean刚刚创建的时候，会调用到doCreateBean方法，在这个方法中真正实例化了bean，那么实例化完成之后，紧接着就会将其包装成ObjectFactory对象，存储到三级缓存。来到这块代码：</p>
 <p><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -480,7 +481,7 @@
 		<span class="n">Assert</span><span class="o">.</span><span class="na">notNull</span><span class="o">(</span><span class="n">singletonFactory</span><span class="o">,</span> <span class="s">&#34;Singleton factory must not be null&#34;</span><span class="o">);</span>
 		<span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">singletonObjects</span><span class="o">)</span> <span class="o">{</span>
 			<span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">singletonObjects</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
-				<span class="c1">// 将这个bean，和匿名对象，存储到三级缓存。匿名对象中封装了一个扩展点的操作。
+				<span class="c1">// 将这个bean的匿名对象，存储到三级缓存。匿名对象中封装了一个扩展点的操作。
 </span><span class="hl"><span class="c1"></span>				<span class="k">this</span><span class="o">.</span><span class="na">singletonFactories</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">singletonFactory</span><span class="o">);</span>
 </span>				<span class="k">this</span><span class="o">.</span><span class="na">earlySingletonObjects</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
 				<span class="k">this</span><span class="o">.</span><span class="na">registeredSingletons</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
@@ -492,7 +493,7 @@
 </div>
 可以看到，在bean刚刚创建完成，就把其封装到了ObjectFactory中，存储到了三级缓存singletonFactories（一个Map）。</p>
 <p>从调用这个方法的地方（addSingletonFactory()），可以看到，这个匿名函数的内容：() -&gt; getEarlyBeanReference(beanName, mbd, bean)</p>
-<p>来看一下这个匿名对象中具体操作了什么：
+<p>来看一下这个匿名对象具体做了什么：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -554,7 +555,7 @@
 <p>回到文章开头部分，依次从一、二、三级缓存中获取实例，在执行三级缓存获取操作时，就会调用这个方法，拿到Bean提前暴露的引用。拿到之后从三级缓存中移除，放入二级缓存。然后返回。</p>
 <p>这也解释了为什么多个实例之间相互依赖，spring依然能够将依赖实例注入到对应成员中。</p>
 <p>还有一个点，在哪里放入到一级缓存的？前面的文章中，有列出创建bean实例的入口，createBean方法是在一个函数式接口方法中调用的，它的上层方法是getSingleton()。</p>
-<p>来到getSingleton()源码。
+<p>来到getSingleton()源码：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -599,8 +600,8 @@
 <span class="o">}</span></code></pre></td></tr></table>
 </div>
 </div>
-singletonFactory.getObject();中调用了createBean，这里完成了bean的实例化、依赖注入、代理生成等等操作。</p>
-<p>在createBean所有操作完成之后，最后调用了addSingleton()方法，这里就把bean实例加入到了一级缓存，并从二级缓存中移除。</p>
+singletonFactory.getObject() 中调用了createBean，这里完成了bean的实例化、依赖注入、代理生成等等操作。</p>
+<p>在createBean所有操作完成之后，最后调用了addSingleton()方法。这里把bean实例加入到了一级缓存，并从二级缓存中移除。</p>
 <p>来到addSingleton()源码：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -631,6 +632,7 @@ singletonFactory.getObject();中调用了createBean，这里完成了bean的实�
 </div>
 </div>
 很简单的逻辑，只是把一个对象放入到一级缓存，并从二级、三级缓存中移除。最后一个是已注册的单例bean容器，暂不讨论。</p>
+<h3 id="22-源码中要注意的细节">2.2 源码中要注意的细节</h3>
 <div class="details admonition note open">
         <div class="details-summary admonition-title">
             <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
@@ -696,7 +698,7 @@ singletonFactory.getObject();中调用了createBean，这里完成了bean的实�
 <span class="o">}</span></code></pre></td></tr></table>
 </div>
 </div></p>
-<h3 id="22-流程梳理">2.2 流程梳理</h3>
+<h3 id="23-流程梳理">2.3 流程梳理</h3>
 <p>例如有A、B两个类进行实例化，分别将对方的实例注入到自身成员中，代码如下（<a href="#ciclic-demo" rel="">前文中类似案例</a>）：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
