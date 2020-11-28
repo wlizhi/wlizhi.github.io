@@ -20,7 +20,7 @@
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/06-cyclic-dependence/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/06-cyclic-dependence/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" /><link rel="next" href="https://wlizhi.cc/posts/spring/07-factory-bean/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4492 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  4479 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/06-cyclic-dependence\/","datePublished": "2020-11-27T19:23:40+08:00","dateModified": "2020-11-27T19:23:40+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">06 循环依赖的实现原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4492 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-27">2020-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4479 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;<span id="/posts/spring/06-cyclic-dependence/" class="leancloud_visitors" data-flag-title="06 循环依赖的实现原理">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -302,9 +302,10 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>先跳过无关代码，看关键点。从上面代码中可以看出，在doGetBean()中先调用了getSingleton()，如果这个值不为空就调用getObjectForBeanInstance()，经过一定的处理（先不要关心具体处理了什么），返回这个bean实例。</p>
+</div><p><span id="get-singleton-source"></span>
+先跳过无关代码，看关键点。从上面代码中可以看出，在doGetBean()中先调用了getSingleton()，如果这个值不为空就调用getObjectForBeanInstance()，经过一定的处理（先不要关心具体处理了什么），返回这个bean实例。</p>
 <p>可以先分析，从接收变量的变量名sharedInstance就可以看出来，这是一个bean实例。关键点就在getSingleton()方法，这里可能会获取到一个bean实例。</p>
-<p>下面是getSingleton方法源码：
+<p>下面是 getSingleton() 源码：
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -764,7 +765,8 @@ singletonFactory.getObject() 中调用了createBean，这里完成了bean的实�
         </section>
     </div>
 
-    <div class="post-nav"><a href="/posts/spring/05-spring-ioc-init/" class="prev" rel="prev" title="05 Bean实例化整体流程"><i class="fas fa-angle-left fa-fw"></i>05 Bean实例化整体流程</a></div>
+    <div class="post-nav"><a href="/posts/spring/05-spring-ioc-init/" class="prev" rel="prev" title="05 Bean实例化整体流程"><i class="fas fa-angle-left fa-fw"></i>05 Bean实例化整体流程</a>
+            <a href="/posts/spring/07-factory-bean/" class="next" rel="next" title="07 复杂对象的构建 - FactoryBean">07 复杂对象的构建 - FactoryBean<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
