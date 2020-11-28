@@ -2,15 +2,13 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://wlizhi.cc/categories/</loc><lastmod>2020-11-28T23:33:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-11-28T23:33:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-11-28T23:33:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-11-28T23:33:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/</loc><lastmod>2020-11-28T23:33:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/posts/spring/xxx/</loc><lastmod>2020-11-28T23:33:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/</loc><lastmod>2020-11-28T23:33:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/posts/spring/xx/</loc><lastmod>2020-11-28T23:33:03&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/07-factory-bean/</loc><lastmod>2020-11-28T14:26:12&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/categories/</loc><lastmod>2020-11-28T14:26:12&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-11-28T14:26:12&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-11-28T14:26:12&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-11-28T14:26:12&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/</loc><lastmod>2020-11-28T14:26:12&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/</loc><lastmod>2020-11-28T14:26:12&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/06-cyclic-dependence/</loc><lastmod>2020-11-27T19:23:40&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</loc><lastmod>2020-11-26T12:26:00&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/message-board/</loc><lastmod>2020-11-25T16:30:44&#43;08:00</lastmod></url><url>
