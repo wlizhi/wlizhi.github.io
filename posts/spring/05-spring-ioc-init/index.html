@@ -6,7 +6,7 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>05 Bean实例化流程 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="05 Bean实例化流程" />
-<meta property="og:description" content="本章中详细解读了spring中bean的实例化流程，由于篇幅原因，循环依赖、以及一些流程节点的更细致的问题在别的文章中讨论。" />
+<meta property="og:description" content="详细解读spring中bean的实例化流程，由于篇幅原因，循环依赖、一些流程节点的详细解析在后续文章中讨论。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://wlizhi.cc/posts/spring/05-spring-ioc-init/" />
 <meta property="og:image" content="https://wlizhi.cc/logo.png"/>
@@ -16,7 +16,7 @@
 <meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
 
 <meta name="twitter:title" content="05 Bean实例化流程"/>
-<meta name="twitter:description" content="本章中详细解读了spring中bean的实例化流程，由于篇幅原因，循环依赖、以及一些流程节点的更细致的问题在别的文章中讨论。"/>
+<meta name="twitter:description" content="详细解读spring中bean的实例化流程，由于篇幅原因，循环依赖、一些流程节点的详细解析在后续文章中讨论。"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  13186 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  13181 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/","datePublished": "2020-11-26T12:26:00+08:00","dateModified": "2020-11-26T12:26:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">05 Bean实例化流程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13186 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13181 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 27 分钟&nbsp;<span id="/posts/spring/05-spring-ioc-init/" class="leancloud_visitors" data-flag-title="05 Bean实例化流程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -139,15 +139,15 @@
     <li><a href="#9-临终方法注册registerdisposablebeanifnecessary">9 临终方法注册，registerDisposableBeanIfNecessary</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>本章中详细解读了spring中bean的实例化流程，由于篇幅原因，循环依赖、以及一些流程节点的更细致的问题在别的文章中讨论。</p>
+            </div><div class="content" id="content"><p>详细解读spring中bean的实例化流程，由于篇幅原因，循环依赖、一些流程节点的详细解析在后续文章中讨论。</p>
 <h2 id="1-常见的applicationcontext实现类">1 常见的ApplicationContext实现类：</h2>
 <p>spring容器都是从构造一个ApplicationContext对象开始的，以下是spring中常见的ApplicationContext实现。</p>
 <ul>
 <li>容器：AbstractApplicationContext 抽象父类，核心(模板)方法 refresh()。
 <ul>
-<li>ClassPathXmlApplicationContext XML方式启动。</li>
-<li>AnnotationConfigWebApplicationContext 注解方式启动，对局部代码进行测试时比较好用。</li>
-<li>AnnotationConfigServletWebServerApplicationContext SpringBoot启动默认使用的上下文类。</li>
+<li>ClassPathXmlApplicationContext - XML方式启动。</li>
+<li>AnnotationConfigWebApplicationContext - 注解方式启动，对局部代码进行测试时比较好用。</li>
+<li>AnnotationConfigServletWebServerApplicationContext - SpringBoot启动默认使用的上下文类。</li>
 </ul>
 </li>
 </ul>
@@ -372,7 +372,7 @@
             <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
         </div>
         <div class="details-content">
-            <div class="admonition-content">从以上源码中可以看到，在已经收集好的BeanDefinition集合中，只有非抽象的、单例的、并且非懒加载的，才会在容器启动时就实例化。</div>
+            <div class="admonition-content">从以上源码中可以看到，在已经搜集好的BeanDefinition集合中，只有非抽象的、单例的、并且非懒加载的，才会在容器启动时就实例化。</div>
         </div>
     </div>
 <h2 id="4-实例化主流程">4 实例化主流程</h2>
@@ -1438,7 +1438,7 @@
 		<span class="o">}</span>
 		<span class="k">while</span> <span class="o">(</span><span class="n">targetClass</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">targetClass</span> <span class="o">!=</span> <span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 
-		<span class="c1">// 将上面步骤收集到的初始化、销毁方法封装起来返回。
+		<span class="c1">// 将上面步骤搜集到的初始化、销毁方法封装起来返回。
 </span><span class="c1"></span>		<span class="k">return</span> <span class="k">new</span> <span class="n">LifecycleMetadata</span><span class="o">(</span><span class="n">clazz</span><span class="o">,</span> <span class="n">initMethods</span><span class="o">,</span> <span class="n">destroyMethods</span><span class="o">);</span>
 	<span class="o">}</span>
 <span class="o">}</span>
