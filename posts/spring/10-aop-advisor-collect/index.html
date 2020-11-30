@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/10-aop-advisor-collect\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4182 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  4215 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/10-aop-advisor-collect\/","datePublished": "2020-11-30T18:01:17+08:00","dateModified": "2020-11-30T18:01:17+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">10 Aop - Advisor的搜集</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-30">2020-11-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4182 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-30">2020-11-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4215 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;<span id="/posts/spring/10-aop-advisor-collect/" class="leancloud_visitors" data-flag-title="10 Aop - Advisor的搜集">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -120,6 +120,12 @@
     <li><a href="#1-主流程">1 主流程</a></li>
     <li><a href="#2-搜集封装advisor">2 搜集封装Advisor</a></li>
     <li><a href="#3-筛选出匹配的advisor">3 筛选出匹配的Advisor</a></li>
+    <li><a href="#4-流程图">4 流程图</a>
+      <ul>
+        <li><a href="#41-搜集容器中所有的advisor的流程">4.1 搜集容器中所有的Advisor的流程</a></li>
+        <li><a href="#42-筛选出匹配的advisor">4.2 筛选出匹配的Advisor</a></li>
+      </ul>
+    </li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="1-主流程">1 主流程</h2>
@@ -806,9 +812,12 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>从上面代码可以看到，ASPECTJ_ANNOTATION_CLASSES数组常量中，预定义了支持切点表达式的注解。如果能在当前方法上找到任何一种，就将这个切点信息封装成 AspectJAnnotation。</p>
-<p>以下是搜集容器中所有的 Advisor 的流程：
-<div class="mermaid" id="id-1"></div></p>
-<h2 id="3-筛选出匹配的advisor">3 筛选出匹配的Advisor</h2></div>
+<h2 id="3-筛选出匹配的advisor">3 筛选出匹配的Advisor</h2>
+<p>未完待续&hellip;</p>
+<h2 id="4-流程图">4 流程图</h2>
+<h3 id="41-搜集容器中所有的advisor的流程">4.1 搜集容器中所有的Advisor的流程</h3>
+<div class="mermaid" id="id-1"></div>
+<h3 id="42-筛选出匹配的advisor">4.2 筛选出匹配的Advisor</h3></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
