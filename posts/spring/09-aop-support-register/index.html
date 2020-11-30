@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/09-aop-support-register\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  2565 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  2567 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/09-aop-support-register\/","datePublished": "2020-11-29T19:04:06+08:00","dateModified": "2020-11-29T19:04:06+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">09 AOP支持类 - AbstractAutoProxyCreator的注册</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-29">2020-11-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2565 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-29">2020-11-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2567 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/09-aop-support-register/" class="leancloud_visitors" data-flag-title="09 AOP支持类 - AbstractAutoProxyCreator的注册">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -118,7 +118,7 @@
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
     <li><a href="#1-aop入口">1 AOP入口</a></li>
-    <li><a href="#2-xml配置方式beanpostprocessor的注册">2. XMl配置方式BeanPostProcessor的注册</a></li>
+    <li><a href="#2-xml配置方式beanpostprocessor的注册">2 XMl配置方式BeanPostProcessor的注册</a></li>
     <li><a href="#3-注解方式beanpostprocessor的注册">3 注解方式BeanPostProcessor的注册</a>
       <ul>
         <li><a href="#31-注解方式案例">3.1 注解方式案例</a></li>
@@ -131,7 +131,7 @@
 <h2 id="1-aop入口">1 AOP入口</h2>
 <p>AOP是通过 BeanPostProcessor.postProcessAfterInitialization() 实现的，来到 doCreateBean() -&gt; initializeBean()，在初始化方法执行完成后，会调用 applyBeanPostProcessorsAfterInitialization()，这里循环调用了所有 BeanPostProcessor 的 postProcessAfterInitialization()，AOP 的入口就在其中的一个实现类，也是 AbstractAutoProxyCreator 的子类实现。</p>
 <p>要看代理对象的生成过程，首先要看支持这个功能的类，是在哪里注册的，它源自哪里？</p>
-<h2 id="2-xml配置方式beanpostprocessor的注册">2. XMl配置方式BeanPostProcessor的注册</h2>
+<h2 id="2-xml配置方式beanpostprocessor的注册">2 XMl配置方式BeanPostProcessor的注册</h2>
 <p>XMl方式注入AOP支持的BeanPostProcessor，是通过 <code>&lt;aop:aspectj-autoproxy/&gt;</code> 标签注入的。</p>
 <p>根据SPI加载规则，找到 spring-aop 模块下的 META-INF/spring.handlers 文件。</p>
 <p>可以看到以下内容：</p>
@@ -170,9 +170,9 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>我们在使用Spring XML配置方式使用 <code>&lt;aop:aspectj-autoproxy/&gt;</code> 标签激活代理，在 init() 中注册了 <code>aspectj-autoproxy</code> 属性的解析类，在这个解析类中，注入了 AnnotationAwareAspectJAutoProxyCreator 的 BeanDefinition。
-源码如下：<br>
-第一步</p>
+</div><p>我们在使用Spring XML配置方式使用 <code>&lt;aop:aspectj-autoproxy/&gt;</code> 标签激活代理，在 init() 中注册了 <code>aspectj-autoproxy</code> 属性的解析类，在这个解析类中，注入了 AnnotationAwareAspectJAutoProxyCreator 的 BeanDefinition。</p>
+<p>源码如下：<br>
+步骤一：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -197,7 +197,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>第二步</p>
+</div><p>步骤二：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -224,7 +224,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>第三步：</p>
+</div><p>步骤三：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -247,7 +247,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>可以看到，第三步中，最后 <code>return</code> 语句后注册了 AnnotationAwareAspectJAutoProxyCreator。</p>
+</div><p>可以看到，步骤三中，最后 <code>return</code> 语句后注册了 AnnotationAwareAspectJAutoProxyCreator。</p>
 <div class="details admonition info open">
         <div class="details-summary admonition-title">
             <i class="icon fas fa-info-circle fa-fw"></i>信息<i class="details-icon fas fa-angle-right fa-fw"></i>
