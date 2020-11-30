@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/10-aop-advisor-collect\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4241 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  4949 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/10-aop-advisor-collect\/","datePublished": "2020-11-30T18:01:17+08:00","dateModified": "2020-11-30T18:01:17+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">10 AOP - Advisor的封装与搜集</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-30">2020-11-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4241 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;<span id="/posts/spring/10-aop-advisor-collect/" class="leancloud_visitors" data-flag-title="10 AOP - Advisor的封装与搜集">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-30">2020-11-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4949 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/posts/spring/10-aop-advisor-collect/" class="leancloud_visitors" data-flag-title="10 AOP - Advisor的封装与搜集">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -120,12 +120,7 @@
     <li><a href="#1-主流程">1 主流程</a></li>
     <li><a href="#2-搜集封装advisor">2 搜集封装Advisor</a></li>
     <li><a href="#3-筛选出匹配的advisor">3 筛选出匹配的Advisor</a></li>
-    <li><a href="#4-流程图">4 流程图</a>
-      <ul>
-        <li><a href="#41-搜集容器中所有的advisor的流程">4.1 搜集容器中所有的Advisor的流程</a></li>
-        <li><a href="#42-筛选出匹配的advisor">4.2 筛选出匹配的Advisor</a></li>
-      </ul>
-    </li>
+    <li><a href="#4-搜集容器中所有的advisor的流程">4 搜集容器中所有的Advisor的流程</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="1-主流程">1 主流程</h2>
@@ -813,17 +808,149 @@
 </div>
 </div><p>从上面代码可以看到，ASPECTJ_ANNOTATION_CLASSES数组常量中，预定义了支持切点表达式的注解。如果能在当前方法上找到任何一种，就将这个切点信息封装成 AspectJAnnotation。</p>
 <h2 id="3-筛选出匹配的advisor">3 筛选出匹配的Advisor</h2>
-<p>未完待续&hellip;</p>
-<h2 id="4-流程图">4 流程图</h2>
-<h3 id="41-搜集容器中所有的advisor的流程">4.1 搜集容器中所有的Advisor的流程</h3>
+<p>在获取到容器中所有的通知方法封装成的 Advisor 后，会调用 findAdvisorsThatCanApply()，将 beanName 放入到一个 ThreadLocal 类型的变量中，然后调用 findAdvisorsThatCanApply() 的重载方法。调用完毕之后，会将 ThreadLocal 变量中的 beanName置空。</p>
+<p>findAdvisorsThatCanApply() 重载方法源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AopUtils</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Advisor</span><span class="o">&gt;</span> <span class="nf">findAdvisorsThatCanApply</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Advisor</span><span class="o">&gt;</span> <span class="n">candidateAdvisors</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">candidateAdvisors</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="n">candidateAdvisors</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">Advisor</span><span class="o">&gt;</span> <span class="n">eligibleAdvisors</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="c1">// 先处理IntroductionAdvisor类型的增强
+</span><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">Advisor</span> <span class="n">candidate</span> <span class="o">:</span> <span class="n">candidateAdvisors</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">candidate</span> <span class="k">instanceof</span> <span class="n">IntroductionAdvisor</span> <span class="o">&amp;&amp;</span> <span class="n">canApply</span><span class="o">(</span><span class="n">candidate</span><span class="o">,</span> <span class="n">clazz</span><span class="o">))</span> <span class="o">{</span>
+				<span class="n">eligibleAdvisors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">candidate</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="kt">boolean</span> <span class="n">hasIntroductions</span> <span class="o">=</span> <span class="o">!</span><span class="n">eligibleAdvisors</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">();</span>
+		<span class="c1">// 再处理其他类型的增强
+</span><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">Advisor</span> <span class="n">candidate</span> <span class="o">:</span> <span class="n">candidateAdvisors</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">candidate</span> <span class="k">instanceof</span> <span class="n">IntroductionAdvisor</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// already processed
+</span><span class="c1"></span>				<span class="k">continue</span><span class="o">;</span>
+			<span class="o">}</span>
+			<span class="c1">// 我们自定义的切面，就会走到这里，使用已经封装的PointcutAdvisor，根据切点表达式进行匹配，具体的匹配过程，不用看。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">canApply</span><span class="o">(</span><span class="n">candidate</span><span class="o">,</span> <span class="n">clazz</span><span class="o">,</span> <span class="n">hasIntroductions</span><span class="o">))</span> <span class="o">{</span>
+				<span class="n">eligibleAdvisors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">candidate</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">eligibleAdvisors</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用 canApply()，这里进行了切点表达式与方法的匹配，如果匹配成功，将 Advisor 放入到集合中，否则就跳过。</p>
+<p>当将所有的 Advisor 遍历完毕，最终匹配成功的 Advisor 会被筛选出来，放入到一个新的集合中，最终生成的执行链中的通知方法，就来自筛选后的 Advisor 集合（这个集合在创建代理前还有一次新增操作）。</p>
+<p>看 canApply()，这里进行了匹配：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AopUtils</span> <span class="o">{</span>
+    <span class="c1">// 步骤一
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">canApply</span><span class="o">(</span><span class="n">Advisor</span> <span class="n">advisor</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">hasIntroductions</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">advisor</span> <span class="k">instanceof</span> <span class="n">IntroductionAdvisor</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="o">((</span><span class="n">IntroductionAdvisor</span><span class="o">)</span> <span class="n">advisor</span><span class="o">).</span><span class="na">getClassFilter</span><span class="o">().</span><span class="na">matches</span><span class="o">(</span><span class="n">targetClass</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">advisor</span> <span class="k">instanceof</span> <span class="n">PointcutAdvisor</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">PointcutAdvisor</span> <span class="n">pca</span> <span class="o">=</span> <span class="o">(</span><span class="n">PointcutAdvisor</span><span class="o">)</span> <span class="n">advisor</span><span class="o">;</span>
+			<span class="c1">//切点表达式匹配。
+</span><span class="c1"></span>			<span class="k">return</span> <span class="n">canApply</span><span class="o">(</span><span class="n">pca</span><span class="o">.</span><span class="na">getPointcut</span><span class="o">(),</span> <span class="n">targetClass</span><span class="o">,</span> <span class="n">hasIntroductions</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="c1">// It doesn&#39;t have a pointcut so we assume it applies.
+</span><span class="c1"></span>			<span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">canApply</span><span class="o">(</span><span class="n">Pointcut</span> <span class="n">pc</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">hasIntroductions</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="c1">// 这里做了切入点表达式的匹配，匹配通过的返回true，具体的匹配过程不用看，不是重点。
+</span><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span> <span class="o">:</span> <span class="n">classes</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">Method</span><span class="o">[]</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">getAllDeclaredMethods</span><span class="o">(</span><span class="n">clazz</span><span class="o">);</span>
+			<span class="k">for</span> <span class="o">(</span><span class="n">Method</span> <span class="n">method</span> <span class="o">:</span> <span class="n">methods</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">introductionAwareMethodMatcher</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span>
+						<span class="n">introductionAwareMethodMatcher</span><span class="o">.</span><span class="na">matches</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">targetClass</span><span class="o">,</span> <span class="n">hasIntroductions</span><span class="o">)</span> <span class="o">:</span>
+						<span class="n">methodMatcher</span><span class="o">.</span><span class="na">matches</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">targetClass</span><span class="o">))</span> <span class="o">{</span>
+					<span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面代码可以看到，PointcutAdvisor 类型的，最终会遍历类中所有的方法，根据切点表达式，进行一一匹配，如果匹配成功，返回true，否则返回false。</p>
+<h2 id="4-搜集容器中所有的advisor的流程">4 搜集容器中所有的Advisor的流程</h2>
 <ol>
 <li>父类调用流程：
 <div class="mermaid" id="id-1"></div></li>
 <li>子类调用流程：
 <div class="mermaid" id="id-2"></div></li>
-</ol>
-<h3 id="42-筛选出匹配的advisor">4.2 筛选出匹配的Advisor</h3>
-<p>未完待续&hellip;</p></div>
+</ol></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
