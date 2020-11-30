@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>09 AOP支持类 - AbstractAutoProxyCreator的注册 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="09 AOP支持类 - AbstractAutoProxyCreator的注册" />
+<meta property="og:description" content="AOP - 代理对象生成的入口、代理对象生成原理、代理方法执行时执行链的调用原理解析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/09-aop-support-register/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-11-29T19:04:06+08:00" />
+<meta property="article:modified_time" content="2020-11-29T19:04:06+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="09 AOP支持类 - AbstractAutoProxyCreator的注册"/>
+<meta name="twitter:description" content="AOP - 代理对象生成的入口、代理对象生成原理、代理方法执行时执行链的调用原理解析"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/09-aop-support-register/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/08-configuration-class-post-processor/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "09 AOP支持类 - AbstractAutoProxyCreator的注册",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/09-aop-support-register\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  2594 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/09-aop-support-register\/","datePublished": "2020-11-29T19:04:06+08:00","dateModified": "2020-11-29T19:04:06+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">09 AOP支持类 - AbstractAutoProxyCreator的注册</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-29">2020-11-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2594 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/09-aop-support-register/" class="leancloud_visitors" data-flag-title="09 AOP支持类 - AbstractAutoProxyCreator的注册">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-aop入口">1 AOP入口</a></li>
+    <li><a href="#2-xml配置方式beanpostprocessor的注册">2. XMl配置方式BeanPostProcessor的注册</a></li>
+    <li><a href="#3-注解方式beanpostprocessor的注册">3 注解方式BeanPostProcessor的注册</a>
+      <ul>
+        <li><a href="#31-注解方式案例">3.1 注解方式案例</a></li>
+        <li><a href="#32-aspectjautoproxyregistrar的注册">3.2 AspectJAutoProxyRegistrar的注册</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>AOP - 代理对象生成的入口、代理对象生成原理、代理方法执行时执行链的调用原理解析</p>
+<h2 id="1-aop入口">1 AOP入口</h2>
+<p>AOP是通过 BeanPostProcessor.postProcessAfterInitialization() 实现的，来到 doCreateBean() -&gt; initializeBean()，在初始化方法执行完成后，会调用 applyBeanPostProcessorsAfterInitialization()，这里循环调用了所有 BeanPostProcessor 的 postProcessAfterInitialization()，AOP 的入口就在其中的一个实现类，也是 AbstractAutoProxyCreator 的子类实现。</p>
+<p>要看代理对象的生成过程，首先要看支持这个功能的类，是在哪里注册的，它源自哪里？</p>
+<h2 id="2-xml配置方式beanpostprocessor的注册">2. XMl配置方式BeanPostProcessor的注册</h2>
+<p>XMl方式注入AOP支持的BeanPostProcessor，是通过 <code>&lt;aop:aspectj-autoproxy/&gt;</code> 标签注入的。</p>
+<p>根据SPI加载规则，找到 spring-aop 模块下的 META-INF/spring.handlers 文件。</p>
+<p>可以看到以下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">http\://www.springframework.org/schema/aop=org.springframework.aop.config.AopNamespaceHandler
+</code></pre></td></tr></table>
+</div>
+</div><p>来到 AopNamespaceHandler 类，源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AopNamespaceHandler</span> <span class="kd">extends</span> <span class="n">NamespaceHandlerSupport</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&#34;config&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ConfigBeanDefinitionParser</span><span class="o">());</span>
+        <span class="c1">// AspectJAutoProxyBeanDefinitionParser标签 &lt;aop:aspectj-autoproxy/&gt; 的支持，
+</span><span class="c1"></span>        <span class="c1">// 在其 parse() 中注册了AOP的入口类 AnnotationAwareAspectJAutoProxyCreator，是一个 BeanPostProcessor
+</span><span class="c1"></span>        <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&#34;aspectj-autoproxy&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">AspectJAutoProxyBeanDefinitionParser</span><span class="o">());</span>
+        <span class="n">registerBeanDefinitionDecorator</span><span class="o">(</span><span class="s">&#34;scoped-proxy&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ScopedProxyBeanDefinitionDecorator</span><span class="o">());</span>
+        <span class="n">registerBeanDefinitionParser</span><span class="o">(</span><span class="s">&#34;spring-configured&#34;</span><span class="o">,</span> <span class="k">new</span> <span class="n">SpringConfiguredBeanDefinitionParser</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们在使用Spring XML配置方式使用 <a href="aop:aspectj-autoproxy/">aop:aspectj-autoproxy/</a> 标签激活代理，在 init() 中注册了 <code>aspectj-autoproxy</code> 属性的解析类，在这个解析类中，注入了 AnnotationAwareAspectJAutoProxyCreator 的 BeanDefinition。
+源码如下：<br>
+第一步</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">AspectJAutoProxyBeanDefinitionParser</span> <span class="kd">implements</span> <span class="n">BeanDefinitionParser</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">BeanDefinition</span> <span class="nf">parse</span><span class="o">(</span><span class="n">Element</span> <span class="n">element</span><span class="o">,</span> <span class="n">ParserContext</span> <span class="n">parserContext</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 对aspectj-autoproxy属性的支持
+</span><span class="c1"></span>		<span class="n">AopNamespaceUtils</span><span class="o">.</span><span class="na">registerAspectJAnnotationAutoProxyCreatorIfNecessary</span><span class="o">(</span><span class="n">parserContext</span><span class="o">,</span> <span class="n">element</span><span class="o">);</span>
+		<span class="c1">// 添加IncludePatterns
+</span><span class="c1"></span>		<span class="n">extendBeanDefinition</span><span class="o">(</span><span class="n">element</span><span class="o">,</span> <span class="n">parserContext</span><span class="o">);</span>
+		<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第二步</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AopNamespaceUtils</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">registerAspectJAnnotationAutoProxyCreatorIfNecessary</span><span class="o">(</span>
+			<span class="n">ParserContext</span> <span class="n">parserContext</span><span class="o">,</span> <span class="n">Element</span> <span class="n">sourceElement</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 这里注册了AnnotationAwareAspectJAutoProxyCreator
+</span><span class="c1"></span>		<span class="n">BeanDefinition</span> <span class="n">beanDefinition</span> <span class="o">=</span> <span class="n">AopConfigUtils</span><span class="o">.</span><span class="na">registerAspectJAnnotationAutoProxyCreatorIfNecessary</span><span class="o">(</span>
+				<span class="n">parserContext</span><span class="o">.</span><span class="na">getRegistry</span><span class="o">(),</span> <span class="n">parserContext</span><span class="o">.</span><span class="na">extractSource</span><span class="o">(</span><span class="n">sourceElement</span><span class="o">));</span>
+		<span class="n">useClassProxyingIfNecessary</span><span class="o">(</span><span class="n">parserContext</span><span class="o">.</span><span class="na">getRegistry</span><span class="o">(),</span> <span class="n">sourceElement</span><span class="o">);</span>
+		<span class="n">registerComponentIfNecessary</span><span class="o">(</span><span class="n">beanDefinition</span><span class="o">,</span> <span class="n">parserContext</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>第三步：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AopConfigUtils</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">BeanDefinition</span> <span class="nf">registerAspectJAnnotationAutoProxyCreatorIfNecessary</span><span class="o">(</span>
+			<span class="n">BeanDefinitionRegistry</span> <span class="n">registry</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">source</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 注入此类 AnnotationAwareAspectJAutoProxyCreator，本质还是一个BeanPostProcessor,
+</span><span class="c1"></span>		<span class="c1">// 实现了BeanPostProcessor的子接口：SmartInstantiationAwareBeanPostProcessor
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">registerOrEscalateApcAsRequired</span><span class="o">(</span><span class="n">AnnotationAwareAspectJAutoProxyCreator</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">registry</span><span class="o">,</span> <span class="n">source</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，第三步中，最后 <code>return</code> 语句后注册了 AnnotationAwareAspectJAutoProxyCreator。</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>信息<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>回顾：BeanPostProcessor 提前注册到IOC容器的流程。</p>
+<ol>
+<li>创建 BeanFactory，完成所有 BeanDefinition 的搜集。</li>
+<li>执行 invokeBeanFactoryPostProcessors()（BeanDefinition的后置处理）。BeanFactoryPostProcessor 及子接口 BeanDefinitionRegistryPostProcessor 实现类的方法。</li>
+<li>执行 registerBeanPostProcessors。从 beanFactory 中获取所有的 BeanPostProcessor，优先进行 getBean() 操作，实例化。</li>
+</ol>
+</div>
+        </div>
+    </div>
+<h2 id="3-注解方式beanpostprocessor的注册">3 注解方式BeanPostProcessor的注册</h2>
+<h3 id="31-注解方式案例">3.1 注解方式案例</h3>
+<p>先看一个案例：</p>
+<ol>
+<li>切面类：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Component</span>  <span class="nd">@Aspect</span>  <span class="nd">@Slf4j</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomAspect</span> <span class="o">{</span>
+	<span class="nd">@Pointcut</span><span class="o">(</span><span class="s">&#34;execution(* top.wlz922.aspect.*.*(..))&#34;</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">pointCut</span><span class="o">(){}</span>
+
+	<span class="nd">@Before</span><span class="o">(</span><span class="s">&#34;pointCut()&#34;</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">before</span><span class="o">(){</span>
+		<span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;CustomAspect.before execute...&#34;</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>业务类：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Component</span>
+<span class="nd">@Slf4j</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Apple</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">showTaste</span><span class="o">(){</span>
+		<span class="n">log</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">&#34;Apple is sour and sweet.&#34;</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>配置类：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="nd">@EnableAspectJAutoProxy</span>
+<span class="nd">@ComponentScan</span><span class="o">(</span><span class="n">basePackages</span> <span class="o">=</span> <span class="s">&#34;top.wlz922&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AspectAnoConfiguration</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>测试类：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Slf4j</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ApplicationContextTest</span> <span class="o">{</span>
+	<span class="nd">@Test</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testAnoAop</span><span class="o">(){</span>
+		<span class="n">AnnotationConfigApplicationContext</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AnnotationConfigApplicationContext</span><span class="o">(</span><span class="n">AspectAnoConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="n">Apple</span> <span class="n">apple</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="n">Apple</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="n">apple</span><span class="o">.</span><span class="na">showTaste</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>执行结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">12:23:34.294 [main] INFO  top.wlz922.aspect.CustomAspect 16 - CustomAspect.before execute...
+12:23:34.325 [main] INFO  top.wlz922.aspect.Apple 10 - Apple is sour and sweet.
+</code></pre></td></tr></table>
+</div>
+</div><p>以上是一个简单的注解方式激活AOP功能的案例。</p>
+<h3 id="32-aspectjautoproxyregistrar的注册">3.2 AspectJAutoProxyRegistrar的注册</h3>
+<p>下面来看注解方式，注入对应支持的 BeanPostProcessor 的入口。</p>
+<p>这是 @EnableAspectJAutoProxy 的声明：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Target</span><span class="o">(</span><span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">)</span>
+<span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+<span class="nd">@Documented</span>
+<span class="nd">@Import</span><span class="o">(</span><span class="n">AspectJAutoProxyRegistrar</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">EnableAspectJAutoProxy</span> <span class="o">{</span>
+	<span class="kt">boolean</span> <span class="nf">proxyTargetClass</span><span class="o">()</span> <span class="k">default</span> <span class="kc">false</span><span class="o">;</span>
+	<span class="kt">boolean</span> <span class="nf">exposeProxy</span><span class="o">()</span> <span class="k">default</span> <span class="kc">false</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，@EnableAspectJAutoProxy 上有一个 @Import，那么它在创建 BeanFactory，扫描注册 BeanDefinition 时，会把 AspectJAutoProxyRegistrar 类包装为 BeanDefinition 注册到容器中。</p>
+<p>看 AspectJAutoProxyRegistrar 的声明：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">AspectJAutoProxyRegistrar</span> <span class="kd">implements</span> <span class="n">ImportBeanDefinitionRegistrar</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerBeanDefinitions</span><span class="o">(</span>
+			<span class="n">AnnotationMetadata</span> <span class="n">importingClassMetadata</span><span class="o">,</span> <span class="n">BeanDefinitionRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// TODO 注册自动代理的支持类的BeanDefinition到容器中。
+</span><span class="c1"></span>		<span class="n">AopConfigUtils</span><span class="o">.</span><span class="na">registerAspectJAnnotationAutoProxyCreatorIfNecessary</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+
+		<span class="n">AnnotationAttributes</span> <span class="n">enableAspectJAutoProxy</span> <span class="o">=</span>
+				<span class="n">AnnotationConfigUtils</span><span class="o">.</span><span class="na">attributesFor</span><span class="o">(</span><span class="n">importingClassMetadata</span><span class="o">,</span> <span class="n">EnableAspectJAutoProxy</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="c1">// 如果激活了自动代理，这里会设置AnnotationAwareAspectJAutoProxyCreator的BeanDefinition对应的属性值
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">enableAspectJAutoProxy</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">enableAspectJAutoProxy</span><span class="o">.</span><span class="na">getBoolean</span><span class="o">(</span><span class="s">&#34;proxyTargetClass&#34;</span><span class="o">))</span> <span class="o">{</span>
+				<span class="n">AopConfigUtils</span><span class="o">.</span><span class="na">forceAutoProxyCreatorToUseClassProxying</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">enableAspectJAutoProxy</span><span class="o">.</span><span class="na">getBoolean</span><span class="o">(</span><span class="s">&#34;exposeProxy&#34;</span><span class="o">))</span> <span class="o">{</span>
+				<span class="n">AopConfigUtils</span><span class="o">.</span><span class="na">forceAutoProxyCreatorToExposeProxy</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>来到 registerAspectJAnnotationAutoProxyCreatorIfNecessary()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AopConfigUtils</span> <span class="o">{</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="n">BeanDefinition</span> <span class="nf">registerAspectJAnnotationAutoProxyCreatorIfNecessary</span><span class="o">(</span>
+			<span class="n">BeanDefinitionRegistry</span> <span class="n">registry</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">source</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 注入此类 AnnotationAwareAspectJAutoProxyCreator，本质还是一个BeanPostProcessor,
+</span><span class="c1"></span>		<span class="c1">// 实现了BeanPostProcessor的子接口：SmartInstantiationAwareBeanPostProcessor
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">registerOrEscalateApcAsRequired</span><span class="o">(</span><span class="n">AnnotationAwareAspectJAutoProxyCreator</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">registry</span><span class="o">,</span> <span class="n">source</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，在这里对 AnnotationAwareAspectJAutoProxyCreator 进行了注册。</p>
+<p>具体的注册逻辑源码（注意参数的传递）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AopConfigUtils</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">AUTO_PROXY_CREATOR_BEAN_NAME</span> <span class="o">=</span>
+			<span class="s">&#34;org.springframework.aop.config.internalAutoProxyCreator&#34;</span><span class="o">;</span>
+
+	<span class="kd">private</span> <span class="kd">static</span> <span class="n">BeanDefinition</span> <span class="nf">registerOrEscalateApcAsRequired</span><span class="o">(</span>
+			<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">cls</span><span class="o">,</span> <span class="n">BeanDefinitionRegistry</span> <span class="n">registry</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">source</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 前面注册的类没用，注册不进来，这里会根据等级返回BeanDefinition，注解方式会返回AnnotationAwareAspectJAutoProxyCreator
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">registry</span><span class="o">.</span><span class="na">containsBeanDefinition</span><span class="o">(</span><span class="n">AUTO_PROXY_CREATOR_BEAN_NAME</span><span class="o">))</span> <span class="o">{</span>
+			<span class="n">BeanDefinition</span> <span class="n">apcDefinition</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="na">getBeanDefinition</span><span class="o">(</span><span class="n">AUTO_PROXY_CREATOR_BEAN_NAME</span><span class="o">);</span>
+			<span class="k">if</span> <span class="o">(!</span><span class="n">cls</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">apcDefinition</span><span class="o">.</span><span class="na">getBeanClassName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="c1">// 这里会有一个比较，在注册AbstractAdvisorAutoProxyCreator时，会有一个优先级。
+</span><span class="c1"></span>				<span class="c1">// 如果这里已经注册过AbstractAdvisorAutoProxyCreator，在此注册的时候，
+</span><span class="c1"></span>				<span class="c1">// 会与之前的注册的进行优先级比较，优先级高的会覆盖掉优先级低的。注解的优先级最高。
+</span><span class="c1"></span>				<span class="kt">int</span> <span class="n">currentPriority</span> <span class="o">=</span> <span class="n">findPriorityForClass</span><span class="o">(</span><span class="n">apcDefinition</span><span class="o">.</span><span class="na">getBeanClassName</span><span class="o">());</span>
+				<span class="kt">int</span> <span class="n">requiredPriority</span> <span class="o">=</span> <span class="n">findPriorityForClass</span><span class="o">(</span><span class="n">cls</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">currentPriority</span> <span class="o">&lt;</span> <span class="n">requiredPriority</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">apcDefinition</span><span class="o">.</span><span class="na">setBeanClassName</span><span class="o">(</span><span class="n">cls</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+			<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="c1">// 创建BeanDefinition，并设置一些属性。
+</span><span class="c1"></span>		<span class="n">RootBeanDefinition</span> <span class="n">beanDefinition</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RootBeanDefinition</span><span class="o">(</span><span class="n">cls</span><span class="o">);</span>
+		<span class="n">beanDefinition</span><span class="o">.</span><span class="na">setSource</span><span class="o">(</span><span class="n">source</span><span class="o">);</span>
+		<span class="n">beanDefinition</span><span class="o">.</span><span class="na">getPropertyValues</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="s">&#34;order&#34;</span><span class="o">,</span> <span class="n">Ordered</span><span class="o">.</span><span class="na">HIGHEST_PRECEDENCE</span><span class="o">);</span>
+		<span class="n">beanDefinition</span><span class="o">.</span><span class="na">setRole</span><span class="o">(</span><span class="n">BeanDefinition</span><span class="o">.</span><span class="na">ROLE_INFRASTRUCTURE</span><span class="o">);</span>
+		<span class="c1">// 注册到BeanDefinitionRegistry
+</span><span class="c1"></span>		<span class="n">registry</span><span class="o">.</span><span class="na">registerBeanDefinition</span><span class="o">(</span><span class="n">AUTO_PROXY_CREATOR_BEAN_NAME</span><span class="o">,</span> <span class="n">beanDefinition</span><span class="o">);</span>
+		<span class="k">return</span> <span class="n">beanDefinition</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>首先这里会判断容器中是否包含指定名称的 BeanDefinition，如果包含，拿这次将要注册的类型与已存在的类型进行优先级比对，以优先级高的为准进行 BeanDefinition 的注册。</p>
+<p>看一下获取优先级的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AopConfigUtils</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Class</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">APC_PRIORITY_LIST</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">3</span><span class="o">);</span>
+
+	<span class="kd">static</span> <span class="o">{</span>
+		<span class="c1">// 这里默认包含三个代理生成类
+</span><span class="c1"></span>		<span class="c1">// Set up the escalation list...
+</span><span class="c1"></span>		<span class="n">APC_PRIORITY_LIST</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">InfrastructureAdvisorAutoProxyCreator</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="n">APC_PRIORITY_LIST</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">AspectJAwareAdvisorAutoProxyCreator</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="n">APC_PRIORITY_LIST</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">AnnotationAwareAspectJAutoProxyCreator</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+	<span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">findPriorityForClass</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">String</span> <span class="n">className</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">APC_PRIORITY_LIST</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+			<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span> <span class="o">=</span> <span class="n">APC_PRIORITY_LIST</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">className</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">i</span><span class="o">;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span>
+				<span class="s">&#34;Class name [&#34;</span> <span class="o">+</span> <span class="n">className</span> <span class="o">+</span> <span class="s">&#34;] is not a known auto-proxy creator class&#34;</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 AopConfigUtils 静态代码块中，初始化了三个 BeanPostProcessor 的实现，按照在 list 容器中的索引大小来确定优先级。优先级大小顺序为：</p>
+<p>AnnotationAwareAspectJAutoProxyCreator &gt; AspectJAwareAdvisorAutoProxyCreator &gt; InfrastructureAdvisorAutoProxyCreator</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-11-29</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/08-configuration-class-post-processor/" class="prev" rel="prev" title="08 ConfigurationClassPostProcessor源码解析"><i class="fas fa-angle-left fa-fw"></i>08 ConfigurationClassPostProcessor源码解析</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>
