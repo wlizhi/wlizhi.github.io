@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sun, 29 Nov 2020 19:04:06 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Mon, 30 Nov 2020 18:01:17 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>10 Aop - Advisor的搜集</title>
+    <link>https://wlizhi.cc/posts/spring/10-aop-advisor-collect/</link>
+    <pubDate>Mon, 30 Nov 2020 18:01:17 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/10-aop-advisor-collect/</guid>
+    <description><![CDATA[AOP Advisor的搜集]]></description>
+</item><item>
     <title>09 AOP - AbstractAutoProxyCreator的注册</title>
     <link>https://wlizhi.cc/posts/spring/09-aop-support-register/</link>
     <pubDate>Sun, 29 Nov 2020 19:04:06 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/01-spring-main-xml-parse/</guid>
     <description><![CDATA[<p>Spring源码的程序入口，和XML解析的源码流程。</p>]]></description>
-</item><item>
-    <title>其他 - 转载</title>
-    <link>https://wlizhi.cc/posts/docs/other-blog-link/</link>
-    <pubDate>Sat, 21 Nov 2020 19:16:51 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/docs/other-blog-link/</guid>
-    <description><![CDATA[<p>本章记录一些博客的链接，经常百度的一些内容，以链接的方式记录在这里，使用站内搜索引擎方便查找。</p>]]></description>
 </item></channel>
 </rss>
