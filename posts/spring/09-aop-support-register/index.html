@@ -170,7 +170,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>我们在使用Spring XML配置方式使用 <a href="aop:aspectj-autoproxy/">aop:aspectj-autoproxy/</a> 标签激活代理，在 init() 中注册了 <code>aspectj-autoproxy</code> 属性的解析类，在这个解析类中，注入了 AnnotationAwareAspectJAutoProxyCreator 的 BeanDefinition。
+</div><p>我们在使用Spring XML配置方式使用 <code>&lt;aop:aspectj-autoproxy/&gt;</code> 标签激活代理，在 init() 中注册了 <code>aspectj-autoproxy</code> 属性的解析类，在这个解析类中，注入了 AnnotationAwareAspectJAutoProxyCreator 的 BeanDefinition。
 源码如下：<br>
 第一步</p>
 <div class="highlight"><div class="chroma">
