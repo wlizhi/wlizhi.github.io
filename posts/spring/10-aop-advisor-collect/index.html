@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/10-aop-advisor-collect\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4949 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  5935 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/10-aop-advisor-collect\/","datePublished": "2020-11-30T18:01:17+08:00","dateModified": "2020-11-30T18:01:17+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">10 AOP - Advisor的封装与搜集</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-30">2020-11-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4949 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/posts/spring/10-aop-advisor-collect/" class="leancloud_visitors" data-flag-title="10 AOP - Advisor的封装与搜集">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-30">2020-11-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5935 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;<span id="/posts/spring/10-aop-advisor-collect/" class="leancloud_visitors" data-flag-title="10 AOP - Advisor的封装与搜集">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -118,7 +118,13 @@
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
     <li><a href="#1-主流程">1 主流程</a></li>
-    <li><a href="#2-搜集封装advisor">2 搜集封装Advisor</a></li>
+    <li><a href="#2-搜集封装advisor">2 搜集封装Advisor</a>
+      <ul>
+        <li><a href="#21-搜集流程">2.1 搜集流程</a></li>
+        <li><a href="#22-pointcut的获取">2.2 PointCut的获取</a></li>
+        <li><a href="#23-advisor的初始化">2.3 Advisor的初始化</a></li>
+      </ul>
+    </li>
     <li><a href="#3-筛选出匹配的advisor">3 筛选出匹配的Advisor</a></li>
     <li><a href="#4-搜集容器中所有的advisor的流程">4 搜集容器中所有的Advisor的流程</a></li>
   </ul>
@@ -223,6 +229,7 @@
         </div>
     </div></p>
 <h2 id="2-搜集封装advisor">2 搜集封装Advisor</h2>
+<h3 id="21-搜集流程">2.1 搜集流程</h3>
 <p>getAdvicesAndAdvisorsForBean() 会调用到 findEligibleAdvisors()。来到这个方法：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -700,6 +707,7 @@
 <li>获取到通知方法的 PointCut() 对象，如果有方法没有切点表达式，直接返回null，这种情况会被忽略，不被加入到 Advisor 列表中。</li>
 <li>创建 Advisor 对象，封装切点表达式、通知方法等必要信息。</li>
 </ol>
+<h3 id="22-pointcut的获取">2.2 PointCut的获取</h3>
 <p>关于如何获取 PointCut 的，源码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -807,6 +815,234 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>从上面代码可以看到，ASPECTJ_ANNOTATION_CLASSES数组常量中，预定义了支持切点表达式的注解。如果能在当前方法上找到任何一种，就将这个切点信息封装成 AspectJAnnotation。</p>
+<h3 id="23-advisor的初始化">2.3 Advisor的初始化</h3>
+<p>这里还有一个重点，new InstantiationModelAwarePointcutAdvisorImpl 中的初始化过程。</p>
+<p>构造函数源码如下：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="hl"><span class="lnt">18
+</span></span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">InstantiationModelAwarePointcutAdvisorImpl</span>
+		<span class="kd">implements</span> <span class="n">InstantiationModelAwarePointcutAdvisor</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+<span class="kd">public</span> <span class="nf">InstantiationModelAwarePointcutAdvisorImpl</span><span class="o">(</span><span class="n">AspectJExpressionPointcut</span> <span class="n">declaredPointcut</span><span class="o">,</span>
+			<span class="n">Method</span> <span class="n">aspectJAdviceMethod</span><span class="o">,</span> <span class="n">AspectJAdvisorFactory</span> <span class="n">aspectJAdvisorFactory</span><span class="o">,</span>
+			<span class="n">MetadataAwareAspectInstanceFactory</span> <span class="n">aspectInstanceFactory</span><span class="o">,</span> <span class="kt">int</span> <span class="n">declarationOrder</span><span class="o">,</span> <span class="n">String</span> <span class="n">aspectName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 切点、切面名称、通知方法名称、等等一系列信息的封装
+</span><span class="c1"></span>		<span class="k">this</span><span class="o">.</span><span class="na">declaredPointcut</span> <span class="o">=</span> <span class="n">declaredPointcut</span><span class="o">;</span>
+		<span class="c1">// 省略...
+</span><span class="c1"></span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">aspectInstanceFactory</span><span class="o">.</span><span class="na">getAspectMetadata</span><span class="o">().</span><span class="na">isLazilyInstantiated</span><span class="o">())</span> <span class="o">{</span>
+			<span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+			<span class="c1">// A singleton aspect.
+</span><span class="c1"></span>			<span class="k">this</span><span class="o">.</span><span class="na">pointcut</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">declaredPointcut</span><span class="o">;</span>
+			<span class="k">this</span><span class="o">.</span><span class="na">lazy</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+			<span class="c1">// TODO 重点，实例化的过程，这里封装了具体的Advice
+</span><span class="hl"><span class="c1"></span>			<span class="k">this</span><span class="o">.</span><span class="na">instantiatedAdvice</span> <span class="o">=</span> <span class="n">instantiateAdvice</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">declaredPointcut</span><span class="o">);</span>
+</span>		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+重点方法是 instantiateAdvice()，这里完成了 Advice 的创建。</p>
+<p>继续向下跟踪代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">InstantiationModelAwarePointcutAdvisorImpl</span>
+		<span class="kd">implements</span> <span class="n">InstantiationModelAwarePointcutAdvisor</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+<span class="kd">private</span> <span class="n">Advice</span> <span class="nf">instantiateAdvice</span><span class="o">(</span><span class="n">AspectJExpressionPointcut</span> <span class="n">pointcut</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// TODO 重点getAdvice
+</span><span class="c1"></span>		<span class="n">Advice</span> <span class="n">advice</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">aspectJAdvisorFactory</span><span class="o">.</span><span class="na">getAdvice</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">aspectJAdviceMethod</span><span class="o">,</span> <span class="n">pointcut</span><span class="o">,</span>
+				<span class="k">this</span><span class="o">.</span><span class="na">aspectInstanceFactory</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">declarationOrder</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">aspectName</span><span class="o">);</span>
+		<span class="k">return</span> <span class="o">(</span><span class="n">advice</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">advice</span> <span class="o">:</span> <span class="n">EMPTY_ADVICE</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>来到 getAdvice()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ReflectiveAspectJAdvisorFactory</span> <span class="kd">extends</span> <span class="n">AbstractAspectJAdvisorFactory</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="n">Advice</span> <span class="nf">getAdvice</span><span class="o">(</span><span class="n">Method</span> <span class="n">candidateAdviceMethod</span><span class="o">,</span> <span class="n">AspectJExpressionPointcut</span> <span class="n">expressionPointcut</span><span class="o">,</span>
+			<span class="n">MetadataAwareAspectInstanceFactory</span> <span class="n">aspectInstanceFactory</span><span class="o">,</span> <span class="kt">int</span> <span class="n">declarationOrder</span><span class="o">,</span> <span class="n">String</span> <span class="n">aspectName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 获取切面类
+</span><span class="c1"></span>		<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">candidateAspectClass</span> <span class="o">=</span> <span class="n">aspectInstanceFactory</span><span class="o">.</span><span class="na">getAspectMetadata</span><span class="o">().</span><span class="na">getAspectClass</span><span class="o">();</span>
+		<span class="n">validate</span><span class="o">(</span><span class="n">candidateAspectClass</span><span class="o">);</span>
+		<span class="c1">// 查找切点表达式、五种通知增强注解。@Before等五种。
+</span><span class="c1"></span>		<span class="n">AspectJAnnotation</span><span class="o">&lt;?&gt;</span> <span class="n">aspectJAnnotation</span> <span class="o">=</span>
+				<span class="n">AbstractAspectJAdvisorFactory</span><span class="o">.</span><span class="na">findAspectJAnnotationOnMethod</span><span class="o">(</span><span class="n">candidateAdviceMethod</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">aspectJAnnotation</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="c1">// 省略部分代码...
+</span><span class="c1"></span>		<span class="n">AbstractAspectJAdvice</span> <span class="n">springAdvice</span><span class="o">;</span>
+		<span class="c1">// TODO 执行判断，针对不同类型的通知，封装不同类型的Advice
+</span><span class="c1"></span>        <span class="c1">//  这几个Advice的实现类要记一下。主要以是否实现MethodInterceptor来区分，有的实现了，有的没有。
+</span><span class="c1"></span>		<span class="k">switch</span> <span class="o">(</span><span class="n">aspectJAnnotation</span><span class="o">.</span><span class="na">getAnnotationType</span><span class="o">())</span> <span class="o">{</span>
+			<span class="k">case</span> <span class="n">AtPointcut</span><span class="o">:</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+					<span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Processing pointcut &#39;&#34;</span> <span class="o">+</span> <span class="n">candidateAdviceMethod</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+			<span class="k">case</span> <span class="n">AtAround</span><span class="o">:</span>
+				<span class="n">springAdvice</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AspectJAroundAdvice</span><span class="o">(</span>
+						<span class="n">candidateAdviceMethod</span><span class="o">,</span> <span class="n">expressionPointcut</span><span class="o">,</span> <span class="n">aspectInstanceFactory</span><span class="o">);</span>
+				<span class="k">break</span><span class="o">;</span>
+			<span class="k">case</span> <span class="n">AtBefore</span><span class="o">:</span>
+				<span class="n">springAdvice</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AspectJMethodBeforeAdvice</span><span class="o">(</span>
+						<span class="n">candidateAdviceMethod</span><span class="o">,</span> <span class="n">expressionPointcut</span><span class="o">,</span> <span class="n">aspectInstanceFactory</span><span class="o">);</span>
+				<span class="k">break</span><span class="o">;</span>
+			<span class="k">case</span> <span class="n">AtAfter</span><span class="o">:</span>
+				<span class="n">springAdvice</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AspectJAfterAdvice</span><span class="o">(</span>
+						<span class="n">candidateAdviceMethod</span><span class="o">,</span> <span class="n">expressionPointcut</span><span class="o">,</span> <span class="n">aspectInstanceFactory</span><span class="o">);</span>
+				<span class="k">break</span><span class="o">;</span>
+			<span class="k">case</span> <span class="n">AtAfterReturning</span><span class="o">:</span>
+				<span class="n">springAdvice</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AspectJAfterReturningAdvice</span><span class="o">(</span>
+						<span class="n">candidateAdviceMethod</span><span class="o">,</span> <span class="n">expressionPointcut</span><span class="o">,</span> <span class="n">aspectInstanceFactory</span><span class="o">);</span>
+				<span class="n">AfterReturning</span> <span class="n">afterReturningAnnotation</span> <span class="o">=</span> <span class="o">(</span><span class="n">AfterReturning</span><span class="o">)</span> <span class="n">aspectJAnnotation</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">();</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">hasText</span><span class="o">(</span><span class="n">afterReturningAnnotation</span><span class="o">.</span><span class="na">returning</span><span class="o">()))</span> <span class="o">{</span>
+					<span class="n">springAdvice</span><span class="o">.</span><span class="na">setReturningName</span><span class="o">(</span><span class="n">afterReturningAnnotation</span><span class="o">.</span><span class="na">returning</span><span class="o">());</span>
+				<span class="o">}</span>
+				<span class="k">break</span><span class="o">;</span>
+			<span class="k">case</span> <span class="n">AtAfterThrowing</span><span class="o">:</span>
+				<span class="n">springAdvice</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AspectJAfterThrowingAdvice</span><span class="o">(</span>
+						<span class="n">candidateAdviceMethod</span><span class="o">,</span> <span class="n">expressionPointcut</span><span class="o">,</span> <span class="n">aspectInstanceFactory</span><span class="o">);</span>
+				<span class="n">AfterThrowing</span> <span class="n">afterThrowingAnnotation</span> <span class="o">=</span> <span class="o">(</span><span class="n">AfterThrowing</span><span class="o">)</span> <span class="n">aspectJAnnotation</span><span class="o">.</span><span class="na">getAnnotation</span><span class="o">();</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">StringUtils</span><span class="o">.</span><span class="na">hasText</span><span class="o">(</span><span class="n">afterThrowingAnnotation</span><span class="o">.</span><span class="na">throwing</span><span class="o">()))</span> <span class="o">{</span>
+					<span class="n">springAdvice</span><span class="o">.</span><span class="na">setThrowingName</span><span class="o">(</span><span class="n">afterThrowingAnnotation</span><span class="o">.</span><span class="na">throwing</span><span class="o">());</span>
+				<span class="o">}</span>
+				<span class="k">break</span><span class="o">;</span>
+			<span class="k">default</span><span class="o">:</span>
+				<span class="k">throw</span> <span class="k">new</span> <span class="n">UnsupportedOperationException</span><span class="o">(</span>
+						<span class="s">&#34;Unsupported advice type on method: &#34;</span> <span class="o">+</span> <span class="n">candidateAdviceMethod</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">springAdvice</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>上面代码中，AspectJMethodBeforeAdvice 等几个Advice的实现要看一下，这里五个 Advice 实现，部分实现了MethodInterceptor。
+实现了MethodInterceptor的：</p>
+<ol>
+<li>AspectJAroundAdvice</li>
+<li>AspectJAfterAdvice</li>
+<li>AspectJAfterThrowingAdvice</li>
+</ol>
+<p>未实现MethodInterceptor的 &ndash;&gt; 生成执行链时依赖的适配器：</p>
+<ol>
+<li>AspectJMethodBeforeAdvice &ndash;&gt; MethodBeforeAdviceAdapter</li>
+<li>AspectJAfterReturningAdvice &ndash;&gt; AfterReturningAdviceAdapter</li>
+</ol>
+<p>另外还有一个未用到的Advice，也没有实现MethodInterceptor<br>
+ThrowsAdvice &ndash;&gt; ThrowsAdviceAdapter</p>
+<p>在生成搭理对象后，真正执行代理方法生成执行链的时候，实现了MethodInterceptor和未实现前者的，调用逻辑上有些差别。</p>
+<p>实现了MethodInterceptor的，会直接加入到执行链，未实现的，会通过对应的适配器，调用 getInterceptor() 来获取 MethodInterceptor，然后将 MethodInterceptor 加入执行链。<del>（这些是后话）</del></p>
+</div>
+        </div>
+    </div>
 <h2 id="3-筛选出匹配的advisor">3 筛选出匹配的Advisor</h2>
 <p>在获取到容器中所有的通知方法封装成的 Advisor 后，会调用 findAdvisorsThatCanApply()，将 beanName 放入到一个 ThreadLocal 类型的变量中，然后调用 findAdvisorsThatCanApply() 的重载方法。调用完毕之后，会将 ThreadLocal 变量中的 beanName置空。</p>
 <p>findAdvisorsThatCanApply() 重载方法源码如下：</p>
