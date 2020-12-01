@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>07 复杂对象的构建方式 - FactoryBean - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="07 复杂对象的构建方式 - FactoryBean" />
+        <title>07 复杂对象的构建方式 - FactoryBean - 暗夜零星</title><meta name="Description" content="介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。"><meta property="og:title" content="07 复杂对象的构建方式 - FactoryBean" />
 <meta property="og:description" content="介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://wlizhi.cc/posts/spring/07-factory-bean/" />
@@ -29,13 +29,13 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/07-factory-bean\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  3211 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  3276 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/07-factory-bean\/","datePublished": "2020-11-28T14:26:12+08:00","dateModified": "2020-11-28T14:26:12+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
                 "@type": "Person",
                 "name": "Wlizhi"
-            },"description": ""
+            },"description": "介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。"
     }
     </script></head>
     <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">07 复杂对象的构建方式 - FactoryBean</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-28">2020-11-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3211 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-28">2020-11-28</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3276 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;<span id="/posts/spring/07-factory-bean/" class="leancloud_visitors" data-flag-title="07 复杂对象的构建方式 - FactoryBean">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -117,6 +117,7 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
+    <li><a href="#前言">前言</a></li>
     <li><a href="#1-factorybean-的作用">1 FactoryBean 的作用</a></li>
     <li><a href="#2-factorybean-接口的定义">2 FactoryBean 接口的定义</a></li>
     <li><a href="#3-应用场景">3 应用场景</a></li>
@@ -129,7 +130,11 @@
     </li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。</p>
+            </div><div class="content" id="content"><h2 id="前言">前言</h2>
+<hr>
+<p><strong>spring源码系列文章，示例代码的中文注释，均是copy自 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/spring-framework</a> 。</strong></p>
+<p><strong>链接中的 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">Spring源码</a> 是本人从 github 中下载，然后以自身理解对核心流程及主要节点做了详细的中文注释。建议下载、结合 Spring 系列文章阅读源码。点此查看 <a href="https://github.com/spring-projects/spring-framework" target="_blank" rel="noopener noreffer">原版spring源码</a> 。</strong></p>
+<hr>
 <h2 id="1-factorybean-的作用">1 FactoryBean 的作用</h2>
 <p>Spring 中有两种类型的Bean，一种是普通Bean，另一种是工厂Bean 即 FactoryBean。FactoryBean跟普通Bean不同，其返回的对象不是指定类的一个实例，而是该FactoryBean的getObject方法所返回的对象。创建出来的对象是否属于单例由isSingleton中的返回决定。</p>
 <p>一般情况下，Spring通过反射机制利用<bean>的class属性指定实现类实例化Bean，在某些情况下，实例化Bean过程比较复杂，如果按照传统的方式，则需要在<bean>中提供大量的配置信息。配置方式的灵活性是受限的，这时采用编码的方式可能会得到一个简单的方案。Spring为此提供了一个org.springframework.bean.factory.FactoryBean的工厂类接口，用户可以通过实现该接口定制实例化Bean的逻辑。FactoryBean接口对于Spring框架来说占用重要的地位，Spring自身就提供了70多个FactoryBean的实现。它们隐藏了实例化一些复杂Bean的细节，给上层应用带来了便利。从Spring3.0开始，FactoryBean开始支持泛型，即接口声明改为FactoryBean<T>的形式</p>

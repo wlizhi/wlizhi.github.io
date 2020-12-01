@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>08 ConfigurationClassPostProcessor源码解析 - 暗夜零星</title><meta name="Description" content="这是我的博客"><meta property="og:title" content="08 ConfigurationClassPostProcessor源码解析" />
+        <title>08 ConfigurationClassPostProcessor源码解析 - 暗夜零星</title><meta name="Description" content="这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。"><meta property="og:title" content="08 ConfigurationClassPostProcessor源码解析" />
 <meta property="og:description" content="这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://wlizhi.cc/posts/spring/08-configuration-class-post-processor/" />
@@ -29,13 +29,13 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/08-configuration-class-post-processor\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  2751 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  2843 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/08-configuration-class-post-processor\/","datePublished": "2020-11-29T10:11:28+08:00","dateModified": "2020-11-29T10:11:28+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
                 "@type": "Person",
                 "name": "Wlizhi"
-            },"description": ""
+            },"description": "这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。"
     }
     </script></head>
     <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">08 ConfigurationClassPostProcessor源码解析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-29">2020-11-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2751 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-29">2020-11-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2843 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/08-configuration-class-post-processor/" class="leancloud_visitors" data-flag-title="08 ConfigurationClassPostProcessor源码解析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -117,13 +117,18 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
+    <li><a href="#前言">前言</a></li>
     <li><a href="#1-主流程">1 主流程</a></li>
     <li><a href="#2-循环所有benaname校验bean是否符合">2 循环所有benaName、校验bean是否符合</a></li>
     <li><a href="#3-解析">3 解析</a></li>
     <li><a href="#4-装载beandefinition">4 装载BeanDefinition</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。</p>
+            </div><div class="content" id="content"><h2 id="前言">前言</h2>
+<hr>
+<p><strong>spring源码系列文章，示例代码的中文注释，均是copy自 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/spring-framework</a> 。</strong></p>
+<p><strong>链接中的 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">Spring源码</a> 是本人从 github 中下载，然后以自身理解对核心流程及主要节点做了详细的中文注释。建议下载、结合 Spring 系列文章阅读源码。点此查看 <a href="https://github.com/spring-projects/spring-framework" target="_blank" rel="noopener noreffer">原版spring源码</a> 。</strong></p>
+<hr>
 <h2 id="1-主流程">1 主流程</h2>
 <p>在调用 invokeBeanDefinitionRegistryPostProcessors() 是，会调用到这个实现类中，来到源码：
 <div class="highlight"><div class="chroma">

@@ -5,7 +5,7 @@
         <description>spring - 分类 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
             <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 01 Dec 2020 13:48:59 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/categories/spring/" rel="self" type="application/rss+xml" /><item>
-    <title>11 Aop 代理实例的创建</title>
+    <title>11 AOP 代理实例的创建</title>
     <link>https://wlizhi.cc/posts/spring/11-aop-proxy-create-processor/</link>
     <pubDate>Tue, 01 Dec 2020 13:48:59 &#43;0800</pubDate>
     <author>作者</author>
@@ -24,21 +24,21 @@
     <pubDate>Sun, 29 Nov 2020 19:04:06 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/09-aop-support-register/</guid>
-    <description><![CDATA[<p>AOP - AbstractAutoProxyCreator的注册</p>]]></description>
+    <description><![CDATA[AOP - AbstractAutoProxyCreator的注册流程解析]]></description>
 </item><item>
     <title>08 ConfigurationClassPostProcessor源码解析</title>
     <link>https://wlizhi.cc/posts/spring/08-configuration-class-post-processor/</link>
     <pubDate>Sun, 29 Nov 2020 10:11:28 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/08-configuration-class-post-processor/</guid>
-    <description><![CDATA[<p>这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。</p>]]></description>
+    <description><![CDATA[这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。]]></description>
 </item><item>
     <title>07 复杂对象的构建方式 - FactoryBean</title>
     <link>https://wlizhi.cc/posts/spring/07-factory-bean/</link>
     <pubDate>Sat, 28 Nov 2020 14:26:12 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/07-factory-bean/</guid>
-    <description><![CDATA[<p>介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。</p>]]></description>
+    <description><![CDATA[介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。]]></description>
 </item><item>
     <title>06 循环依赖的实现原理</title>
     <link>https://wlizhi.cc/posts/spring/06-cyclic-dependence/</link>
@@ -52,21 +52,21 @@
     <pubDate>Thu, 26 Nov 2020 12:26:00 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</guid>
-    <description><![CDATA[<p>详细解读spring中bean的实例化流程，由于篇幅原因，循环依赖、一些流程节点的详细解析在后续文章中讨论。</p>]]></description>
+    <description><![CDATA[详细解读spring中bean的实例化流程，由于篇幅原因，循环依赖、一些流程节点的详细解析在后续文章中讨论。]]></description>
 </item><item>
     <title>04 BeanPostProcessor的注册</title>
     <link>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</link>
     <pubDate>Tue, 24 Nov 2020 11:05:21 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</guid>
-    <description><![CDATA[<p>spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。</p>]]></description>
+    <description><![CDATA[spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。]]></description>
 </item><item>
     <title>03 BeanFactoryPostProcessor的注册与执行</title>
     <link>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</link>
     <pubDate>Tue, 24 Nov 2020 09:14:28 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</guid>
-    <description><![CDATA[<p>spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法</p>]]></description>
+    <description><![CDATA[spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法]]></description>
 </item><item>
     <title>02 Spring标签解析-BeanDefinitionParser</title>
     <link>https://wlizhi.cc/posts/spring/02-spring-tag-parse-bean-definition-parser/</link>
