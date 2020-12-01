@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>12 Aop 执行链的创建和执行原理 - 暗夜零星</title><meta name="Description" content="AOP 中代理对象生成后，在调用代理方法时，以 JDK 动态代理为例，执行链的生成、执行链火炬传递式的调用源码解析。"><meta property="og:title" content="12 Aop 执行链的创建和执行原理" />
+<meta property="og:description" content="AOP 中代理对象生成后，在调用代理方法时，以 JDK 动态代理为例，执行链的生成、执行链火炬传递式的调用源码解析。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/12-aop-proxy-execute-processor/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-12-01T20:34:31+08:00" />
+<meta property="article:modified_time" content="2020-12-01T20:34:31+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="12 Aop 执行链的创建和执行原理"/>
+<meta name="twitter:description" content="AOP 中代理对象生成后，在调用代理方法时，以 JDK 动态代理为例，执行链的生成、执行链火炬传递式的调用源码解析。"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/12-aop-proxy-execute-processor/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/11-aop-proxy-create-processor/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "12 Aop 执行链的创建和执行原理",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/12-aop-proxy-execute-processor\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  4830 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/12-aop-proxy-execute-processor\/","datePublished": "2020-12-01T20:34:31+08:00","dateModified": "2020-12-01T20:34:31+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": "AOP 中代理对象生成后，在调用代理方法时，以 JDK 动态代理为例，执行链的生成、执行链火炬传递式的调用源码解析。"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">12 Aop 执行链的创建和执行原理</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-01">2020-12-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4830 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/posts/spring/12-aop-proxy-execute-processor/" class="leancloud_visitors" data-flag-title="12 Aop 执行链的创建和执行原理">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#1-主流程">1 主流程</a></li>
+    <li><a href="#2-执行链的构建">2 执行链的构建</a></li>
+    <li><a href="#3-执行链递归调用的火炬传递">3 执行链递归调用的火炬传递</a></li>
+    <li><a href="#4-总结">4 总结</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="前言">前言</h2>
+<hr>
+<p><strong>spring源码系列文章，示例代码的中文注释，均是copy自 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/spring-framework</a> 。</strong></p>
+<p><strong>链接中的 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">Spring源码</a> 是本人从 github 中下载，然后以自身理解对核心流程及主要节点做了详细的中文注释。建议下载、结合 Spring 系列文章阅读源码。点此查看 <a href="https://github.com/spring-projects/spring-framework" target="_blank" rel="noopener noreffer">原版spring源码</a> 。</strong></p>
+<hr>
+<h2 id="1-主流程">1 主流程</h2>
+<p>以 jdk 动态代理为例，在代理对象生成后，会加入到 ioc 容器中。当有代码调用到对应的方法时，会走到 InvocationHandler 的 invoke()。</p>
+<p>在 spring-aop 模块中，jdk动态代理是在 JdkDynamicAopProxy.getProxy() 中生成的。在生成代理对象时，Proxy.newProxyInstance() 中第三个参数传入的是 this，JdkDynamicAopProxy本身也是 InvocationHandler
+的实现类。那么，在调用代理对象方法时，一定会调用到 JdkDynamicAopProxy.invoke()。</p>
+<p>来到 invoke() 源码：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="hl"><span class="lnt">20
+</span></span><span class="hl"><span class="lnt">21
+</span></span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="hl"><span class="lnt">29
+</span></span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="hl"><span class="lnt">36
+</span></span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="hl"><span class="lnt">40
+</span></span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="hl"><span class="lnt">43
+</span></span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="hl"><span class="lnt">58
+</span></span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">JdkDynamicAopProxy</span> <span class="kd">implements</span> <span class="n">AopProxy</span><span class="o">,</span> <span class="n">InvocationHandler</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+   <span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+   		<span class="n">MethodInvocation</span> <span class="n">invocation</span><span class="o">;</span>
+   		<span class="c1">// 存储在调用方法之前，当前线程中的方法调用链中的上一个代理对象。
+</span><span class="c1"></span>   		<span class="c1">// 比如 代理A -&gt; 代理B -&gt; 当前代理方法。那么方法内 oldProxy 会存储前面的代理对象。因为在这个方法执行完之前，会将
+</span><span class="c1"></span>   		<span class="c1">// 一个全局的ThreadLocal变量置换为当前的代理对象，旧的值需要缓存起来，等到当前方法执行结束，再设置回原值。
+</span><span class="c1"></span>   		<span class="n">Object</span> <span class="n">oldProxy</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+   		<span class="kt">boolean</span> <span class="n">setProxyContext</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+   
+   		<span class="c1">// 从代理工厂中拿到TargetSource对象，该对象包装了被代理实例bean
+</span><span class="c1"></span>   		<span class="n">TargetSource</span> <span class="n">targetSource</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">advised</span><span class="o">.</span><span class="na">targetSource</span><span class="o">;</span>
+   		<span class="n">Object</span> <span class="n">target</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+   
+   		<span class="k">try</span> <span class="o">{</span>
+   			<span class="c1">// 被代理对象的equals方法和hashCode方法不被代理的，不会走切面，此处代码省略...
+</span><span class="c1"></span>   
+   			<span class="n">Object</span> <span class="n">retVal</span><span class="o">;</span>
+   			<span class="c1">// 如果需要暴露代理对象（在配置文件或者注解中全局配置的），则将当前代理对象放入到一个全局的ThreadLocal变量中。
+</span><span class="c1"></span>   			<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">advised</span><span class="o">.</span><span class="na">exposeProxy</span><span class="o">)</span> <span class="o">{</span>
+<span class="hl">   				<span class="n">oldProxy</span> <span class="o">=</span> <span class="n">AopContext</span><span class="o">.</span><span class="na">setCurrentProxy</span><span class="o">(</span><span class="n">proxy</span><span class="o">);</span>
+</span><span class="hl">   				<span class="n">setProxyContext</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span>   			<span class="o">}</span>
+   
+   			<span class="c1">// 这个target就是被代理实例
+</span><span class="c1"></span>   			<span class="n">target</span> <span class="o">=</span> <span class="n">targetSource</span><span class="o">.</span><span class="na">getTarget</span><span class="o">();</span>
+   			<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span> <span class="o">=</span> <span class="o">(</span><span class="n">target</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">target</span><span class="o">.</span><span class="na">getClass</span><span class="o">()</span> <span class="o">:</span> <span class="kc">null</span><span class="o">);</span>
+   
+   			<span class="c1">// 从代理工厂中拿过滤器链 Object是一个MethodInterceptor类型的对象，其实就是一个advice对象，或者说是MethodInterceptor
+</span><span class="hl"><span class="c1"></span>   			<span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">chain</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">advised</span><span class="o">.</span><span class="na">getInterceptorsAndDynamicInterceptionAdvice</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">targetClass</span><span class="o">);</span>
+</span>   
+   			<span class="c1">// 如果该方法没有执行链，则说明这个方法不需要被拦截，则直接反射调用。
+</span><span class="c1"></span>   			<span class="c1">// 因为执行链不论是否为空，都会被缓存到一个ConcurrentHashMap中，执行只有第一次相对较慢。
+</span><span class="c1"></span>   			<span class="k">if</span> <span class="o">(</span><span class="n">chain</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+   				<span class="n">Object</span><span class="o">[]</span> <span class="n">argsToUse</span> <span class="o">=</span> <span class="n">AopProxyUtils</span><span class="o">.</span><span class="na">adaptArgumentsIfNecessary</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+   				<span class="c1">// 这里返回了method.invoke()执行后的返回值。
+</span><span class="hl"><span class="c1"></span>   				<span class="n">retVal</span> <span class="o">=</span> <span class="n">AopUtils</span><span class="o">.</span><span class="na">invokeJoinpointUsingReflection</span><span class="o">(</span><span class="n">target</span><span class="o">,</span> <span class="n">method</span><span class="o">,</span> <span class="n">argsToUse</span><span class="o">);</span>
+</span>   			<span class="o">}</span>
+   			<span class="k">else</span> <span class="o">{</span>
+   				<span class="c1">// 这里面调用了执行链，在执行链的调用中，会进行火炬传递。具体执行流程，重点在ReflectiveMethodInvocation.proceed()。
+</span><span class="hl"><span class="c1"></span>   				<span class="n">invocation</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ReflectiveMethodInvocation</span><span class="o">(</span><span class="n">proxy</span><span class="o">,</span> <span class="n">target</span><span class="o">,</span> <span class="n">method</span><span class="o">,</span> <span class="n">args</span><span class="o">,</span> <span class="n">targetClass</span><span class="o">,</span> <span class="n">chain</span><span class="o">);</span>
+</span>   				<span class="c1">// 在递归结束后，这里最终也会返回实际方法的返回值。火炬传递的过程，实际上也是递归，只是将ReflectiveMethodInvocation
+</span><span class="c1"></span>   				<span class="c1">// 本身当做参数不断地向下传递。
+</span><span class="hl"><span class="c1"></span>   				<span class="n">retVal</span> <span class="o">=</span> <span class="n">invocation</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+</span>   			<span class="o">}</span>
+            <span class="c1">// 省略无关代码...
+</span><span class="c1"></span>   			<span class="k">return</span> <span class="n">retVal</span><span class="o">;</span>
+   		<span class="o">}</span><span class="k">finally</span> <span class="o">{</span>
+   		    <span class="c1">// 单例情况下，targetSource类型是SingletonTargetSource，这个类中的releaseTarget是个空方法，不用看。
+</span><span class="c1"></span>   			<span class="k">if</span> <span class="o">(</span><span class="n">target</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">targetSource</span><span class="o">.</span><span class="na">isStatic</span><span class="o">())</span> <span class="o">{</span>
+   				<span class="n">targetSource</span><span class="o">.</span><span class="na">releaseTarget</span><span class="o">(</span><span class="n">target</span><span class="o">);</span>
+   			<span class="o">}</span><span class="c1">// 如果配置了允许暴露代理对象，在前面设置ThreadLocal变量时，会把局部变量setProxyContext设置为true
+</span><span class="c1"></span>   			<span class="k">if</span> <span class="o">(</span><span class="n">setProxyContext</span><span class="o">)</span> <span class="o">{</span>
+   				<span class="c1">// 将旧的代理对象设置到当前代理对象中，这里和执行链火炬传递式无关的。
+</span><span class="c1"></span>   				<span class="c1">// 如果当前代理方法是从一个代理对象方法内调用过来的，那么这个ThreadLocal变量中是有值的，执行当前代理对象方法时，
+</span><span class="c1"></span>   				<span class="c1">// 设置为当前的代理对象，执行完后，需要重新设置回原来的代理对象，这样才不会乱套。
+</span><span class="c1"></span>   				<span class="c1">// 其用途是，当项目中配置允许暴露代理对象时，可以通过AopContext.currentProxy() 来获取到当前线程正在执行的代理对象。
+</span><span class="c1"></span>   				<span class="c1">// Restore old proxy.
+</span><span class="hl"><span class="c1"></span>   				<span class="n">AopContext</span><span class="o">.</span><span class="na">setCurrentProxy</span><span class="o">(</span><span class="n">oldProxy</span><span class="o">);</span>
+</span>   			<span class="o">}</span>
+   		<span class="o">}</span>
+   	<span class="o">}</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+以上代码有点长，删去了一些非关键点的代码。着重看代码中高亮部分，这些是关键节点。</p>
+<p>invoke() 的主流程：</p>
+<ol>
+<li>如果允许暴露代理对象，将 ThreadLocal 类型的全局变量 currentProxy 设置为当前代理对象，将旧的代理对象放到局部变量 oldProxy 中，setProxyContext 设置为 true。</li>
+<li>获取通知方法执行链。（执行链的构建）</li>
+<li>如果执行链不为空，将其封装到 ReflectiveMethodInvocation 中，调用 proceed()。（执行链递归调用的火炬传递）</li>
+<li>如果有必要，全局变量 currentProxy 还原为调入当前方法时的状态。</li>
+</ol>
+<p>第1、4条相对简单，主要是第2、3条相对复杂些。</p>
+<h2 id="2-执行链的构建">2 执行链的构建</h2>
+<p>来到 getInterceptorsAndDynamicInterceptionAdvice()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AdvisedSupport</span> <span class="kd">extends</span> <span class="n">ProxyConfig</span> <span class="kd">implements</span> <span class="n">Advised</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="nf">getInterceptorsAndDynamicInterceptionAdvice</span><span class="o">(</span><span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">MethodCacheKey</span> <span class="n">cacheKey</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MethodCacheKey</span><span class="o">(</span><span class="n">method</span><span class="o">);</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">cached</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">methodCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">cacheKey</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">cached</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 根据Method来获取执行链。将获取到的执行链加入到缓存中，键值是根据MethodCacheKey，实际上包装的就是Method对象。
+</span><span class="c1"></span>			<span class="n">cached</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">advisorChainFactory</span><span class="o">.</span><span class="na">getInterceptorsAndDynamicInterceptionAdvice</span><span class="o">(</span>
+					<span class="k">this</span><span class="o">,</span> <span class="n">method</span><span class="o">,</span> <span class="n">targetClass</span><span class="o">);</span>
+			<span class="k">this</span><span class="o">.</span><span class="na">methodCache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">cacheKey</span><span class="o">,</span> <span class="n">cached</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">cached</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里使用了一个并发安全的map作为缓存，因为执行链的构建相对还是比较耗时的（相对 ConcurrentHashMap 的 get()），构建工作只执行一次，后面都是从缓存中获取。</p>
+<p>往下追踪代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultAdvisorChainFactory</span> <span class="kd">implements</span> <span class="n">AdvisorChainFactory</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="nf">getInterceptorsAndDynamicInterceptionAdvice</span><span class="o">(</span>
+			<span class="n">Advised</span> <span class="n">config</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span><span class="o">)</span> <span class="o">{</span>
+
+		<span class="n">AdvisorAdapterRegistry</span> <span class="n">registry</span> <span class="o">=</span> <span class="n">GlobalAdvisorAdapterRegistry</span><span class="o">.</span><span class="na">getInstance</span><span class="o">();</span>
+		<span class="n">Advisor</span><span class="o">[]</span> <span class="n">advisors</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="na">getAdvisors</span><span class="o">();</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">interceptorList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">advisors</span><span class="o">.</span><span class="na">length</span><span class="o">);</span>
+		<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">actualClass</span> <span class="o">=</span> <span class="o">(</span><span class="n">targetClass</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">targetClass</span> <span class="o">:</span> <span class="n">method</span><span class="o">.</span><span class="na">getDeclaringClass</span><span class="o">());</span>
+		<span class="n">Boolean</span> <span class="n">hasIntroductions</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+		<span class="k">for</span> <span class="o">(</span><span class="n">Advisor</span> <span class="n">advisor</span> <span class="o">:</span> <span class="n">advisors</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">advisor</span> <span class="k">instanceof</span> <span class="n">PointcutAdvisor</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">PointcutAdvisor</span> <span class="n">pointcutAdvisor</span> <span class="o">=</span> <span class="o">(</span><span class="n">PointcutAdvisor</span><span class="o">)</span> <span class="n">advisor</span><span class="o">;</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">config</span><span class="o">.</span><span class="na">isPreFiltered</span><span class="o">()</span> <span class="o">||</span> <span class="n">pointcutAdvisor</span><span class="o">.</span><span class="na">getPointcut</span><span class="o">().</span><span class="na">getClassFilter</span><span class="o">().</span><span class="na">matches</span><span class="o">(</span><span class="n">actualClass</span><span class="o">))</span> <span class="o">{</span>
+					<span class="n">MethodMatcher</span> <span class="n">mm</span> <span class="o">=</span> <span class="n">pointcutAdvisor</span><span class="o">.</span><span class="na">getPointcut</span><span class="o">().</span><span class="na">getMethodMatcher</span><span class="o">();</span>
+					<span class="kt">boolean</span> <span class="n">match</span><span class="o">;</span>
+					<span class="c1">// 省略部分代码...
+</span><span class="c1"></span>					<span class="n">match</span> <span class="o">=</span> <span class="n">mm</span><span class="o">.</span><span class="na">matches</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">actualClass</span><span class="o">);</span>
+					
+					<span class="k">if</span> <span class="o">(</span><span class="n">match</span><span class="o">)</span> <span class="o">{</span>
+						<span class="c1">// TODO 重点 获取MethodInterceptor列表。
+</span><span class="c1"></span>						<span class="n">MethodInterceptor</span><span class="o">[]</span> <span class="n">interceptors</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="na">getInterceptors</span><span class="o">(</span><span class="n">advisor</span><span class="o">);</span>
+						<span class="k">if</span> <span class="o">(</span><span class="n">mm</span><span class="o">.</span><span class="na">isRuntime</span><span class="o">())</span> <span class="o">{</span>
+							<span class="c1">// Creating a new object instance in the getInterceptors() method
+</span><span class="c1"></span>							<span class="c1">// isn&#39;t a problem as we normally cache created chains.
+</span><span class="c1"></span>							<span class="k">for</span> <span class="o">(</span><span class="n">MethodInterceptor</span> <span class="n">interceptor</span> <span class="o">:</span> <span class="n">interceptors</span><span class="o">)</span> <span class="o">{</span>
+								<span class="n">interceptorList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">InterceptorAndDynamicMethodMatcher</span><span class="o">(</span><span class="n">interceptor</span><span class="o">,</span> <span class="n">mm</span><span class="o">));</span>
+							<span class="o">}</span>
+						<span class="o">}</span>
+						<span class="k">else</span> <span class="o">{</span>
+							<span class="n">interceptorList</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">interceptors</span><span class="o">));</span>
+						<span class="o">}</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+			<span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="o">}</span>
+
+		<span class="k">return</span> <span class="n">interceptorList</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从 Advised 中拿到 advisors，里面包含了前面流程搜集的所有通知方法包装的 Advisor，对其遍历，对 PointcutAdvisor 类型的执行方法匹配，匹配为 true，调用 getInterceptors()，将获取到的 MethodInterceptor 封装到 list 中。</p>
+<p>下次再调用到当前方法时，从缓存中直接获取的就是这个 MethodInterceptor 列表。</p>
+<p>来到 getInterceptors()，看一下是怎么获取的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultAdvisorAdapterRegistry</span> <span class="kd">implements</span> <span class="n">AdvisorAdapterRegistry</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">MethodInterceptor</span><span class="o">[]</span> <span class="nf">getInterceptors</span><span class="o">(</span><span class="n">Advisor</span> <span class="n">advisor</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">UnknownAdviceTypeException</span> <span class="o">{</span>
+		<span class="c1">// 从Advice获取MethodInterceptor。before、afterReturning的增强会被AdvisorAdapter匹配到。
+</span><span class="c1"></span>		<span class="c1">// 其他自定义的增强方法，都是MethodInterceptor类型，被强转后，直接加入到interceptors中。
+</span><span class="c1"></span>		<span class="n">List</span><span class="o">&lt;</span><span class="n">MethodInterceptor</span><span class="o">&gt;</span> <span class="n">interceptors</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">3</span><span class="o">);</span>
+		<span class="n">Advice</span> <span class="n">advice</span> <span class="o">=</span> <span class="n">advisor</span><span class="o">.</span><span class="na">getAdvice</span><span class="o">();</span>
+		<span class="c1">// 如果是MethodInterceptor，将其添加到拦截器链中
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">advice</span> <span class="k">instanceof</span> <span class="n">MethodInterceptor</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">interceptors</span><span class="o">.</span><span class="na">add</span><span class="o">((</span><span class="n">MethodInterceptor</span><span class="o">)</span> <span class="n">advice</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 如果有AdviceorAdapter支持当前advice，进行适配，获取interceptor。adapters变量的值，是在无参构造函数中初始化的。
+</span><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">AdvisorAdapter</span> <span class="n">adapter</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">adapters</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">adapter</span><span class="o">.</span><span class="na">supportsAdvice</span><span class="o">(</span><span class="n">advice</span><span class="o">))</span> <span class="o">{</span>
+				<span class="n">interceptors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">adapter</span><span class="o">.</span><span class="na">getInterceptor</span><span class="o">(</span><span class="n">advisor</span><span class="o">));</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">interceptors</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="n">UnknownAdviceTypeException</span><span class="o">(</span><span class="n">advisor</span><span class="o">.</span><span class="na">getAdvice</span><span class="o">());</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">interceptors</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="n">MethodInterceptor</span><span class="o">[</span><span class="n">0</span><span class="o">]);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面代码流程：</p>
+<ol>
+<li>从 advisor 中获取 Advice 对象，如果这个 Advice 是 MethodInterceptor 类型，则直接添加到 interceptors 中</li>
+<li>遍历 adapters，如果支持当前 Advice，使用 getInterceptor 获取对应的 MethodInterceptor（至于adapters存储了什么，在哪里初始化的，<a href="/posts/spring/11-aop-proxy-create-processor/#adapters-init" rel="">前文</a>中有）。</li>
+<li>将 interceptors 转换为数组返回。</li>
+</ol>
+<p>这里看两个典型的getInterceptor得实现。</p>
+<p>@Before 注解的通知方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">MethodBeforeAdviceAdapter</span> <span class="kd">implements</span> <span class="n">AdvisorAdapter</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+	<span class="c1">// 是否支持指定的 Advice
+</span><span class="c1"></span>	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">supportsAdvice</span><span class="o">(</span><span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="o">(</span><span class="n">advice</span> <span class="k">instanceof</span> <span class="n">MethodBeforeAdvice</span><span class="o">);</span>
+	<span class="o">}</span>
+	<span class="c1">// 从Advisor中获取Advice，并封装到MethodBeforeAdviceInterceptor
+</span><span class="c1"></span>	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">MethodInterceptor</span> <span class="nf">getInterceptor</span><span class="o">(</span><span class="n">Advisor</span> <span class="n">advisor</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">MethodBeforeAdvice</span> <span class="n">advice</span> <span class="o">=</span> <span class="o">(</span><span class="n">MethodBeforeAdvice</span><span class="o">)</span> <span class="n">advisor</span><span class="o">.</span><span class="na">getAdvice</span><span class="o">();</span>
+		<span class="k">return</span> <span class="k">new</span> <span class="n">MethodBeforeAdviceInterceptor</span><span class="o">(</span><span class="n">advice</span><span class="o">);</span>
+	<span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>@AfterReturning 注解的通知方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">AfterReturningAdviceAdapter</span> <span class="kd">implements</span> <span class="n">AdvisorAdapter</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">supportsAdvice</span><span class="o">(</span><span class="n">Advice</span> <span class="n">advice</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="o">(</span><span class="n">advice</span> <span class="k">instanceof</span> <span class="n">AfterReturningAdvice</span><span class="o">);</span> <span class="o">}</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">MethodInterceptor</span> <span class="nf">getInterceptor</span><span class="o">(</span><span class="n">Advisor</span> <span class="n">advisor</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">AfterReturningAdvice</span> <span class="n">advice</span> <span class="o">=</span> <span class="o">(</span><span class="n">AfterReturningAdvice</span><span class="o">)</span> <span class="n">advisor</span><span class="o">.</span><span class="na">getAdvice</span><span class="o">();</span>
+		<span class="k">return</span> <span class="k">new</span> <span class="n">AfterReturningAdviceInterceptor</span><span class="o">(</span><span class="n">advice</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面可以看到，几乎是一模一样的逻辑。封装过程很简单。</p>
+<h2 id="3-执行链递归调用的火炬传递">3 执行链递归调用的火炬传递</h2>
+<p>构建完执行链之后，就是执行了。</p>
+<p>从<a href="#1-%e4%b8%bb%e6%b5%81%e7%a8%8b" rel="">主流程源码</a>中已经知道，真正的执行是在 proceed() 中进行的。</p>
+<p>看一下 proceed() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ReflectiveMethodInvocation</span> <span class="kd">implements</span> <span class="n">ProxyMethodInvocation</span><span class="o">,</span> <span class="n">Cloneable</span> <span class="o">{</span>
+    <span class="c1">// 当前执行链的索引，标识执行到哪一个通知方法了。
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kt">int</span> <span class="n">currentInterceptorIndex</span> <span class="o">=</span> <span class="o">-</span><span class="n">1</span><span class="o">;</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">proceed</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="c1">//	We start with an index of -1 and increment early.
+</span><span class="c1"></span>		<span class="c1">// 如果执行链中的advice全部执行完，则直接调用joinPoint方法，就是被代理方法。
+</span><span class="c1"></span>		<span class="c1">// 这里的成员变量currentInterceptorIndex会记录目前执行到哪一个增强方法了。
+</span><span class="c1"></span>		<span class="c1">// 最终一定会返回代理方法的返回值，因为没有其他路径返回了，其他路径都是递归调用。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">currentInterceptorIndex</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="na">interceptorsAndDynamicMethodMatchers</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="n">invokeJoinpoint</span><span class="o">();</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 执行到这个方法，说明进入到了增强方法，当前执行的索引+1，当执行到最后一个时，此值会与执行链的长度-1相等，这时候就会调用被代理方法。
+</span><span class="c1"></span>		<span class="n">Object</span> <span class="n">interceptorOrInterceptionAdvice</span> <span class="o">=</span>
+				<span class="k">this</span><span class="o">.</span><span class="na">interceptorsAndDynamicMethodMatchers</span><span class="o">.</span><span class="na">get</span><span class="o">(++</span><span class="k">this</span><span class="o">.</span><span class="na">currentInterceptorIndex</span><span class="o">);</span>
+		<span class="c1">// 这段不用看，直接看else里面的代码。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">interceptorOrInterceptionAdvice</span> <span class="k">instanceof</span> <span class="n">InterceptorAndDynamicMethodMatcher</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="c1">// 调用MethodInterceptor中的invoke方法,并将自身作为参数向下传递，这里就是个火炬传递的过程。
+</span><span class="c1"></span>			<span class="c1">// It&#39;s an interceptor, so we just invoke it: The pointcut will have
+</span><span class="c1"></span>			<span class="c1">// been evaluated statically before this object was constructed.
+</span><span class="c1"></span>			<span class="k">return</span> <span class="o">((</span><span class="n">MethodInterceptor</span><span class="o">)</span> <span class="n">interceptorOrInterceptionAdvice</span><span class="o">).</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>已经知道，我们定义的切面通知方法，在执行链中都被封装为 MethodInterceptor 类型了。</p>
+<p>注意成员变量 currentInterceptorIndex，它是用来标识执行链执行到哪个节点了。初始值是-1，每调用一个通知方法都会自增，当达到执行链的末尾，就会通过反射执行被代理方法。</p>
+<p>执行到上面源码方法末尾时，会调用执行链中索引为 ++this.currentInterceptorIndex 节点的 MethodInterceptor，执行 invoke(this)，注意这个 invoke(this) 中的参数，将 this 传递进去，也就是说每一个 MethodInterceptor
+都持有了 ReflectiveMethodInvocation。而调用执行链是通过调用 ReflectiveMethodInvocation.proceed()。</p>
+<h2 id="4-总结">4 总结</h2>
+<ol>
+<li>
+<p>执行链的缓存是在 AdvisedSupport 中封装的，成员变量名 methodCache。执行链的构建是在 AdvisorChainFactory 的实现类 DefaultAdvisorChainFactory 中完成的，AdvisedSupport 中有成员变量 advisorChainFactory。AdvisedSupport 负责缓存和获取执行链，AdvisorChainFactory负责构建执行链。</p>
+</li>
+<li>
+<p>AdvisedSupport 中缓存了所有的 Advisor，在调用代理方法时，第一次调用会计算有哪些 Advisor 匹配到这个代理方法，将匹配到的 的 Advisor 获取到 Advice，转换为 MethodInterceptor，封装到执行链中，并将 <code>方法名-执行链</code> 缓存到 methodCache 中，methodCache 是一个 ConcurrentHashMap（并发安全的map）。后面再调用会从 methodCache 中获取。</p>
+</li>
+<li>
+<p>调用代理方法时，火炬传递式的递归执行，这个操作封装在 ReflectiveMethodInvocation 类中，也就是说 ReflectiveMethodInvocation 负责代理方法的执行。其执行逻辑是递归调用自身，每次调用取执行链中下一个索引的通知方法，并将自身作为参数在通知方法中传递，直至执行链末尾，调用完被代理方法，返回被代理方法执行后的返回值。</p>
+</li>
+<li>
+<p>之所以这么做，也是为了解耦。充分体现了开发原则中的单一职责原则（一个类只干一件事，也是最重要的一个原则，其他原则都是为其展开的）。</p>
+</li>
+<li>
+<p>使用 currentInterceptorIndex 索引来标识执行节点的位置的好处：不用在具体节点中，关心执行链参数是什么、以及如何传递的，可以看到 ReflectiveMethodInvocation.proceed() 是一个无参数的方法。</p>
+</li>
+<li>
+<p>至于为什么在构建执行链的时候，要把所有类型的 Advice 都封装成 MethodInterceptor ？设想一下，如果不这么做，在火炬传递的过程中，火炬传递的过程中，会存在大量的 if 语句，且会在一定程度丧失扩展性。这也是策略模式的一种体现，消除了大量 if 语句，且使得代码变得可扩展。</p>
+</li>
+</ol>
+<p>至于执行链中每一个节点是如何执行，并将 ReflectiveMethodInvocation 向下传递的，在别的章节说明。</p>
+<blockquote>
+<p>附 - 感想</p>
+<p>相较于 dubbo 源码 的‘凌乱’（当然，它俩根本不在一个量级），spring 真的是将代码写成了艺术。不愧是音乐学博士写出的代码，真的很优雅。😄</p>
+</blockquote>
+<blockquote>
+<p>附 - 递归的定义（来源百度百科）</p>
+<p>程序调用自身的编程技巧称为递归（ recursion）。递归做为一种算法在程序设计语言中广泛应用。 <strong>一个过程或函数在其定义或说明中有 <em>直接或间接</em> 调用自身的一种方法</strong>，它通常把一个大型复杂的问题层层转化为一个与原问题相似的规模较小的问题来求解，递归策略只需少量的程序就可描述出解题过程所需要的多次重复计算，大大地减少了程序的代码量。递归的能力在于用有限的语句来定义对象的无限集合。一般来说，递归需要有边界条件、递归前进段和递归返回段。当边界条件不满足时，递归前进；当边界条件满足时，递归返回。</p>
+</blockquote></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-01</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/11-aop-proxy-create-processor/" class="prev" rel="prev" title="11 AOP 代理实例的创建"><i class="fas fa-angle-left fa-fw"></i>11 AOP 代理实例的创建</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>
