@@ -539,7 +539,7 @@
 &ndash;&gt; exposedObject = initializeBean(beanName, exposedObject, mbd);</p>
 </blockquote>
 <p>实际上，Spring对AOP的支持，这一整块儿，都是基于 BeanPostProcessor.applyBeanPostProcessorsAfterInitialization() 完成的。</p>
-<p>冗长的流程，最终回转到 doCreateBean 中，在遍历 BeanPostProcessor 时依次调用 applyBeanPostProcessorsAfterInitialization() 中，传入创建好的bean实例，返回一个实例，而AbstractAutoProxyCreator中定义了骨架方法wrapIfNecessary()，这里面返回了一个代理实例，由此沿着调用链向上返回，最终getBean()得到的就可能是一个代理实例。</p>
+<p>冗长的流程，最终回转到 doCreateBean 中，在遍历 BeanPostProcessor 并依次调用 applyBeanPostProcessorsAfterInitialization() 时，传入创建好的bean实例，返回一个实例，而AbstractAutoProxyCreator中定义了骨架方法wrapIfNecessary()，这里面返回了一个代理实例，由此沿着调用链向上返回，最终getBean()得到的就可能是一个代理实例。</p>
 <p>之所以说是可能，因为后面的流程，还有一个 getObjectForBeanInstance() 执行，如果 bean 是 FactoryBean 类型，会返回 getObject() 中返回的实例。文章 <a href="/posts/spring/07-factory-bean" rel="">复杂对象的构建方式 - FactoryBean</a> 中有详细说明。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
