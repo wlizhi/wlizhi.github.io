@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/11-aop-proxy-create-processor\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  2753 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  2742 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/11-aop-proxy-create-processor\/","datePublished": "2020-12-01T13:48:59+08:00","dateModified": "2020-12-01T13:48:59+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">11 Aop 代理实例的创建</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-01">2020-12-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2753 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-01">2020-12-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2742 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/11-aop-proxy-create-processor/" class="leancloud_visitors" data-flag-title="11 Aop 代理实例的创建">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -530,7 +530,7 @@
         </div>
     </div></p>
 <p>到这里，代理对象创建完成。</p>
-<p>动态代理的入口方法 wrapIfNecessary() 到这里执行完成，会将创建的代理对象返回。将代码执行流程回转到 getBean 中:</p>
+<p>动态代理的入口方法 wrapIfNecessary() 到这里执行完成，会将创建的代理对象返回。将代码执行流程回转到 doCreateBean 中:</p>
 <blockquote>
 <p>&ndash;&gt; wrapIfNecessary()<br>
 &ndash;&gt; postProcessAfterInitialization()<br>
@@ -540,7 +540,7 @@
 &ndash;&gt; exposedObject = initializeBean(beanName, exposedObject, mbd);</p>
 </blockquote>
 <p>实际上，Spring对AOP的支持，这一整块儿，都是基于 BeanPostProcessor.applyBeanPostProcessorsAfterInitialization() 完成的。</p>
-<p>冗长的流程，最终回转到 doCreateBean中，在遍历 BeanPostProcessor 依次调用 applyBeanPostProcessorsAfterInitialization() 中，传入创建好的bean实例，返回一个实例，而AbstractAutoProxyCreator中定义了骨架方法wrapIfNecessary()，这里面返回了一个代理实例，由此沿着调用链向上返回，最终getBean()得到的就可能是一个代理实例。</p>
+<p>冗长的流程，最终回转到 doCreateBean 中，在遍历 BeanPostProcessor 依次调用 applyBeanPostProcessorsAfterInitialization() 中，传入创建好的bean实例，返回一个实例，而AbstractAutoProxyCreator中定义了骨架方法wrapIfNecessary()，这里面返回了一个代理实例，由此沿着调用链向上返回，最终getBean()得到的就可能是一个代理实例。</p>
 <p>之所以说是可能，因为后面的流程，还有一个 getObjectForBeanInstance() 执行，如果 bean 是 FactoryBean 类型，会返回 getObject() 中返回的实例。文章 <a href="/posts/spring/07-factory-bean" rel="">复杂对象的构建方式 - FactoryBean</a> 中有详细说明。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
