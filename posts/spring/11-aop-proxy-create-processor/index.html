@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>11 Aop 代理实例的创建 - 暗夜零星</title><meta name="Description" content="AOP 代理实例的创建"><meta property="og:title" content="11 Aop 代理实例的创建" />
+<meta property="og:description" content="AOP 代理实例的创建" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/11-aop-proxy-create-processor/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-12-01T13:48:59+08:00" />
+<meta property="article:modified_time" content="2020-12-01T13:48:59+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="11 Aop 代理实例的创建"/>
+<meta name="twitter:description" content="AOP 代理实例的创建"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/11-aop-proxy-create-processor/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/10-aop-advisor-collect/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "11 Aop 代理实例的创建",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/11-aop-proxy-create-processor\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  2753 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/11-aop-proxy-create-processor\/","datePublished": "2020-12-01T13:48:59+08:00","dateModified": "2020-12-01T13:48:59+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": "AOP 代理实例的创建"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">11 Aop 代理实例的创建</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-01">2020-12-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2753 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/11-aop-proxy-create-processor/" class="leancloud_visitors" data-flag-title="11 Aop 代理实例的创建">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-创建实例的流程">1 创建实例的流程</a></li>
+    <li><a href="#2-构建advisor---buildadvisors">2 构建Advisor - buildAdvisors</a></li>
+    <li><a href="#3-生成代理实例---getproxy">3 生成代理实例 - getProxy</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="1-创建实例的流程">1 创建实例的流程</h2>
+<p>创建代理实例在 createProxy() 中进行。</p>
+<p>createProxy() 中有两个比较关键的方法：</p>
+<ol>
+<li>buildAdvisors()</li>
+<li>getProxy()</li>
+</ol>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutoProxyCreator</span> <span class="kd">extends</span> <span class="n">ProxyProcessorSupport</span>
+		<span class="kd">implements</span> <span class="n">SmartInstantiationAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">BeanFactoryAware</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">Object</span> <span class="nf">createProxy</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">beanClass</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">,</span>
+			<span class="nd">@Nullable</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">specificInterceptors</span><span class="o">,</span> <span class="n">TargetSource</span> <span class="n">targetSource</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="c1">// 注意这个ProxyFactory，里面封装了 Advisors
+</span><span class="c1"></span>		<span class="n">ProxyFactory</span> <span class="n">proxyFactory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ProxyFactory</span><span class="o">();</span>
+		<span class="n">proxyFactory</span><span class="o">.</span><span class="na">copyFrom</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+		<span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="c1">// TODO 重点：构建增强对象，这里会在原有的Advisor列表中，增加存在的MethodInterceptor
+</span><span class="c1"></span>		<span class="n">Advisor</span><span class="o">[]</span> <span class="n">advisors</span> <span class="o">=</span> <span class="n">buildAdvisors</span><span class="o">(</span><span class="n">beanName</span><span class="o">,</span> <span class="n">specificInterceptors</span><span class="o">);</span>
+		<span class="n">proxyFactory</span><span class="o">.</span><span class="na">addAdvisors</span><span class="o">(</span><span class="n">advisors</span><span class="o">);</span>
+		<span class="n">proxyFactory</span><span class="o">.</span><span class="na">setTargetSource</span><span class="o">(</span><span class="n">targetSource</span><span class="o">);</span>
+		<span class="n">customizeProxyFactory</span><span class="o">(</span><span class="n">proxyFactory</span><span class="o">);</span>
+
+		<span class="n">proxyFactory</span><span class="o">.</span><span class="na">setFrozen</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">freezeProxy</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">advisorsPreFiltered</span><span class="o">())</span> <span class="o">{</span>
+			<span class="n">proxyFactory</span><span class="o">.</span><span class="na">setPreFiltered</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c1">// TODO 重点：生成代理对象
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">proxyFactory</span><span class="o">.</span><span class="na">getProxy</span><span class="o">(</span><span class="n">getProxyClassLoader</span><span class="o">());</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="2-构建advisor---buildadvisors">2 构建Advisor - buildAdvisors</h2>
+<p>来到 buildAdvisors() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutoProxyCreator</span> <span class="kd">extends</span> <span class="n">ProxyProcessorSupport</span>
+		<span class="kd">implements</span> <span class="n">SmartInstantiationAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">BeanFactoryAware</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">Advisor</span><span class="o">[]</span> <span class="nf">buildAdvisors</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">String</span> <span class="n">beanName</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">specificInterceptors</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// Handle prototypes correctly...
+</span><span class="c1"></span>		<span class="c1">// 获取已有的方法拦截器，名称，并包装成Advisor
+</span><span class="c1"></span>		<span class="n">Advisor</span><span class="o">[]</span> <span class="n">commonInterceptors</span> <span class="o">=</span> <span class="n">resolveInterceptorNames</span><span class="o">();</span>
+
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">allInterceptors</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">specificInterceptors</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">allInterceptors</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">specificInterceptors</span><span class="o">));</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">commonInterceptors</span><span class="o">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">applyCommonInterceptorsFirst</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">allInterceptors</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">0</span><span class="o">,</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">commonInterceptors</span><span class="o">));</span>
+				<span class="o">}</span>
+				<span class="k">else</span> <span class="o">{</span>
+					<span class="n">allInterceptors</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="n">commonInterceptors</span><span class="o">));</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+        <span class="c1">// 省略部分代码...
+</span><span class="c1"></span>		<span class="n">Advisor</span><span class="o">[]</span> <span class="n">advisors</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Advisor</span><span class="o">[</span><span class="n">allInterceptors</span><span class="o">.</span><span class="na">size</span><span class="o">()];</span>
+		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">allInterceptors</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+			<span class="c1">// 在这里进行构建的，最终，所有的通知方法都会封装成Advisor。
+</span><span class="c1"></span>			<span class="c1">// 实际上我们自己定义的切面，到这里时，都已经是Advisor了，没有做任何处理直接返回了。
+</span><span class="c1"></span>			<span class="c1">// 之所以在这里要再进行封装，是因为Spring中涉及过多的拦截器，增强器，增强方法等方式来对逻辑进行增强，
+</span><span class="c1"></span>			<span class="c1">// 有些情况allInterceptors中可能存在Advice对象，所以非常有必要统一封装成Advisor
+</span><span class="c1"></span>			<span class="n">advisors</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">advisorAdapterRegistry</span><span class="o">.</span><span class="na">wrap</span><span class="o">(</span><span class="n">allInterceptors</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">advisors</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从源码中可以看出，首选获取了一个 Advisor 数组，然后与之前搜集好的 Advisor 数组进行合并。</p>
+<p>对合并后的结果进行遍历，然后调用 advisorAdapterRegistry.wrap()，wrap() 方法的作用，源码注释中有详细说明。</p>
+<p>简单看一下 resolveInterceptorNames() 的过程：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAutoProxyCreator</span> <span class="kd">extends</span> <span class="n">ProxyProcessorSupport</span>
+		<span class="kd">implements</span> <span class="n">SmartInstantiationAwareBeanPostProcessor</span><span class="o">,</span> <span class="n">BeanFactoryAware</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">Advisor</span><span class="o">[]</span> <span class="nf">resolveInterceptorNames</span><span class="o">()</span> <span class="o">{</span>
+		<span class="n">BeanFactory</span> <span class="n">bf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">beanFactory</span><span class="o">;</span>
+		<span class="n">ConfigurableBeanFactory</span> <span class="n">cbf</span> <span class="o">=</span> <span class="o">(</span><span class="n">bf</span> <span class="k">instanceof</span> <span class="n">ConfigurableBeanFactory</span> <span class="o">?</span> <span class="o">(</span><span class="n">ConfigurableBeanFactory</span><span class="o">)</span> <span class="n">bf</span> <span class="o">:</span> <span class="kc">null</span><span class="o">);</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">Advisor</span><span class="o">&gt;</span> <span class="n">advisors</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="c1">// 这里会根据interceptorNames中存储的拦截器名称，获取到对应的bean实例，最终包装成Advisor，添加到列表中返回。
+</span><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">beanName</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">interceptorNames</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">cbf</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="o">!</span><span class="n">cbf</span><span class="o">.</span><span class="na">isCurrentlyInCreation</span><span class="o">(</span><span class="n">beanName</span><span class="o">))</span> <span class="o">{</span>
+				<span class="n">Assert</span><span class="o">.</span><span class="na">state</span><span class="o">(</span><span class="n">bf</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">,</span> <span class="s">&#34;BeanFactory required for resolving interceptor names&#34;</span><span class="o">);</span>
+				<span class="n">Object</span> <span class="n">next</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="n">beanName</span><span class="o">);</span>
+				<span class="n">advisors</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">advisorAdapterRegistry</span><span class="o">.</span><span class="na">wrap</span><span class="o">(</span><span class="n">next</span><span class="o">));</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">advisors</span><span class="o">.</span><span class="na">toArray</span><span class="o">(</span><span class="k">new</span> <span class="n">Advisor</span><span class="o">[</span><span class="n">0</span><span class="o">]);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>代码流程是：首先对 interceptorNames 进行遍历，依次对其进行 getBean 操作，然后使用 advisorAdapterRegistry.wrap() 将其包装成 Advisor。</p>
+<p>来到 advisorAdapterRegistry.wrap()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultAdvisorAdapterRegistry</span> <span class="kd">implements</span> <span class="n">AdvisorAdapterRegistry</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Advisor</span> <span class="nf">wrap</span><span class="o">(</span><span class="n">Object</span> <span class="n">adviceObject</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">UnknownAdviceTypeException</span> <span class="o">{</span>
+		<span class="c1">//如果要封装的对象本身就是Advisor类型的，无须做任何处理
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">adviceObject</span> <span class="k">instanceof</span> <span class="n">Advisor</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="o">(</span><span class="n">Advisor</span><span class="o">)</span> <span class="n">adviceObject</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="c1">//因为此封装只对Advisor和Advice两种类型的数据有效，如果不是将不能封装
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(!(</span><span class="n">adviceObject</span> <span class="k">instanceof</span> <span class="n">Advice</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="n">UnknownAdviceTypeException</span><span class="o">(</span><span class="n">adviceObject</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="n">Advice</span> <span class="n">advice</span> <span class="o">=</span> <span class="o">(</span><span class="n">Advice</span><span class="o">)</span> <span class="n">adviceObject</span><span class="o">;</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">advice</span> <span class="k">instanceof</span> <span class="n">MethodInterceptor</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">//如果是MethodInterceptor类型则使用DefaultPointcutrAdvisor封装
+</span><span class="c1"></span>			<span class="c1">// So well-known it doesn&#39;t even need an adapter.
+</span><span class="c1"></span>			<span class="k">return</span> <span class="k">new</span> <span class="n">DefaultPointcutAdvisor</span><span class="o">(</span><span class="n">advice</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 如果存在Advisor类型的适配器那么也同样需要进行封装
+</span><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">AdvisorAdapter</span> <span class="n">adapter</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">adapters</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// Check that it is supported.
+</span><span class="c1"></span>			<span class="c1">// @Before,@After使用的DefaultPointcutAdvisor
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">adapter</span><span class="o">.</span><span class="na">supportsAdvice</span><span class="o">(</span><span class="n">advice</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="k">new</span> <span class="n">DefaultPointcutAdvisor</span><span class="o">(</span><span class="n">advice</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">throw</span> <span class="k">new</span> <span class="n">UnknownAdviceTypeException</span><span class="o">(</span><span class="n">advice</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面源码逻辑比较简单：</p>
+<ol>
+<li>首先判断传入的实例是否为 Advisor 实现类，如果为 true 不作任何处理，直接返回。</li>
+<li>对 MethodInterceptor 的实例，包装成 DefaultPointcutAdvisor 返回。</li>
+<li>循环成员 adapters 中预定义的所有 AdvisorAdapter，进行适配操作，如果有适配器支持这个 Advice，就包装成 DefaultPointcutAdvisor 返回。</li>
+<li>如果以上条件都未处理成功，直接抛出异常。所以这里传入的对象一定得是一个 Advice 实现。</li>
+</ol>
+<p>其实我们自定义的切面类中的通知增强，在这里都已经包装为 Advisor了，大多数都是走的直接返回。</p>
+<p>关于成员变量 adapters，是在无参构造中初始化的:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultAdvisorAdapterRegistry</span> <span class="kd">implements</span> <span class="n">AdvisorAdapterRegistry</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">DefaultAdvisorAdapterRegistry</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// 注册三种适配器。
+</span><span class="c1"></span>		<span class="n">registerAdvisorAdapter</span><span class="o">(</span><span class="k">new</span> <span class="n">MethodBeforeAdviceAdapter</span><span class="o">());</span>
+		<span class="n">registerAdvisorAdapter</span><span class="o">(</span><span class="k">new</span> <span class="n">AfterReturningAdviceAdapter</span><span class="o">());</span>
+		<span class="n">registerAdvisorAdapter</span><span class="o">(</span><span class="k">new</span> <span class="n">ThrowsAdviceAdapter</span><span class="o">());</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>关于 MethodInterceptor、 Advice、 AdvisorAdapter暂且跳过。</p>
+<h2 id="3-生成代理实例---getproxy">3 生成代理实例 - getProxy</h2>
+<p>getProxy() 中只有一行代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProxyFactory</span> <span class="kd">extends</span> <span class="n">ProxyCreatorSupport</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">getProxy</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">ClassLoader</span> <span class="n">classLoader</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">//根据目标对象是否有接口来判断采用什么代理方式，cglib代理还是jdk动态代理
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">createAopProxy</span><span class="o">().</span><span class="na">getProxy</span><span class="o">(</span><span class="n">classLoader</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><hr>
+<p>先看第一个方法 createAopProxy()。
+步骤一（注意调用下一步方法的参数）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ProxyCreatorSupport</span> <span class="kd">extends</span> <span class="n">AdvisedSupport</span> <span class="o">{</span>
+
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="kd">synchronized</span> <span class="n">AopProxy</span> <span class="nf">createAopProxy</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">active</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">activate</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">getAopProxyFactory</span><span class="o">().</span><span class="na">createAopProxy</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面代码看出，会调到另一个方法，注意这个参数，传入了一个 AdvisedSupport，里面封装了通知方法、切点等信息。
+步骤二：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultAopProxyFactory</span> <span class="kd">implements</span> <span class="n">AopProxyFactory</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">AopProxy</span> <span class="nf">createAopProxy</span><span class="o">(</span><span class="n">AdvisedSupport</span> <span class="n">config</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AopConfigException</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">config</span><span class="o">.</span><span class="na">isOptimize</span><span class="o">()</span> <span class="o">||</span> <span class="n">config</span><span class="o">.</span><span class="na">isProxyTargetClass</span><span class="o">()</span> <span class="o">||</span> <span class="n">hasNoUserSuppliedProxyInterfaces</span><span class="o">(</span><span class="n">config</span><span class="o">))</span> <span class="o">{</span>
+			<span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">targetClass</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="na">getTargetClass</span><span class="o">();</span>
+			<span class="c1">// 如果目标类是一个接口，则使用JDK动态代理
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">targetClass</span><span class="o">.</span><span class="na">isInterface</span><span class="o">()</span> <span class="o">||</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">isProxyClass</span><span class="o">(</span><span class="n">targetClass</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="k">new</span> <span class="n">JdkDynamicAopProxy</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="c1">// 使用cglib代理。
+</span><span class="c1"></span>			<span class="k">return</span> <span class="k">new</span> <span class="n">ObjenesisCglibAopProxy</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="k">new</span> <span class="n">JdkDynamicAopProxy</span><span class="o">(</span><span class="n">config</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面代码可以看出，将 AdvisedSupport 封装到了创建代理的对象中。</p>
+<p>有两种情况，可能会使用 JDK 动态代理、或者使用 Cglib 子类代理。</p>
+<p>无论是xml方式还是注解方式配置，激活代理时都可以配置一个布尔类型的属性 proxyTargetClass，如果不配置，默认值是 false。这个属性的作用是：指明是否要创建基于子类（CGLIB）的代理，而不是基于标准Java接口的代理。</p>
+<p>可以看到，默认是使用 JDK 动态代理，如果配置了 proxyTargetClass=true，会默认使用 Cglib 子类代理，但如果被代理的类本身是接口的话，依然会使用JDK动态代理。</p>
+<p>以上规律从上面的源码中可以看到，是在两个 if 条件中判断的。</p>
+<hr>
+<p>接着看 getProxy()，这里真正生成了代理对象，以 JDK 动态代理为例（cglib也类似，其实都是将 Advisor 的必要信息封装到一个类中，将执行行为封装到对应的回调函数中）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">final</span> <span class="kd">class</span> <span class="nc">JdkDynamicAopProxy</span> <span class="kd">implements</span> <span class="n">AopProxy</span><span class="o">,</span> <span class="n">InvocationHandler</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">getProxy</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">ClassLoader</span> <span class="n">classLoader</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">proxiedInterfaces</span> <span class="o">=</span> <span class="n">AopProxyUtils</span><span class="o">.</span><span class="na">completeProxiedInterfaces</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">advised</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+		<span class="n">findDefinedEqualsAndHashCodeMethods</span><span class="o">(</span><span class="n">proxiedInterfaces</span><span class="o">);</span>
+		<span class="c1">// 创建代理对象，参数中的InvocationHandler传入的是this，那么本类中一定有invoke()，在调用代理类方法时，就会执行这个invoke()。
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">classLoader</span><span class="o">,</span> <span class="n">proxiedInterfaces</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>源码中调用了 Proxy.newProxyInstance() 生成代理，这是典型的 JDK 动态代理的生成方式。
+<div class="details admonition note open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>仔细看 <code>Proxy.newProxyInstance(classLoader, proxiedInterfaces, this)</code>，这里第三个传输是 this，那么这个 this 一定实现了 InvocationHandler 接口、并实现了 invoke()。</p>
+<p>记一下 <code>JdkDynamicAopProxy</code> 的声明： <code>final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializable</code></p>
+<p>可以看到 JdkDynamicAopProxy 实现了 InvocationHandler。</p>
+</div>
+        </div>
+    </div></p>
+<p>到这里，代理对象创建完成。</p>
+<p>动态代理的入口方法 wrapIfNecessary() 到这里执行完成，会将创建的代理对象返回。将代码执行流程回转到 getBean 中:</p>
+<blockquote>
+<p>&ndash;&gt; wrapIfNecessary()<br>
+&ndash;&gt; postProcessAfterInitialization()<br>
+&ndash;&gt; applyBeanPostProcessorsAfterInitialization()<br>
+&ndash;&gt; applyBeanPostProcessorsAfterInitialization()<br>
+&ndash;&gt; initializeBean()<br>
+&ndash;&gt; exposedObject = initializeBean(beanName, exposedObject, mbd);</p>
+</blockquote>
+<p>实际上，Spring对AOP的支持，这一整块儿，都是基于 BeanPostProcessor.applyBeanPostProcessorsAfterInitialization() 完成的。</p>
+<p>冗长的流程，最终回转到 doCreateBean中，在遍历 BeanPostProcessor 依次调用 applyBeanPostProcessorsAfterInitialization() 中，传入创建好的bean实例，返回一个实例，而AbstractAutoProxyCreator中定义了骨架方法wrapIfNecessary()，这里面返回了一个代理实例，由此沿着调用链向上返回，最终getBean()得到的就可能是一个代理实例。</p>
+<p>之所以说是可能，因为后面的流程，还有一个 getObjectForBeanInstance() 执行，如果 bean 是 FactoryBean 类型，会返回 getObject() 中返回的实例。文章 <a href="/posts/spring/07-factory-bean" rel="">复杂对象的构建方式 - FactoryBean</a> 中有详细说明。</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-01</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/10-aop-advisor-collect/" class="prev" rel="prev" title="10 AOP - Advisor的封装与搜集"><i class="fas fa-angle-left fa-fw"></i>10 AOP - Advisor的封装与搜集</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>
