@@ -374,7 +374,8 @@
 <li>循环成员 adapters 中预定义的所有 AdvisorAdapter，进行适配操作，如果有适配器支持这个 Advice，就包装成 DefaultPointcutAdvisor 返回。</li>
 <li>如果以上条件都未处理成功，直接抛出异常。所以这里传入的对象一定得是一个 Advice 实现。</li>
 </ol>
-<p>其实我们自定义的切面类中的通知增强，在这里都已经包装为 Advisor了，大多数都是走的直接返回。</p>
+<p>其实我们自定义的切面类中的通知增强，在这里都已经包装为 Advisor了，大多数都是走的直接返回。
+<span id="adapters-init"></span></p>
 <p>关于成员变量 adapters，是在无参构造中初始化的:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
