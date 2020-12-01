@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/12-aop-proxy-execute-processor\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  4830 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  4829 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/12-aop-proxy-execute-processor\/","datePublished": "2020-12-01T20:34:31+08:00","dateModified": "2020-12-01T20:34:31+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">12 Aop 执行链的创建和执行原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-01">2020-12-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4830 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-01">2020-12-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4829 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/posts/spring/12-aop-proxy-execute-processor/" class="leancloud_visitors" data-flag-title="12 Aop 执行链的创建和执行原理">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -596,7 +596,7 @@
 <p>执行链的缓存是在 AdvisedSupport 中封装的，成员变量名 methodCache。执行链的构建是在 AdvisorChainFactory 的实现类 DefaultAdvisorChainFactory 中完成的，AdvisedSupport 中有成员变量 advisorChainFactory。AdvisedSupport 负责缓存和获取执行链，AdvisorChainFactory负责构建执行链。</p>
 </li>
 <li>
-<p>AdvisedSupport 中缓存了所有的 Advisor，在调用代理方法时，第一次调用会计算有哪些 Advisor 匹配到这个代理方法，将匹配到的 的 Advisor 获取到 Advice，转换为 MethodInterceptor，封装到执行链中，并将 <code>方法名-执行链</code> 缓存到 methodCache 中，methodCache 是一个 ConcurrentHashMap（并发安全的map）。后面再调用会从 methodCache 中获取。</p>
+<p>AdvisedSupport 中缓存了所有的 Advisor，在调用代理方法时，第一次调用会计算有哪些 Advisor 匹配到这个代理方法，将匹配到的 Advisor 获取到 Advice，转换为 MethodInterceptor，封装到执行链中，并将 <code>方法名-执行链</code> 缓存到 methodCache 中，methodCache 是一个 ConcurrentHashMap（并发安全的map）。后面再调用会从 methodCache 中获取。</p>
 </li>
 <li>
 <p>调用代理方法时，火炬传递式的递归执行，这个操作封装在 ReflectiveMethodInvocation 类中，也就是说 ReflectiveMethodInvocation 负责代理方法的执行。其执行逻辑是递归调用自身，每次调用取执行链中下一个索引的通知方法，并将自身作为参数在通知方法中传递，直至执行链末尾，调用完被代理方法，返回被代理方法执行后的返回值。</p>
