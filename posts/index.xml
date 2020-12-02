@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 01 Dec 2020 20:34:31 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Wed, 02 Dec 2020 10:11:35 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>13 Aop MethodInterceptor执行原理</title>
+    <link>https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/</link>
+    <pubDate>Wed, 02 Dec 2020 10:11:35 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/</guid>
+    <description><![CDATA[AOP中代理方法执行时，自定义切面通知方法的MethodInterceptor执行原理解析。]]></description>
+</item><item>
     <title>12 AOP 执行链的创建和执行原理</title>
     <link>https://wlizhi.cc/posts/spring/12-aop-proxy-execute-processor/</link>
     <pubDate>Tue, 01 Dec 2020 20:34:31 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/04-registry-of-bean-post-processor/</guid>
     <description><![CDATA[spring容器启动过程中，在创建BeanFactory、搜集BeanDefinition、实例化并调用BeanFactoryPostProcessor之后，会对BeanPostProcessor进行注册。]]></description>
-</item><item>
-    <title>03 BeanFactoryPostProcessor的注册与执行</title>
-    <link>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</link>
-    <pubDate>Tue, 24 Nov 2020 09:14:28 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/03-bean-factory-post-processor-registry-and-execute/</guid>
-    <description><![CDATA[spring ioc容器初始化时，首先创建BeanFactory对象，搜集BeanDefinition，在完成之后，会优先先实例化BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor，并调用postProcessBeanDefinitionRegistry()、postProcessBeanFactory()方法]]></description>
 </item></channel>
 </rss>

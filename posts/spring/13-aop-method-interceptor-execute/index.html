@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>13 Aop MethodInterceptor执行原理 - 暗夜零星</title><meta name="Description" content="AOP中代理方法执行时，自定义切面通知方法的MethodInterceptor执行原理解析。"><meta property="og:title" content="13 Aop MethodInterceptor执行原理" />
+<meta property="og:description" content="AOP中代理方法执行时，自定义切面通知方法的MethodInterceptor执行原理解析。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-12-02T10:11:35+08:00" />
+<meta property="article:modified_time" content="2020-12-02T10:11:35+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="13 Aop MethodInterceptor执行原理"/>
+<meta name="twitter:description" content="AOP中代理方法执行时，自定义切面通知方法的MethodInterceptor执行原理解析。"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/12-aop-proxy-execute-processor/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "13 Aop MethodInterceptor执行原理",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/13-aop-method-interceptor-execute\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  3817 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/13-aop-method-interceptor-execute\/","datePublished": "2020-12-02T10:11:35+08:00","dateModified": "2020-12-02T10:11:35+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": "AOP中代理方法执行时，自定义切面通知方法的MethodInterceptor执行原理解析。"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a class="menu-item" href="https://twitter.com/Eddie42358406" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-twitter fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">13 Aop MethodInterceptor执行原理</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-02">2020-12-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3817 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;<span id="/posts/spring/13-aop-method-interceptor-execute/" class="leancloud_visitors" data-flag-title="13 Aop MethodInterceptor执行原理">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#1-代理方法执行回顾">1 代理方法执行回顾</a></li>
+    <li><a href="#2-methodbeforeadviceinterceptor">2 MethodBeforeAdviceInterceptor</a></li>
+    <li><a href="#3-aspectjaroundadvice">3 AspectJAroundAdvice</a></li>
+    <li><a href="#4-aspectjafteradvice">4 AspectJAfterAdvice</a></li>
+    <li><a href="#5-afterreturningadviceinterceptor">5 AfterReturningAdviceInterceptor</a></li>
+    <li><a href="#6-aspectjafterthrowingadvice">6 AspectJAfterThrowingAdvice</a></li>
+    <li><a href="#7-argbinding-参数绑定">7 argBinding() 参数绑定</a></li>
+    <li><a href="#8-invokeadvicemethodwithgivenargs-通知方法调用">8 invokeAdviceMethodWithGivenArgs() 通知方法调用</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="前言">前言</h2>
+<hr>
+<p>spring源码系列文章，示例代码的中文注释，均是 copy 自 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/spring-framework</a> 。</p>
+<p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。可下载、结合 Spring 系列文章阅读源码。</p>
+<p>如需转载，请务必保留作者姓名，并注明原文链接。</p>
+<hr>
+<h2 id="1-代理方法执行回顾">1 代理方法执行回顾</h2>
+<p>在代理对象方法被调用时，会获取到执行链，将其封装在 ProxyMethodInvocation 中，调用 proceed()，通过递归方式，依次调用执行链中的通知方法节点，最终会调用到代理方法，然后回转到调用处。回转过程中可能存在后置通知方法的节点调用，其顺序与前置的调用刚好相反。</p>
+<p>多个切面通知方法，执行顺序实际上是环环相扣的，被代理方法在中间，与内存模型的栈有点类似，先进后出。</p>
+<p>业务开发中我们自定义的切面共有五种，实际上并不是每种都常用。</p>
+<p>列举这五种通知方法的MethodInterceptor实现类和对应注解：</p>
+<ul>
+<li>MethodBeforeAdviceInterceptor &ndash;&gt; @Before</li>
+<li>AspectJAroundAdvice &ndash;&gt; @Around</li>
+<li>AspectJAfterAdvice &ndash;&gt; @After</li>
+<li>AspectJAfterReturningAdvice &ndash;&gt; @AfterReturning</li>
+<li>AspectJAfterThrowingAdvice &ndash;&gt; @AfterThrowing</li>
+</ul>
+<h2 id="2-methodbeforeadviceinterceptor">2 MethodBeforeAdviceInterceptor</h2>
+<p>MethodBeforeAdviceInterceptor.invoe() 中，封装了 MethodBeforeAdvice，在这个 Advice 中，通过调用 before()，来完成通知方法的调用。</p>
+<p>首先会调用 before()，接着，调用 MethodInvocation.proceed()。继续向下递归，直到执行链的末尾，调用被代理方法，然后返回。</p>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MethodBeforeAdviceInterceptor</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span><span class="o">,</span> <span class="n">BeforeAdvice</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+	<span class="c1">// 封装了前置通知方法的具体执行内容。
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">MethodBeforeAdvice</span> <span class="n">advice</span><span class="o">;</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">mi</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="c1">// 调用advice.before()，执行内容封装的前置通知方法。调用MethodInvocation.proceed()，火炬传递。实际上就是一个递归调用。
+</span><span class="c1"></span>		<span class="k">this</span><span class="o">.</span><span class="na">advice</span><span class="o">.</span><span class="na">before</span><span class="o">(</span><span class="n">mi</span><span class="o">.</span><span class="na">getMethod</span><span class="o">(),</span> <span class="n">mi</span><span class="o">.</span><span class="na">getArguments</span><span class="o">(),</span> <span class="n">mi</span><span class="o">.</span><span class="na">getThis</span><span class="o">());</span>
+		<span class="k">return</span> <span class="n">mi</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>来到 before() ：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AspectJMethodBeforeAdvice</span> <span class="kd">extends</span> <span class="n">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">MethodBeforeAdvice</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">before</span><span class="o">(</span><span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">target</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="c1">// 前置增强知识调用切面通知方法，并未理会参数中传递的目标对象、参数列表、以及方法
+</span><span class="c1"></span>		<span class="n">invokeAdviceMethod</span><span class="o">(</span><span class="n">getJoinPointMatch</span><span class="o">(),</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>参数 JoinPointMatch 暂且忽略。</p>
+<p>继续往下跟踪源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+	<span class="kd">protected</span> <span class="n">Object</span> <span class="nf">invokeAdviceMethod</span><span class="o">(</span>
+			<span class="nd">@Nullable</span> <span class="n">JoinPointMatch</span> <span class="n">jpMatch</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">returnValue</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span>
+			<span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="c1">// 获取到绑定参数，调用通知方法。
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">invokeAdviceMethodWithGivenArgs</span><span class="o">(</span><span class="n">argBinding</span><span class="o">(</span><span class="n">getJoinPoint</span><span class="o">(),</span> <span class="n">jpMatch</span><span class="o">,</span> <span class="n">returnValue</span><span class="o">,</span> <span class="n">ex</span><span class="o">));</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面源码中有两个关键方法，invokeAdviceMethodWithGivenArgs()、argBinding()。它们的作用分别是执行通知方法、获取通知方法的参数。</p>
+<p>由于五种拦截器调用和获取参数绑定的逻辑都是相同的方法，这两个方法放到后面列出。</p>
+<h2 id="3-aspectjaroundadvice">3 AspectJAroundAdvice</h2>
+<p>进入 invoke() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AspectJAroundAdvice</span> <span class="kd">extends</span> <span class="n">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">mi</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="n">ProxyMethodInvocation</span> <span class="n">pmi</span> <span class="o">=</span> <span class="o">(</span><span class="n">ProxyMethodInvocation</span><span class="o">)</span> <span class="n">mi</span><span class="o">;</span>
+		<span class="n">ProceedingJoinPoint</span> <span class="n">pjp</span> <span class="o">=</span> <span class="n">lazyGetProceedingJoinPoint</span><span class="o">(</span><span class="n">pmi</span><span class="o">);</span>
+		<span class="n">JoinPointMatch</span> <span class="n">jpm</span> <span class="o">=</span> <span class="n">getJoinPointMatch</span><span class="o">(</span><span class="n">pmi</span><span class="o">);</span>
+		<span class="c1">// 执行环绕通知方法，注意，这里相对AspectJAfterAdvice，多传递了了一个参数pjp，这里是一个MethodInvocationProceedingJoinPoint，
+</span><span class="c1"></span>		<span class="c1">// 内部封装了代理调用对象ProxyMethodInvocation。也就是说，在环绕通知方法中，是可以拿到ProxyMethodInvocation，并可以在其方法任意位置
+</span><span class="c1"></span>		<span class="c1">// 进行执行链的火炬传递。
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">invokeAdviceMethod</span><span class="o">(</span><span class="n">pjp</span><span class="o">,</span> <span class="n">jpm</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>来到 lazyGetProceedingJoinPoint()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AspectJAroundAdvice</span> <span class="kd">extends</span> <span class="n">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">ProceedingJoinPoint</span> <span class="nf">lazyGetProceedingJoinPoint</span><span class="o">(</span><span class="n">ProxyMethodInvocation</span> <span class="n">rmi</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="k">new</span> <span class="n">MethodInvocationProceedingJoinPoint</span><span class="o">(</span><span class="n">rmi</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 <code>new MethodInvocationProceedingJoinPoint(rmi)</code> 参数中，传递了一个 ProxyMethodInvocation，这个类是用来调用执行链中通知方法的。这里把它封装到了ProceedingJoinPoint中。</p>
+<p>在 invokeAdviceMethod() 中将这个创建的 ProceedingJoinPoint 传递下去。我们在使用 @Around 时，会将 ProceedingJoinPoint 作为通知方法的参数，这个参数就来自这里。</p>
+<p>接着，会执行到 invokeAdviceMethod()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">Object</span> <span class="nf">invokeAdviceMethod</span><span class="o">(</span><span class="n">JoinPoint</span> <span class="n">jp</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">JoinPointMatch</span> <span class="n">jpMatch</span><span class="o">,</span>
+			<span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">returnValue</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="c1">// 获取到绑定参数，调用通知。
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">invokeAdviceMethodWithGivenArgs</span><span class="o">(</span><span class="n">argBinding</span><span class="o">(</span><span class="n">jp</span><span class="o">,</span> <span class="n">jpMatch</span><span class="o">,</span> <span class="n">returnValue</span><span class="o">,</span> <span class="n">t</span><span class="o">));</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最终，这里有两个方法调用，invokeAdviceMethodWithGivenArgs()、argBinding()。</p>
+<h2 id="4-aspectjafteradvice">4 AspectJAfterAdvice</h2>
+<p>invoke() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AspectJAfterAdvice</span> <span class="kd">extends</span> <span class="n">AbstractAspectJAdvice</span>
+		<span class="kd">implements</span> <span class="n">MethodInterceptor</span><span class="o">,</span> <span class="n">AfterAdvice</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">mi</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c1">// 先执行执行链，当所有执行链中的通知方法，及被代理方法执行完毕，会继续往下走。
+</span><span class="c1"></span>			<span class="c1">// 最终，在finally语句块中，调用后置通知方法。卸载finally语句块里，是让在执行链中及被代理方法执行完毕，但还未返回时，执行后置通知方法。
+</span><span class="c1"></span>			<span class="c1">// 这里有点绕。 A(around) -&gt; B(after) -&gt; C(around)，假设有这三个切面组成执行链，他们执行顺序按照前面的排序。
+</span><span class="c1"></span>			<span class="c1">// 执行顺序是这样的：A环绕前置通知 -&gt; B invoke中通知调用执行链下一个节点（这里没有实际的执行内容，只是做一个火炬传递） -&gt; C环绕前置通知 -&gt; C环绕后置通知 -&gt; B后置通知（这时候B中调用完，返回前掉finally语句块） -&gt; A环绕后置通知。
+</span><span class="c1"></span>			<span class="k">return</span> <span class="n">mi</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">finally</span> <span class="o">{</span>
+			<span class="n">invokeAdviceMethod</span><span class="o">(</span><span class="n">getJoinPointMatch</span><span class="o">(),</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>先将执行链中剩余节点执行完毕，在执行完之后，方法返回之前，finally块中调用了后置通知方法。仔细看下源码中注释部分。</p>
+<p>接着到 invokeAdviceMethod()，与前面的一致，都是到这个方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="kd">protected</span> <span class="n">Object</span> <span class="nf">invokeAdviceMethod</span><span class="o">(</span>
+			<span class="nd">@Nullable</span> <span class="n">JoinPointMatch</span> <span class="n">jpMatch</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">returnValue</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span>
+			<span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="c1">// 获取到绑定参数，调用通知方法。
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">invokeAdviceMethodWithGivenArgs</span><span class="o">(</span><span class="n">argBinding</span><span class="o">(</span><span class="n">getJoinPoint</span><span class="o">(),</span> <span class="n">jpMatch</span><span class="o">,</span> <span class="n">returnValue</span><span class="o">,</span> <span class="n">ex</span><span class="o">));</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="5-afterreturningadviceinterceptor">5 AfterReturningAdviceInterceptor</h2>
+<p>先调用执行链中剩余节点，拿到返回值之后，再调用 afterReturning() 通知方法。afterReturning() 中一样会调到 invokeAdviceMethod()。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AfterReturningAdviceInterceptor</span> <span class="kd">implements</span> <span class="n">MethodInterceptor</span><span class="o">,</span> <span class="n">AfterAdvice</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">mi</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="c1">// 首先执行执行链方法，当执行链中的通知方法、及被代理方法都执行完毕。才执行afterReturning方法。
+</span><span class="c1"></span>		<span class="n">Object</span> <span class="n">retVal</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+		<span class="c1">// 执行afterReturning通知方法。
+</span><span class="c1"></span>		<span class="k">this</span><span class="o">.</span><span class="na">advice</span><span class="o">.</span><span class="na">afterReturning</span><span class="o">(</span><span class="n">retVal</span><span class="o">,</span> <span class="n">mi</span><span class="o">.</span><span class="na">getMethod</span><span class="o">(),</span> <span class="n">mi</span><span class="o">.</span><span class="na">getArguments</span><span class="o">(),</span> <span class="n">mi</span><span class="o">.</span><span class="na">getThis</span><span class="o">());</span>
+		<span class="k">return</span> <span class="n">retVal</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>afterReturning() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AspectJAfterReturningAdvice</span> <span class="kd">extends</span> <span class="n">AbstractAspectJAdvice</span>
+		<span class="kd">implements</span> <span class="n">AfterReturningAdvice</span><span class="o">,</span> <span class="n">AfterAdvice</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterReturning</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">returnValue</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">target</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">shouldInvokeOnReturnValueOf</span><span class="o">(</span><span class="n">method</span><span class="o">,</span> <span class="n">returnValue</span><span class="o">))</span> <span class="o">{</span>
+			<span class="n">invokeAdviceMethod</span><span class="o">(</span><span class="n">getJoinPointMatch</span><span class="o">(),</span> <span class="n">returnValue</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里会传入 returnValue。</p>
+<h2 id="6-aspectjafterthrowingadvice">6 AspectJAfterThrowingAdvice</h2>
+<p>调用执行链中剩余的节点通知，当这些通知方法抛出异常，就执行当前通知方法。invokeAdviceMethod() 中会调用 invokeAdviceMethod()。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AspectJAfterThrowingAdvice</span> <span class="kd">extends</span> <span class="n">AbstractAspectJAdvice</span>
+		<span class="kd">implements</span> <span class="n">MethodInterceptor</span><span class="o">,</span> <span class="n">AfterAdvice</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">MethodInvocation</span> <span class="n">mi</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c1">// 调用执行链，如果执行链中的剩余节点中，有任何一个节点抛出异常，在这里捕获，在catch语句块传递给afterThrowing通知方法。
+</span><span class="c1"></span>			<span class="k">return</span> <span class="n">mi</span><span class="o">.</span><span class="na">proceed</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">shouldInvokeOnThrowing</span><span class="o">(</span><span class="n">ex</span><span class="o">))</span> <span class="o">{</span>
+				<span class="n">invokeAdviceMethod</span><span class="o">(</span><span class="n">getJoinPointMatch</span><span class="o">(),</span> <span class="kc">null</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里传入了异常对象。</p>
+<h2 id="7-argbinding-参数绑定">7 argBinding() 参数绑定</h2>
+<p>以下是 argBinding() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">Object</span><span class="o">[]</span> <span class="nf">argBinding</span><span class="o">(</span><span class="n">JoinPoint</span> <span class="n">jp</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">JoinPointMatch</span> <span class="n">jpMatch</span><span class="o">,</span>
+			<span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">returnValue</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 计算参数绑定
+</span><span class="c1"></span>		<span class="n">calculateArgumentBindings</span><span class="o">();</span>
+
+		<span class="c1">// AMC start
+</span><span class="c1"></span>		<span class="n">Object</span><span class="o">[]</span> <span class="n">adviceInvocationArgs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Object</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="na">parameterTypes</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+		<span class="kt">int</span> <span class="n">numBound</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+		<span class="c1">// 如果存在参数JointPoint，则在这里放入参数。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">joinPointArgumentIndex</span> <span class="o">!=</span> <span class="o">-</span><span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">adviceInvocationArgs</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="na">joinPointArgumentIndex</span><span class="o">]</span> <span class="o">=</span> <span class="n">jp</span><span class="o">;</span>
+			<span class="n">numBound</span><span class="o">++;</span>
+		<span class="o">}</span><span class="c1">// 如果存在参数JoinPoint.StaticPart，则在这里绑定
+</span><span class="c1"></span>		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">joinPointStaticPartArgumentIndex</span> <span class="o">!=</span> <span class="o">-</span><span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">adviceInvocationArgs</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="na">joinPointStaticPartArgumentIndex</span><span class="o">]</span> <span class="o">=</span> <span class="n">jp</span><span class="o">.</span><span class="na">getStaticPart</span><span class="o">();</span>
+			<span class="n">numBound</span><span class="o">++;</span>
+		<span class="o">}</span>
+		<span class="c1">// 省略...
+</span><span class="c1"></span>
+		<span class="k">return</span> <span class="n">adviceInvocationArgs</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>adviceInvocationArgs[this.joinPointArgumentIndex] = jp</code> 设置了 JoinPoint 参数。</p>
+<p>看一下calculateArgumentBindings() 都做了什么：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">synchronized</span> <span class="kt">void</span> <span class="nf">calculateArgumentBindings</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">argumentsIntrospected</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="na">parameterTypes</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">return</span><span class="o">;</span>
+		<span class="o">}</span>
+
+		<span class="kt">int</span> <span class="n">numUnboundArgs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">parameterTypes</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+		<span class="c1">// 获取切面通知方法的参数列表
+</span><span class="c1"></span>		<span class="n">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">parameterTypes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">aspectJAdviceMethod</span><span class="o">.</span><span class="na">getParameterTypes</span><span class="o">();</span>
+		<span class="c1">// 从这里可以看出，方法的第一个参数必须是JoinPoint类型的
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">maybeBindJoinPoint</span><span class="o">(</span><span class="n">parameterTypes</span><span class="o">[</span><span class="n">0</span><span class="o">])</span> <span class="o">||</span> <span class="n">maybeBindProceedingJoinPoint</span><span class="o">(</span><span class="n">parameterTypes</span><span class="o">[</span><span class="n">0</span><span class="o">])</span> <span class="o">||</span>
+				<span class="n">maybeBindJoinPointStaticPart</span><span class="o">(</span><span class="n">parameterTypes</span><span class="o">[</span><span class="n">0</span><span class="o">]))</span> <span class="o">{</span>
+			<span class="n">numUnboundArgs</span><span class="o">--;</span>
+		<span class="o">}</span>
+		<span class="c1">// 类似这种 @Around(&#34;pc1()&#34;) around(ProceedingJoinPoint joinPoint)
+</span><span class="c1"></span>		<span class="c1">// 方法只有一个参数，numUnboundArgs是0，就不需要参数绑定了
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">numUnboundArgs</span> <span class="o">&gt;</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 需要通过切入点匹配返回的名称绑定参数
+</span><span class="c1"></span>			<span class="c1">// need to bind arguments by name as returned from the pointcut match
+</span><span class="c1"></span>			<span class="n">bindArgumentsByName</span><span class="o">(</span><span class="n">numUnboundArgs</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="k">this</span><span class="o">.</span><span class="na">argumentsIntrospected</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>获取通知方法参数的个数赋值给 numUnboundArgs，获取到通知方法的所有参数类型。</li>
+<li>拿第一个参数，去判断是否符合条件，如果符合条件，将变量 numUnboundArgs 减一。</li>
+<li>如果方法中参数有多个，需要调用 bindArgumentsByName()。</li>
+</ol>
+<p>看一下 maybeBindJoinPoint()，另外两个方法与这个类似：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">maybeBindJoinPoint</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">candidateParameterType</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">JoinPoint</span><span class="o">.</span><span class="na">class</span> <span class="o">==</span> <span class="n">candidateParameterType</span><span class="o">)</span> <span class="o">{</span><span class="c1">// 如果候选的参数类型是JoinPoint类型，则返回true，标识绑定成功。
+</span><span class="c1"></span>			<span class="k">this</span><span class="o">.</span><span class="na">joinPointArgumentIndex</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+			<span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+		<span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>bindArgumentsByName会调用到bindExplicitArguments() ：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">bindExplicitArguments</span><span class="o">(</span><span class="kt">int</span> <span class="n">numArgumentsLeftToBind</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">state</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">argumentNames</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">,</span> <span class="s">&#34;No argument names available&#34;</span><span class="o">);</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">argumentBindings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+		<span class="c1">// 获取参数的数量
+</span><span class="c1"></span>		<span class="kt">int</span> <span class="n">numExpectedArgumentNames</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">aspectJAdviceMethod</span><span class="o">.</span><span class="na">getParameterCount</span><span class="o">();</span>
+	    <span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="c1">// 参数索引偏移量，也就是前面已经绑定过的参数，需要跳过，这里记录的是跳过已绑定参数后的下一个索引值。
+</span><span class="c1"></span>		<span class="kt">int</span> <span class="n">argumentIndexOffset</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">parameterTypes</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">numArgumentsLeftToBind</span><span class="o">;</span>
+		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">argumentIndexOffset</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">.</span><span class="na">argumentNames</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+			<span class="k">this</span><span class="o">.</span><span class="na">argumentBindings</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">argumentNames</span><span class="o">[</span><span class="n">i</span><span class="o">],</span> <span class="n">i</span><span class="o">);</span>
+		<span class="o">}</span>  <span class="c1">// 省略部分代码...
+</span><span class="c1"></span>		<span class="c1">// 把参数对应的名称和对应的参数的类型设置到pointcut中
+</span><span class="c1"></span>		<span class="c1">// configure the pointcut expression accordingly.
+</span><span class="c1"></span>		<span class="n">configurePointcutParameters</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">argumentNames</span><span class="o">,</span> <span class="n">argumentIndexOffset</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>获取到参数索引偏移量，这个偏移量是指前面已绑定的 JoinPoint。
+来到 configurePointcutParameters() ：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">configurePointcutParameters</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argumentNames</span><span class="o">,</span> <span class="kt">int</span> <span class="n">argumentIndexOffset</span><span class="o">)</span> <span class="o">{</span>
+		<span class="kt">int</span> <span class="n">numParametersToRemove</span> <span class="o">=</span> <span class="n">argumentIndexOffset</span><span class="o">;</span>
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">returningName</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">numParametersToRemove</span><span class="o">++;</span>
+		<span class="o">}</span>
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">throwingName</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">numParametersToRemove</span><span class="o">++;</span>
+		<span class="o">}</span>
+		<span class="c1">// 这里装的是参数名称，排除了已绑定的JoinPoint
+</span><span class="c1"></span>		<span class="n">String</span><span class="o">[]</span> <span class="n">pointcutParameterNames</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">[</span><span class="n">argumentNames</span><span class="o">.</span><span class="na">length</span> <span class="o">-</span> <span class="n">numParametersToRemove</span><span class="o">];</span>
+		<span class="n">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">pointcutParameterTypes</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class</span><span class="o">&lt;?&gt;[</span><span class="n">pointcutParameterNames</span><span class="o">.</span><span class="na">length</span><span class="o">];</span>
+		<span class="n">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">methodParameterTypes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">aspectJAdviceMethod</span><span class="o">.</span><span class="na">getParameterTypes</span><span class="o">();</span>
+
+		<span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">argumentNames</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">argumentIndexOffset</span><span class="o">)</span> <span class="o">{</span>
+				<span class="k">continue</span><span class="o">;</span>
+			<span class="o">}</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">argumentNames</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">equals</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">returningName</span><span class="o">)</span> <span class="o">||</span>
+				<span class="n">argumentNames</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="na">equals</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">throwingName</span><span class="o">))</span> <span class="o">{</span>
+				<span class="k">continue</span><span class="o">;</span>
+			<span class="o">}</span>
+			<span class="c1">// 将参数名称，封装到pointcutParameterNames中，将参数类型封装到pointcutParameterTypes中。
+</span><span class="c1"></span>			<span class="n">pointcutParameterNames</span><span class="o">[</span><span class="n">index</span><span class="o">]</span> <span class="o">=</span> <span class="n">argumentNames</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+			<span class="n">pointcutParameterTypes</span><span class="o">[</span><span class="n">index</span><span class="o">]</span> <span class="o">=</span> <span class="n">methodParameterTypes</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+			<span class="n">index</span><span class="o">++;</span>
+		<span class="o">}</span>
+		<span class="c1">// 将未绑定的参数名称数组、参数类型数组，封装到成员变量 pointcut。
+</span><span class="c1"></span>		<span class="k">this</span><span class="o">.</span><span class="na">pointcut</span><span class="o">.</span><span class="na">setParameterNames</span><span class="o">(</span><span class="n">pointcutParameterNames</span><span class="o">);</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">pointcut</span><span class="o">.</span><span class="na">setParameterTypes</span><span class="o">(</span><span class="n">pointcutParameterTypes</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>跳过已绑定的位置，从后面的索引开始，将通知方法中的参数名称按照下标索引封装到数组 pointcutParameterNames 中，将参数类型封装到 pointcutParameterTypes 中。</p>
+<h2 id="8-invokeadvicemethodwithgivenargs-通知方法调用">8 invokeAdviceMethodWithGivenArgs() 通知方法调用</h2>
+<p>通过反射，根据绑定的参数，方法，切面类，进行通知方法调用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAspectJAdvice</span> <span class="kd">implements</span> <span class="n">Advice</span><span class="o">,</span> <span class="n">AspectJPrecedenceInformation</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">Object</span> <span class="nf">invokeAdviceMethodWithGivenArgs</span><span class="o">(</span><span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="n">Object</span><span class="o">[]</span> <span class="n">actualArgs</span> <span class="o">=</span> <span class="n">args</span><span class="o">;</span>
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">aspectJAdviceMethod</span><span class="o">.</span><span class="na">getParameterCount</span><span class="o">()</span> <span class="o">==</span> <span class="n">0</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">actualArgs</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="c1">// 省略try块...
+</span><span class="c1"></span>        <span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">makeAccessible</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">aspectJAdviceMethod</span><span class="o">);</span>
+        <span class="c1">// 根据绑定的参数，反射调用通知方法。
+</span><span class="c1"></span>        <span class="c1">// TODO AopUtils.invokeJoinpointUsingReflection
+</span><span class="c1"></span>        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">aspectJAdviceMethod</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">aspectInstanceFactory</span><span class="o">.</span><span class="na">getAspectInstance</span><span class="o">(),</span> <span class="n">actualArgs</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>不同种类的 MethodInterceptor，有不同的实现，而最终调用时，都是通过反射进行方法调用的。</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-02</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/12-aop-proxy-execute-processor/" class="prev" rel="prev" title="12 AOP 执行链的创建和执行原理"><i class="fas fa-angle-left fa-fw"></i>12 AOP 执行链的创建和执行原理</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>
