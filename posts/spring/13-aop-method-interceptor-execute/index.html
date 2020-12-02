@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/13-aop-method-interceptor-execute\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  3817 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  3778 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/13-aop-method-interceptor-execute\/","datePublished": "2020-12-02T10:11:35+08:00","dateModified": "2020-12-02T10:11:35+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">13 Aop MethodInterceptor执行原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-02">2020-12-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3817 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-02">2020-12-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3778 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;<span id="/posts/spring/13-aop-method-interceptor-execute/" class="leancloud_visitors" data-flag-title="13 Aop MethodInterceptor执行原理">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -131,8 +131,7 @@
             </div><div class="content" id="content"><h2 id="前言">前言</h2>
 <hr>
 <p>spring源码系列文章，示例代码的中文注释，均是 copy 自 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/spring-framework</a> 。</p>
-<p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。可下载、结合 Spring 系列文章阅读源码。</p>
-<p>如需转载，请务必保留作者姓名，并注明原文链接。</p>
+<p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。</p>
 <hr>
 <h2 id="1-代理方法执行回顾">1 代理方法执行回顾</h2>
 <p>在代理对象方法被调用时，会获取到执行链，将其封装在 ProxyMethodInvocation 中，调用 proceed()，通过递归方式，依次调用执行链中的通知方法节点，最终会调用到代理方法，然后回转到调用处。回转过程中可能存在后置通知方法的节点调用，其顺序与前置的调用刚好相反。</p>

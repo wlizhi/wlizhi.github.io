@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  13236 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  13197 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/05-spring-ioc-init\/","datePublished": "2020-11-26T12:26:00+08:00","dateModified": "2020-11-26T12:26:00+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">05 Bean实例化整体流程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13236 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-26">2020-11-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 13197 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 27 分钟&nbsp;<span id="/posts/spring/05-spring-ioc-init/" class="leancloud_visitors" data-flag-title="05 Bean实例化整体流程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -143,8 +143,7 @@
             </div><div class="content" id="content"><h2 id="前言">前言</h2>
 <hr>
 <p>spring源码系列文章，示例代码的中文注释，均是 copy 自 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/spring-framework</a> 。</p>
-<p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。可下载、结合 Spring 系列文章阅读源码。</p>
-<p>如需转载，请务必保留作者姓名，并注明原文链接。</p>
+<p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。</p>
 <hr>
 <h2 id="1-常见的applicationcontext实现类">1 常见的ApplicationContext实现类：</h2>
 <p>spring容器都是从构造一个ApplicationContext对象开始的，以下是spring中常见的ApplicationContext实现。</p>
