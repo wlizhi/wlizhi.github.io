@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/14-transaction-xml-annotation-registry\/"
-        },"genre": "posts","wordcount":  3932 ,
+        },"genre": "posts","wordcount":  3939 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/14-transaction-xml-annotation-registry\/","datePublished": "2020-12-03T11:06:30+08:00","dateModified": "2020-12-03T11:06:30+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">14 声明式事务中XML配置及注解方式的注册入口</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-03">2020-12-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3932 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-03">2020-12-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3939 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;<span id="/posts/spring/14-transaction-xml-annotation-registry/" class="leancloud_visitors" data-flag-title="14 声明式事务中XML配置及注解方式的注册入口">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -597,7 +597,7 @@
 </div><p>在构造方法中，封装了SpringTransactionAnnotationParser对象。</p>
 <p>这个类是对@Transactional注解的支持，在bean实例化完成之后，调用代理方法执行时，首先会生成执行链，然后按照索引顺序递归调用执行链。
 在调用到事务的节点时，会获取事务属性对象，通过事务属性来被代理方法中@Transactional注解中配置的属性值。以此来判断是否开启事务、以及设置事务隔离级别、传播行为等属性值。</p>
-<p>SpringTransactionAnnotationParser中具体有哪些方法，执行了哪些行为，在事务源码解析中会详细列出。</p></div>
+<p>SpringTransactionAnnotationParser中具体有哪些方法，执行了哪些行为，在声明式事务执行流程源码分析中会详细列出。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
