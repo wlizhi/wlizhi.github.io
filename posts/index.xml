@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Thu, 03 Dec 2020 11:06:30 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Thu, 03 Dec 2020 11:12:37 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>15 声明式事务中不同传播行为的表现形式</title>
+    <link>https://wlizhi.cc/posts/spring/15-transaction-propagation-example/</link>
+    <pubDate>Thu, 03 Dec 2020 11:12:37 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/15-transaction-propagation-example/</guid>
+    <description><![CDATA[spring声明式事务的传播行为，严格来说是spring特有的，数据库本身并没有这个概念。本文会列举出spring事务其中传播行为，以案例的方式展示不同的传播行为的表现是怎样的。]]></description>
+</item><item>
     <title>14 声明式事务中XML配置及注解方式的注册入口</title>
     <link>https://wlizhi.cc/posts/spring/14-transaction-xml-annotation-registry/</link>
     <pubDate>Thu, 03 Dec 2020 11:06:30 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/06-cyclic-dependence/</guid>
     <description><![CDATA[本章着重介绍了spring中在多个bean有相互依赖关系时，是怎么样进行依赖注入的。]]></description>
-</item><item>
-    <title>05 Bean实例化整体流程</title>
-    <link>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</link>
-    <pubDate>Thu, 26 Nov 2020 12:26:00 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/05-spring-ioc-init/</guid>
-    <description><![CDATA[详细解读spring中bean的实例化流程，由于篇幅原因，循环依赖、一些流程节点的详细解析在后续文章中讨论。]]></description>
 </item></channel>
 </rss>
