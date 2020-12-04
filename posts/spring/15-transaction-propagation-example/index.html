@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/15-transaction-propagation-example\/"
-        },"genre": "posts","wordcount":  5641 ,
+        },"genre": "posts","wordcount":  5620 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/15-transaction-propagation-example\/","datePublished": "2020-12-03T11:12:37+08:00","dateModified": "2020-12-03T11:12:37+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">15 声明式事务中不同传播行为的表现形式</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-03">2020-12-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5641 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-03">2020-12-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5620 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;<span id="/posts/spring/15-transaction-propagation-example/" class="leancloud_visitors" data-flag-title="15 声明式事务中不同传播行为的表现形式">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -192,12 +192,12 @@
 <p>以下是spring声明式事务中七种传播行为的表现形式：</p>
 <ul>
 <li>REQUIRED 如果当前存在事务，加入当前事务；如果当前不存在事务，开启一个新的事务。</li>
-<li>SUPPORTS 支持事务：如果当前存在事务，加入到事务中；如果当前不存在事务，以非事务的方式运行。</li>
-<li>MANDATORY 支持事务：如果当前存在事务，加入到事务中；如果当前不存在事务，抛出异常。</li>
+<li>SUPPORTS 如果当前存在事务，加入到事务中；如果当前不存在事务，以非事务的方式运行。</li>
+<li>MANDATORY 如果当前存在事务，加入到事务中；如果当前不存在事务，抛出异常。</li>
 <li>REQUIRES_NEW 无论当前是否存在事务，总是在新的事务中运行。（如果存在事务，会先挂起，再开启一个事务）</li>
-<li>NOT_SUPPORTED 不支持事务：如果当前存在事务，挂起当前事务，以非事务方式运行；</li>
+<li>NOT_SUPPORTED 以非事务方式运行；如果当前存在事务，挂起当前事务；</li>
 <li>NEVER 以非事务的方式运行。如果当前存在事务，抛出异常。</li>
-<li>NESTED 嵌套事务：如果当前存在事务，则在嵌套事务内运行；如果当前不存在事务，则新启一个事务（这时候与REQUIRED类似）。</li>
+<li>NESTED 如果当前存在事务，则在嵌套事务内运行；如果当前不存在事务，则新启一个事务（这时候与REQUIRED类似）。</li>
 </ul>
 <p>使用代码案例一一展示不同的传播行为。</p>
 <h2 id="2-前置条件">2 前置条件</h2>
