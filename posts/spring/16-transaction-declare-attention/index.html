@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  1678 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  1918 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/","datePublished": "2020-12-05T18:30:10+08:00","dateModified": "2020-12-05T18:30:10+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">16 声明式事务注意事项</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1678 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1918 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;<span id="/posts/spring/16-transaction-declare-attention/" class="leancloud_visitors" data-flag-title="16 声明式事务注意事项">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -119,7 +119,7 @@
   <ul>
     <li><a href="#1-不正确使用声明式事务的危害">1 不正确使用声明式事务的危害</a></li>
     <li><a href="#2-本类中自调用方法的问题">2 本类中自调用方法的问题</a></li>
-    <li><a href="#3-事务的嵌套">3 事务的嵌套</a></li>
+    <li><a href="#3-避免事务的嵌套">3 避免事务的嵌套</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><p>spring源码系列文章，示例代码的中文注释，均是 copy 自 <a href="https://gitee.com/wlizhi/spring-framework" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/spring-framework</a> 。</p>
@@ -158,7 +158,7 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p>在 order1() 调用 order2() 的时候，order2() 的事务注解中的配置是不会生效的。由于声明式事务是使用代理实现的，只有通过代理对象调用方法时，响应的通知方法才会执行，声明式事务本身的事务开启和提交、回滚就是通过一个通知方法来实现的。</p>
+</div><p>在 order1() 调用 order2() 的时候，order2() 的事务注解中的配置是不会生效的。由于声明式事务是使用代理实现的，只有通过代理对象调用方法时，相应的通知方法才会执行，声明式事务本身的事务开启和提交、回滚就是通过一个通知方法来实现的。</p>
 <p>获取代理对象的方式有两种：</p>
 <ul>
 <li>AopContext.currentProxy()，会返回正在执行的当前方法所在实例的代理对象。需要在代理配置中指定 <code>exposeProxy = true</code>。</li>
@@ -198,21 +198,23 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>之所以可以这么将自身注入为变量，在循环依赖问题的解决源码章节中有详细列举。</p>
-<h2 id="3-事务的嵌套">3 事务的嵌套</h2>
+<h2 id="3-避免事务的嵌套">3 避免事务的嵌套</h2>
 <div class="details admonition note open">
         <div class="details-summary admonition-title">
             <i class="icon fas fa-pencil-alt fa-fw"></i>注意<i class="details-icon fas fa-angle-right fa-fw"></i>
         </div>
         <div class="details-content">
-            <div class="admonition-content"><p>切记，一定不要过多的嵌套事务：</p>
+            <div class="admonition-content"><p>切记，事务方法中，不要过多的嵌套新启事务，或者说，要尽量避免：</p>
 <ul>
-<li>类似一个方法调用带有事务（尤其是RequiredNew这种，加入当前事务的要注意执行时长）的另一个方法，如此嵌套很多事务，会延长外层事务的提交时间，也会延缓数据库连接的释放。因为在方法执行完之前，无法走到代理的后置通知，就无法触发提交或回滚代码，更无法释放数据库连接。</li>
-<li>另一个原因就是，开启事务是需要数据库连接的，数据库连接一般在连接池中是有固定数量的，而且数量不会很多。而开启一个事务就需要获取一个数据库连接，一个事务方法中嵌套过多的新启事务，会导致这个方法在执行过程中，在提交事务之前，会一次性占用多个链接。如果项目中有多个这样的方法；或者仅有一个这样的方法，但同时有多个请求过来执行此方法，这多个执行入口为了打开多个事务，都要去获取多个数据库连接，就很可能发生死锁的情况。</li>
+<li>一个方法调用开启了事务的另一个方法，如此嵌套很多事务，会延长外层事务的提交时间，也会延缓数据库连接的释放。因为在方法执行完之前，无法走到代理的后置通知，就无法触发提交或回滚代码，更无法释放数据库连接。</li>
+<li>另一个原因就是，开启事务是需要数据库连接的，数据库连接在连接池中是有固定数量的，而且数量不会很多。而开启一个事务就需要获取一个数据库连接，事务方法中嵌套过多的新启事务，会导致这个方法在执行过程中占用多个链接。
+如果多个请求并发执行这种方法，或者事务嵌套个数本身就超出了连接池的数量（这种基本不存在），这多个执行入口为了打开多个事务，都要去获取多个数据库连接，就很可能发生死锁的情况。</li>
 </ul>
+<p>有一点需要说明，传播行为 NESTED ，本质上和外围方法还是在一个事务中。只是在通知方法中，标识了 savePoint。它们使用的数据库连接，还是同一个。</p>
 </div>
         </div>
     </div>
-<p>下面来展示一块由于事务方法中多层事务嵌套，导致的死锁问题。</p>
+<p>下面代码展示由于事务方法中多层事务嵌套，导致的死锁问题。</p>
 <p>首先，将连接池最大连接数设置为1。写一个开启事务的方法，让它调用另一个新启事务的方法。那么外层方法执行时，就需要开启两个事务，占用两个连接。</p>
 <p>使用 <a href="/posts/spring/15-transaction-propagation-example/" rel="">声明式事务七种传播行为的表现形式案例</a> 中的一块测试代码，唯一的改变是修改连接池大小。
 数据库连接池设置如下：</p>
@@ -292,7 +294,10 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>在我们调用 transactionExceptionRequiresNewRequiresNew() 的时候就会发现，实际上代码执行到 <code>userService.addRequiredNew(new PropagationUser(&quot;张三&quot;))</code> 时，就会发生死锁。</p>
-<p>道理很简单，addRequiredNew() 在等待数据库连接池给它链接，而连接池已经没有连接了，唯一的一个连接被外层方法给占用了，所以它也在等待 transactionExceptionRequiresNewRequiresNew() 释放连接，这样就产生了死锁。</p></div>
+<p>道理很简单，addRequiredNew() 在等待数据库连接池给它链接，而连接池已经没有连接了，唯一的一个连接被外层方法给占用了，所以它也在等待 transactionExceptionRequiresNewRequiresNew() 释放连接，这样就产生了死锁。</p>
+<p>有限数量的资源，被多个线程并发的请求各自占有多个，就可能发生死锁。很有可能在占有过程中，资源已经用尽了。即使仅嵌套一个事务，假设总数100个数据库连接，
+也是有可能发生死锁的（有100个线程各占了一个连接，这100个线程就会等待在获取第二个连接处）。</p>
+<p>注：这和并发编程中死锁的概念是有区别的。并发编程中的死锁跟锁的获取顺序有关，获取多个所对象，只要顺序一致就不会死锁。而这里占用数据库连接，跟获取顺序无关。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
