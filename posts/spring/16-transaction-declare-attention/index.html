@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  1628 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  1626 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/","datePublished": "2020-12-05T18:30:10+08:00","dateModified": "2020-12-05T18:30:10+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">16 声明式事务注意事项</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1628 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1626 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;<span id="/posts/spring/16-transaction-declare-attention/" class="leancloud_visitors" data-flag-title="16 声明式事务注意事项">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -126,7 +126,7 @@
 <p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。</p>
 <hr>
 <h2 id="1-不正确使用声明式事务的危害">1 不正确使用声明式事务的危害</h2>
-<p>作为一名后端开发人员，在使用声明式事务时，一定要透彻理解事务的传播行为。否则开发出来的代码肯定是有问题的，影响性能是其一，大概率也会出现一些无法理解的“脏数据”，甚至发生死锁、影响整个进程的服务。</p>
+<p>作为一名后端开发人员，声明式事务是我们常用的功能，一定要透彻理解事务的传播行为，否则开发出来的代码大概率是有问题的。影响性能是其一，大概率也会出现一些无法理解的“脏数据”，甚至发生死锁、影响整个进程的服务。</p>
 <p>影响性能的原因：事务的范围跨度过大，可能有一些点，不要求原子操作的，写到了声明了事务的方法中，那么在这个事务方法执行完之前，数据库相关的锁会迟迟无法释放（根据不同的隔离级别，数据库会有不同粒度的锁。）。同时会延缓数据库连接的释放。</p>
 <p>脏数据产生的原因：业务上应该在一个事务中执行的原子操作，由于传播行为设置问题，未能串联到一个事务中，就很有可能产生脏数据。</p>
 <p>总的来说，事务的跨度过大会影响性能。业务上的多项操作，要求原子性的执行的，没有全部包含到一个事务中，就会产生脏数据。</p>
@@ -164,7 +164,7 @@
 <li>AopContext.currentProxy()，会返回正在执行的当前方法所在实例的代理对象。需要在代理配置中指定 <code>exposeProxy = true</code>。</li>
 <li>注入自身实例，即在本类中注入自身实例作为一个成员变量，如果有本类中方法自调用的情况，使用这个变量来调用。就会走代理对象的通知方法。</li>
 </ul>
-<p>注入自身实例伪代码提现大概是这样：</p>
+<p>注入自身实例伪代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
