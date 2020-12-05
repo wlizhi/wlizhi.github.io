@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  1902 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  1863 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/","datePublished": "2020-12-05T18:30:10+08:00","dateModified": "2020-12-05T18:30:10+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">16 声明式事务注意事项</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1902 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1863 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;<span id="/posts/spring/16-transaction-declare-attention/" class="leancloud_visitors" data-flag-title="16 声明式事务注意事项">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -207,8 +207,8 @@
             <div class="admonition-content"><p>事务方法中，尽量避免嵌套新启事务：</p>
 <ul>
 <li>一个方法调用开启了事务的另一个方法，如此嵌套很多事务，会延长外层事务的提交时间，也会延缓数据库连接的释放。因为在方法执行完之前，无法走到代理的后置通知，就无法触发提交或回滚代码，更无法释放数据库连接。</li>
-<li>另一个原因就是，开启事务是需要数据库连接的，数据库连接在连接池中是有固定数量的，而且数量不会很多。而开启一个事务就需要获取一个数据库连接，事务方法中嵌套过多的新启事务，会导致这个方法在执行过程中占用多个链接。
-如果多个请求并发执行这种方法，或者事务嵌套个数本身就超出了连接池的数量（这种基本不存在），这多个执行入口为了打开多个事务，都要去获取多个数据库连接，就很可能发生死锁的情况。</li>
+<li>另一个原因就是，开启事务是需要数据库连接的，连接在连接池中的数量有限。事务方法中嵌套新启事务，会使得这个方法的执行占用多个连接。
+如果多个请求并发执行这种方法，或者事务嵌套个数本身就超出了连接池的数量（这种基本不存在）。为了打开多个事务，每个线程要获取多个数据库连接，就很可能在获取过程中发生死锁的情况。</li>
 </ul>
 <p>有一点需要说明，传播行为 NESTED ，本质上和外围方法还是在一个事务中。只是在通知方法中，标识了 savePoint。它们使用的数据库连接，还是同一个。</p>
 </div>
