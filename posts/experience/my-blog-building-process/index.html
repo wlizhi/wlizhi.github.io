@@ -194,6 +194,14 @@
 <p>流程大概是这个样子：当push代码到github时，触发回调接口。在服务器上部署一个web项目（我使用的springboot），暴露一个接口供webhooks调用。接口内容是异步方式（一个单线程的线程池）执行shell脚本，完成自动部署。</p>
 <p>更轻量的方式，手写代码，使用socket接收请求，执行脚本更加高效。http接口方式写起来比较快，后面如需功能拓展也更方便。</p>
 <p>附一张自动部署日志的截图，速度还挺快。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg"
+        data-srcset="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg, https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg 1.5x, https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg 2x"
+        data-sizes="auto"
+        alt="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg"
+        title="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg" /></p>
 <h3 id="域名备案">域名备案</h3>
 <p><a href="https://wlz922.top" target="_blank" rel="noopener noreffer">wlz922.top</a>是我一直使用的域名，域名备案相对麻烦，思虑再三还是决定再注册一个。</p>
 <p>新域名<a href="https://wlizhi.cc" target="_blank" rel="noopener noreffer">wlizhi.cc</a>审核估计还得几天。</p>
