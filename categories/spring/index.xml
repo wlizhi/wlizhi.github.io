@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/categories/spring/</link>
         <description>spring - 分类 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sat, 05 Dec 2020 09:49:50 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/categories/spring/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sat, 05 Dec 2020 18:30:10 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/categories/spring/" rel="self" type="application/rss+xml" /><item>
+    <title>16 声明式事务注意事项</title>
+    <link>https://wlizhi.cc/posts/spring/16-transaction-declare-attention/</link>
+    <pubDate>Sat, 05 Dec 2020 18:30:10 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/16-transaction-declare-attention/</guid>
+    <description><![CDATA[详细描述不正确使用声明式事务的危害，像本类自调用问题、事务方法嵌套等。]]></description>
+</item><item>
     <title>15 声明式事务七种传播行为的表现形式案例</title>
     <link>https://wlizhi.cc/posts/spring/15-transaction-propagation-example/</link>
     <pubDate>Sat, 05 Dec 2020 09:49:50 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/07-factory-bean/</guid>
     <description><![CDATA[介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。]]></description>
-</item><item>
-    <title>06 循环依赖的实现原理</title>
-    <link>https://wlizhi.cc/posts/spring/06-cyclic-dependence/</link>
-    <pubDate>Fri, 27 Nov 2020 19:23:40 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/06-cyclic-dependence/</guid>
-    <description><![CDATA[本章着重介绍了spring中在多个bean有相互依赖关系时，是怎么样进行依赖注入的。]]></description>
 </item></channel>
 </rss>
