@@ -35,7 +35,7 @@
                             "url": "https:\/\/wlizhi.cc\/posts\/experience\/my-blog-building-process\/featured-image.jpg",
                             "width":  2363 ,
                             "height":  1269 
-                        }],"genre": "posts","keywords": "博客, hugo","wordcount":  2682 ,
+                        }],"genre": "posts","keywords": "博客, hugo","wordcount":  2715 ,
         "url": "https:\/\/wlizhi.cc\/posts\/experience\/my-blog-building-process\/","datePublished": "2020-11-19T22:55:42+08:00","dateModified": "2020-11-19T22:55:42+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -112,7 +112,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">我的博客搭建历程</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E6%8A%98%E8%85%BE/"><i class="far fa-folder fa-fw"></i>折腾</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2682 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2715 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/experience/my-blog-building-process/" class="leancloud_visitors" data-flag-title="我的博客搭建历程">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -193,15 +193,17 @@
 <p>好吧，用了一周左右，实在无法忍受这种龟速。整体迁移到了 gitee，gitee 中 <a href="https://gitee.com/wlizhi/blog-auto-deploy-springboot" target="_blank" rel="noopener noreffer">自动部署脚本传送门</a> 。</p>
 <p>流程大概是这个样子：当push代码到github时，触发回调接口。在服务器上部署一个web项目（我使用的springboot），暴露一个接口供webhooks调用。接口内容是异步方式（一个单线程的线程池）执行shell脚本，完成自动部署。</p>
 <p>更轻量的方式，手写代码，使用socket接收请求，执行脚本更加高效。http接口方式写起来比较快，后面如需功能拓展也更方便。</p>
-<p>附一张自动部署日志的截图，速度还挺快。</p>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg"
-        data-srcset="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg, https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg 1.5x, https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg 2x"
-        data-sizes="auto"
-        alt="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg"
-        title="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg" /></p>
+<p>附一张自动部署日志的截图，速度还挺快，部署一次大概400ms左右。</p>
+<p><figure><a class="lightgallery" href="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg" title="自动部署日志" data-thumbnail="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg" data-sub-html="<h2>自动部署日志</h2><p>自动部署日志</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg"
+            data-srcset="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg, https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg 1.5x, https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg 2x"
+            data-sizes="auto"
+            alt="https://oss.wlizhi.cc/blog/experience/auto-deploy-log-example.jpg" />
+    </a><figcaption class="image-caption">自动部署日志</figcaption>
+    </figure></p>
 <h3 id="域名备案">域名备案</h3>
 <p><a href="https://wlz922.top" target="_blank" rel="noopener noreffer">wlz922.top</a>是我一直使用的域名，域名备案相对麻烦，思虑再三还是决定再注册一个。</p>
 <p>新域名<a href="https://wlizhi.cc" target="_blank" rel="noopener noreffer">wlizhi.cc</a>审核估计还得几天。</p>
