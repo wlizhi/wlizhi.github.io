@@ -2,14 +2,13 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://wlizhi.cc/posts/spring/17-transaction-source-process/</loc><lastmod>2020-12-05T18:35:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-12-05T18:35:12&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/</loc><lastmod>2020-12-05T18:35:12&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/16-transaction-declare-attention/</loc><lastmod>2020-12-05T18:30:10&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/categories/</loc><lastmod>2020-12-05T18:30:10&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-12-05T18:30:10&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-12-05T18:30:10&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-12-05T18:30:10&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/</loc><lastmod>2020-12-05T18:30:10&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/</loc><lastmod>2020-12-05T18:30:10&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/15-transaction-propagation-example/</loc><lastmod>2020-12-05T09:49:50&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/14-transaction-xml-annotation-registry/</loc><lastmod>2020-12-03T11:06:30&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/</loc><lastmod>2020-12-02T10:11:35&#43;08:00</lastmod></url><url>

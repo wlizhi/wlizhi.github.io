@@ -4,14 +4,7 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sat, 05 Dec 2020 18:35:12 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
-    <title>17 声明式事务执行流程源码分析</title>
-    <link>https://wlizhi.cc/posts/spring/17-transaction-source-process/</link>
-    <pubDate>Sat, 05 Dec 2020 18:35:12 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/17-transaction-source-process/</guid>
-    <description><![CDATA[事务执行的主要流程源码]]></description>
-</item><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sat, 05 Dec 2020 18:30:10 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
     <title>16 声明式事务注意事项</title>
     <link>https://wlizhi.cc/posts/spring/16-transaction-declare-attention/</link>
     <pubDate>Sat, 05 Dec 2020 18:30:10 &#43;0800</pubDate>
@@ -74,5 +67,12 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/08-configuration-class-post-processor/</guid>
     <description><![CDATA[这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。]]></description>
+</item><item>
+    <title>07 复杂对象的构建方式 - FactoryBean</title>
+    <link>https://wlizhi.cc/posts/spring/07-factory-bean/</link>
+    <pubDate>Sat, 28 Nov 2020 14:26:12 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/07-factory-bean/</guid>
+    <description><![CDATA[介绍FactoryBean的使用方法和FactoryBean在Spring中的实现原理，执行流程。]]></description>
 </item></channel>
 </rss>
