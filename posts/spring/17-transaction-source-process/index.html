@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/17-transaction-source-process\/"
-        },"genre": "posts","wordcount":  6802 ,
+        },"genre": "posts","wordcount":  6792 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/17-transaction-source-process\/","datePublished": "2020-12-06T14:28:12+08:00","dateModified": "2020-12-06T14:28:12+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">17 声明式事务执行流程源码分析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-06">2020-12-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6802 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-06">2020-12-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6792 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;<span id="/posts/spring/17-transaction-source-process/" class="leancloud_visitors" data-flag-title="17 声明式事务执行流程源码分析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -261,9 +261,9 @@
 			<span class="kd">final</span> <span class="n">InvocationCallback</span> <span class="n">invocation</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
 		<span class="cm">/*
 </span><span class="cm">		 * TODO 其中事务传播行为的特点（这些特点，仔细分析代码是可以看出来的。相对比较烧脑。一般先了解特点，后面才会看源码）：
-</span><span class="cm">		 *  PROPAGATION_REQUIRED 如果当前存在事务，假如当前事务。如果不存在事务，新建事务。使用频率高
+</span><span class="cm">		 *  PROPAGATION_REQUIRED 如果当前存在事务，假如当前事务。如果不存在事务，新建事务。
 </span><span class="cm">		 *  PROPAGATION_REQUIRES_NEW 如果当前存在事务，则挂起当前事务，新建一个事务。如果不存在事务，新建一个事务。使用频率高
-</span><span class="cm">		 *  PROPAGATION_NESTED 如果当前存在事务，则在嵌套事务内执行。如果当前不存在事务，则和PROPAGATION_REQUIRED一样新建事务。使用频率高
+</span><span class="cm">		 *  PROPAGATION_NESTED 如果当前存在事务，则在嵌套事务内执行。如果当前不存在事务，则和PROPAGATION_REQUIRED一样新建事务。
 </span><span class="cm">		 *      特点：外围事务回滚，嵌套事务全部回滚。嵌套事务回滚，如果在外围中捕获了，则仅仅回滚嵌套事务。
 </span><span class="cm">		 *  PROPAGATION_MANDATORY 以事务方式运行，如果当前不存在事务，则抛出异常
 </span><span class="cm">		 *  PROPAGATION_NEVER 以非事务方式运行，如果当前存在事务，则抛出异常
