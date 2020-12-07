@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>19 事务的挂起、提交、回滚、连接的释放原理 - 暗夜零星</title><meta name="Description" content="事务的挂起、提交、回滚源码分析"><meta property="og:title" content="19 事务的挂起、提交、回滚、连接的释放原理" />
+<meta property="og:description" content="事务的挂起、提交、回滚源码分析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-12-07T10:43:26+08:00" />
+<meta property="article:modified_time" content="2020-12-07T10:43:26+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="19 事务的挂起、提交、回滚、连接的释放原理"/>
+<meta name="twitter:description" content="事务的挂起、提交、回滚源码分析"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/18-transaction-source-ano-supports/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "19 事务的挂起、提交、回滚、连接的释放原理",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/19-transaction-source-suspend-rollback-commit\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  4731 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/19-transaction-source-suspend-rollback-commit\/","datePublished": "2020-12-07T10:43:26+08:00","dateModified": "2020-12-07T10:43:26+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": "事务的挂起、提交、回滚源码分析"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">19 事务的挂起、提交、回滚、连接的释放原理</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-07">2020-12-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4731 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;<span id="/posts/spring/19-transaction-source-suspend-rollback-commit/" class="leancloud_visitors" data-flag-title="19 事务的挂起、提交、回滚、连接的释放原理">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-事务的挂起">1 事务的挂起</a></li>
+    <li><a href="#2-事务的提交">2 事务的提交</a></li>
+    <li><a href="#3-事务的回滚">3 事务的回滚</a></li>
+    <li><a href="#4-数据库连接的释放">4 数据库连接的释放</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="1-事务的挂起">1 事务的挂起</h2>
+<p>事务的挂起，调用的是 suspend()。</p>
+<p>以下是 suspend() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractPlatformTransactionManager</span> <span class="kd">implements</span> <span class="n">PlatformTransactionManager</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">SuspendedResourcesHolder</span> <span class="nf">suspend</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">transaction</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TransactionException</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">isSynchronizationActive</span><span class="o">())</span> <span class="o">{</span>
+			<span class="n">List</span><span class="o">&lt;</span><span class="n">TransactionSynchronization</span><span class="o">&gt;</span> <span class="n">suspendedSynchronizations</span> <span class="o">=</span> <span class="n">doSuspendSynchronization</span><span class="o">();</span>
+			<span class="k">try</span> <span class="o">{</span>
+				<span class="n">Object</span> <span class="n">suspendedResources</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">transaction</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="c1">// TODO 重点：如果存在事务，则挂起事务，其实就是从ThreadLocal变量中解绑连接。
+</span><span class="c1"></span>					<span class="n">suspendedResources</span> <span class="o">=</span> <span class="n">doSuspend</span><span class="o">(</span><span class="n">transaction</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="c1">// 清楚TransactionSynchronizationManager中的当前事务的一些信息。将旧的事务对象信息封装到挂起对象中，最终会绑定到当前事务对象。
+</span><span class="c1"></span>				<span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">getCurrentTransactionName</span><span class="o">();</span>
+				<span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">setCurrentTransactionName</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+				<span class="kt">boolean</span> <span class="n">readOnly</span> <span class="o">=</span> <span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">isCurrentTransactionReadOnly</span><span class="o">();</span>
+				<span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">setCurrentTransactionReadOnly</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+				<span class="n">Integer</span> <span class="n">isolationLevel</span> <span class="o">=</span> <span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">getCurrentTransactionIsolationLevel</span><span class="o">();</span>
+				<span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">setCurrentTransactionIsolationLevel</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+				<span class="kt">boolean</span> <span class="n">wasActive</span> <span class="o">=</span> <span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">isActualTransactionActive</span><span class="o">();</span>
+				<span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">setActualTransactionActive</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+				<span class="c1">// 返回一个挂起资源持有对象，这个对象中封装了当前已存在事务的具体信息。这个对象会存储到新开启事务的TransactionStatus中。
+</span><span class="c1"></span>				<span class="k">return</span> <span class="k">new</span> <span class="n">SuspendedResourcesHolder</span><span class="o">(</span>
+						<span class="n">suspendedResources</span><span class="o">,</span> <span class="n">suspendedSynchronizations</span><span class="o">,</span> <span class="n">name</span><span class="o">,</span> <span class="n">readOnly</span><span class="o">,</span> <span class="n">isolationLevel</span><span class="o">,</span> <span class="n">wasActive</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">catch</span> <span class="o">(</span><span class="n">RuntimeException</span> <span class="o">|</span> <span class="n">Error</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// doSuspend failed - original transaction is still active...
+</span><span class="c1"></span>				<span class="n">doResumeSynchronization</span><span class="o">(</span><span class="n">suspendedSynchronizations</span><span class="o">);</span>
+				<span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">transaction</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// Transaction active but no synchronization active.
+</span><span class="c1"></span>			<span class="n">Object</span> <span class="n">suspendedResources</span> <span class="o">=</span> <span class="n">doSuspend</span><span class="o">(</span><span class="n">transaction</span><span class="o">);</span>
+			<span class="k">return</span> <span class="k">new</span> <span class="n">SuspendedResourcesHolder</span><span class="o">(</span><span class="n">suspendedResources</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="c1">// Neither transaction nor synchronization active.
+</span><span class="c1"></span>			<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个方法中，首先会挂起前一个事务，并把前一个事务信息返回，最终封装到SuspendedResourcesHolder中，之后会将 SuspendedResourcesHolder 封装到当前事务对象中。</p>
+<p>在封装之前，会清除 TransactionSynchronizationManager 中记载的当前事务的一些信息。</p>
+<p>具体的挂起操作，就在 doSuspend() 中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataSourceTransactionManager</span> <span class="kd">extends</span> <span class="n">AbstractPlatformTransactionManager</span>
+		<span class="kd">implements</span> <span class="n">ResourceTransactionManager</span><span class="o">,</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">protected</span> <span class="n">Object</span> <span class="nf">doSuspend</span><span class="o">(</span><span class="n">Object</span> <span class="n">transaction</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">DataSourceTransactionObject</span> <span class="n">txObject</span> <span class="o">=</span> <span class="o">(</span><span class="n">DataSourceTransactionObject</span><span class="o">)</span> <span class="n">transaction</span><span class="o">;</span>
+		<span class="n">txObject</span><span class="o">.</span><span class="na">setConnectionHolder</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+		<span class="c1">// 解绑链接资源
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">TransactionSynchronizationManager</span><span class="o">.</span><span class="na">unbindResource</span><span class="o">(</span><span class="n">obtainDataSource</span><span class="o">());</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，所谓的挂起，就是解绑resource，它存储在一个线程绑定的静态常量中。</p>
+<p>来到 unbindResource()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataSourceTransactionManager</span> <span class="kd">extends</span> <span class="n">AbstractPlatformTransactionManager</span>
+		<span class="kd">implements</span> <span class="n">ResourceTransactionManager</span><span class="o">,</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">static</span> <span class="n">Object</span> <span class="nf">doUnbindResource</span><span class="o">(</span><span class="n">Object</span> <span class="n">actualKey</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 从ThreadLocal的map缓存中获取，如果为空，直接返回，如果不为空，则移除绑定关系。
+</span><span class="c1"></span>        <span class="n">Map</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">map</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="c1">// 这里会解绑当前线程的链接资源。
+</span><span class="c1"></span>        <span class="n">Object</span> <span class="n">value</span> <span class="o">=</span> <span class="n">map</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">actualKey</span><span class="o">);</span>
+        <span class="c1">// Remove entire ThreadLocal if empty...
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">resources</span><span class="o">.</span><span class="na">remove</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="c1">// Transparently suppress a ResourceHolder that was marked as void...
+</span><span class="c1"></span>        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="k">instanceof</span> <span class="n">ResourceHolder</span> <span class="o">&amp;&amp;</span> <span class="o">((</span><span class="n">ResourceHolder</span><span class="o">)</span> <span class="n">value</span><span class="o">).</span><span class="na">isVoid</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">logger</span><span class="o">.</span><span class="na">isTraceEnabled</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Removed value [&#34;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s">&#34;] for key [&#34;</span> <span class="o">+</span> <span class="n">actualKey</span> <span class="o">+</span> <span class="s">&#34;] from thread [&#34;</span> <span class="o">+</span>
+                    <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;]&#34;</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>事务的挂起，实际上就是将 DataSourceTransactionManager 中的静态常量 resources 中存储的值给移除掉。这是一个 ThreadLocal 类型的 map。</p>
+<p>其定义是这样的：<code>private static final ThreadLocal&lt;Map&lt;Object, Object&gt;&gt; resources = new NamedThreadLocal&lt;&gt;(&quot;Transactional resources&quot;);</code></p>
+<h2 id="2-事务的提交">2 事务的提交</h2>
+<p>在执行完被代理方法后，最终会在 finally 语句块中调用 commitTransactionAfterReturning()，这个方法就完成了事务的提交操作。</p>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">TransactionAspectSupport</span> <span class="kd">implements</span> <span class="n">BeanFactoryAware</span><span class="o">,</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">commitTransactionAfterReturning</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">TransactionInfo</span> <span class="n">txInfo</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">txInfo</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionStatus</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isTraceEnabled</span><span class="o">())</span> <span class="o">{</span> <span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Completing transaction for [&#34;</span> <span class="o">+</span> <span class="n">txInfo</span><span class="o">.</span><span class="na">getJoinpointIdentification</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;]&#34;</span><span class="o">);</span> <span class="o">}</span>
+			<span class="c1">// 使用事务管理器，提交事务。
+</span><span class="c1"></span>			<span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionManager</span><span class="o">().</span><span class="na">commit</span><span class="o">(</span><span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionStatus</span><span class="o">());</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其实这个方法中，不一定就是提交事务，如果设置了仅回滚，则会进行回滚操作。</p>
+<p>具体逻辑在 commit()中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractPlatformTransactionManager</span> <span class="kd">implements</span> <span class="n">PlatformTransactionManager</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+   <span class="nd">@Override</span>
+   	<span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">commit</span><span class="o">(</span><span class="n">TransactionStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TransactionException</span> <span class="o">{</span>
+   		<span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isCompleted</span><span class="o">())</span> <span class="o">{</span>
+   			<span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalTransactionStateException</span><span class="o">(</span>
+   					<span class="s">&#34;Transaction is already completed - do not call commit or rollback more than once per transaction&#34;</span><span class="o">);</span>
+   		<span class="o">}</span>
+   
+   		<span class="n">DefaultTransactionStatus</span> <span class="n">defStatus</span> <span class="o">=</span> <span class="o">(</span><span class="n">DefaultTransactionStatus</span><span class="o">)</span> <span class="n">status</span><span class="o">;</span>
+   		<span class="c1">// TODO 如果事务信息中保存的是仅回滚，则进行回滚操作。比如假如到这个事务中的方法抛出异常，
+</span><span class="c1"></span>   		<span class="c1">//  则不会再那个方法就回滚，而是返回到事务的起点方法后，再进行回滚操作。
+</span><span class="c1"></span>   		<span class="k">if</span> <span class="o">(</span><span class="n">defStatus</span><span class="o">.</span><span class="na">isLocalRollbackOnly</span><span class="o">())</span> <span class="o">{</span>
+   			<span class="k">if</span> <span class="o">(</span><span class="n">defStatus</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+   				<span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Transactional code has requested rollback&#34;</span><span class="o">);</span>
+   			<span class="o">}</span>
+   			<span class="c1">// 回滚事务
+</span><span class="c1"></span>   			<span class="n">processRollback</span><span class="o">(</span><span class="n">defStatus</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+   			<span class="k">return</span><span class="o">;</span>
+   		<span class="o">}</span>
+   		<span class="c1">// 判断是否仅回滚，主要是看connectionHolder是否设置了仅回滚。
+</span><span class="c1"></span>   		<span class="k">if</span> <span class="o">(!</span><span class="n">shouldCommitOnGlobalRollbackOnly</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">defStatus</span><span class="o">.</span><span class="na">isGlobalRollbackOnly</span><span class="o">())</span> <span class="o">{</span>
+   			<span class="k">if</span> <span class="o">(</span><span class="n">defStatus</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+   				<span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Global transaction is marked as rollback-only but transactional code requested commit&#34;</span><span class="o">);</span>
+   			<span class="o">}</span>
+   			<span class="c1">// 回滚事务
+</span><span class="c1"></span>   			<span class="n">processRollback</span><span class="o">(</span><span class="n">defStatus</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+   			<span class="k">return</span><span class="o">;</span>
+   		<span class="o">}</span>
+   		<span class="c1">// TODO 事务提交
+</span><span class="c1"></span>   		<span class="n">processCommit</span><span class="o">(</span><span class="n">defStatus</span><span class="o">);</span>
+   	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>比如 RERUIRED 传播行为，前一个方法已经开启了事务，然后当前方法就会加入到这个已存在的事务中。如果这个内层的方法抛出异常，即使在外层方法中捕获异常，同样会回滚事务。</p>
+<p>这个回滚操作并不是在内层方法中做的，在内层方法结束的时候，只会做一个 rollbackOnly 的标记。真正的回滚是在创建事务的起点方法做的。</p>
+<p>所以上面代码中，会先判断是否仅回滚，如果是，则直接执行回滚操作。isGlobalRollbackOnly() 的判断于此类似。如果最终判断应该提交事务，则执行 processCommit() 进行事务的提交。</p>
+<p>来到 processCommit() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractPlatformTransactionManager</span> <span class="kd">implements</span> <span class="n">PlatformTransactionManager</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kt">void</span> <span class="nf">processCommit</span><span class="o">(</span><span class="n">DefaultTransactionStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TransactionException</span> <span class="o">{</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="kt">boolean</span> <span class="n">beforeCompletionInvoked</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+			<span class="k">try</span> <span class="o">{</span>
+				<span class="kt">boolean</span> <span class="n">unexpectedRollback</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+				<span class="c1">// 预提交，这是一个钩子方法，点进去可以看到是一个空方法。
+</span><span class="c1"></span>				<span class="n">prepareForCommit</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+				<span class="c1">//  TransactionSynchronization的扩展点可在事务方法中向TransactionSynchronizationManager注入回调。不同的方法回调时机不一样。
+</span><span class="c1"></span>				<span class="c1">// 也可以使用 @TransactionalEventListener，其原理也是注入 TransactionSynchronization 回调。
+</span><span class="c1"></span>				<span class="c1">// 事务同步回调接口TransactionSynchronization.beforeCommit()的调用。
+</span><span class="c1"></span>				<span class="n">triggerBeforeCommit</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+				<span class="c1">// 事务同步回调接口TransactionSynchronization.beforeCompletion()的调用。
+</span><span class="c1"></span>				<span class="n">triggerBeforeCompletion</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+				<span class="n">beforeCompletionInvoked</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+				<span class="c1">// TODO 是否有回滚点（保存点），如果是设置了回滚点，则仅仅吧回滚点抹除即可。真正的提交是在最外层事务提交做的。
+</span><span class="c1"></span>				<span class="c1">//  这也是NESTED传播行为，在外围方法事务异常时，所有嵌套事务全部回滚的原因所在。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">hasSavepoint</span><span class="o">())</span> <span class="o">{</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Releasing transaction savepoint&#34;</span><span class="o">);</span>
+					<span class="o">}</span>
+					<span class="n">unexpectedRollback</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="na">isGlobalRollbackOnly</span><span class="o">();</span>
+					<span class="n">status</span><span class="o">.</span><span class="na">releaseHeldSavepoint</span><span class="o">();</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isNewTransaction</span><span class="o">())</span> <span class="o">{</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Initiating transaction commit&#34;</span><span class="o">);</span>
+					<span class="o">}</span>
+					<span class="c1">// TODO 事务提交
+</span><span class="c1"></span>					<span class="n">unexpectedRollback</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="na">isGlobalRollbackOnly</span><span class="o">();</span>
+					<span class="n">doCommit</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+				<span class="o">}</span><span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">isFailEarlyOnGlobalRollbackOnly</span><span class="o">())</span> <span class="o">{</span>
+					<span class="n">unexpectedRollback</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="na">isGlobalRollbackOnly</span><span class="o">();</span>
+				<span class="o">}</span>
+			    <span class="c1">// 省略...
+</span><span class="c1"></span>			<span class="o">}</span><span class="c1">// 省略... 这里会有一些catch，对 TransactionSynchronization 扩展点的调用。
+</span><span class="c1"></span>			<span class="k">finally</span> <span class="o">{</span>
+				<span class="c1">// TransactionSynchronization 扩展
+</span><span class="c1"></span>				<span class="n">triggerAfterCompletion</span><span class="o">(</span><span class="n">status</span><span class="o">,</span> <span class="n">TransactionSynchronization</span><span class="o">.</span><span class="na">STATUS_COMMITTED</span><span class="o">);</span>
+			<span class="o">}</span>
+
+		<span class="o">}</span>
+		<span class="k">finally</span> <span class="o">{</span>
+			<span class="n">cleanupAfterCompletion</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>在 processCommit() 中，会先进行一些扩展钩子方法的回调。这里使用了策略模式，会对 synchronizations 遍历，里面封装了所有注册的 TransactionSynchronization，遍历去调用对应的方法。</li>
+<li>如果设置了保存点，则将保存点抹除。在 NESTED 传播行为中，它的实现就是使用的保存点（savePoint），NESTED 传播行为并不会新启一个事务，而是标记一个 savePoint，如果这个方法异常，就会回滚至 savePoint处。</li>
+<li>如果是一个事务创建的起点，就会执行提交操作。</li>
+</ol>
+<p>在 doCommit() 中进行了事务的提交：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataSourceTransactionManager</span> <span class="kd">extends</span> <span class="n">AbstractPlatformTransactionManager</span>
+		<span class="kd">implements</span> <span class="n">ResourceTransactionManager</span><span class="o">,</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doCommit</span><span class="o">(</span><span class="n">DefaultTransactionStatus</span> <span class="n">status</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 获取到事务的链接对象，提交事务
+</span><span class="c1"></span>		<span class="n">DataSourceTransactionObject</span> <span class="n">txObject</span> <span class="o">=</span> <span class="o">(</span><span class="n">DataSourceTransactionObject</span><span class="o">)</span> <span class="n">status</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">();</span>
+		<span class="n">Connection</span> <span class="n">con</span> <span class="o">=</span> <span class="n">txObject</span><span class="o">.</span><span class="na">getConnectionHolder</span><span class="o">().</span><span class="na">getConnection</span><span class="o">();</span>
+		<span class="n">con</span><span class="o">.</span><span class="na">commit</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面源码可以看到，拿到事务对象，从事务对象中拿到 ConnectionHolder，在拿到 Connection，使用 Connection 调用 commit() 进行事务的提交。</p>
+<h2 id="3-事务的回滚">3 事务的回滚</h2>
+<p>在调用业务方法抛出异常时，事务的通知方法中，会捕获这个异常。然后对事务进行回滚操作，之后将异常再次抛出。</p>
+<p>事务的回滚入口方法在 completeTransactionAfterThrowing()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">TransactionAspectSupport</span> <span class="kd">implements</span> <span class="n">BeanFactoryAware</span><span class="o">,</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">completeTransactionAfterThrowing</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">TransactionInfo</span> <span class="n">txInfo</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 如果存在事务状态对象
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">txInfo</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionStatus</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 判断事务属性不为空并且满足回滚规则，就进行回滚，否则进行事务提交
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">txInfo</span><span class="o">.</span><span class="na">transactionAttribute</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">txInfo</span><span class="o">.</span><span class="na">transactionAttribute</span><span class="o">.</span><span class="na">rollbackOn</span><span class="o">(</span><span class="n">ex</span><span class="o">))</span> <span class="o">{</span>
+					<span class="c1">// TODO 重点：具体的回滚代码
+</span><span class="c1"></span>                <span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionManager</span><span class="o">().</span><span class="na">rollback</span><span class="o">(</span><span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionStatus</span><span class="o">());</span>
+				<span class="c1">// 省略 try catch 块...
+</span><span class="c1"></span>			<span class="o">}</span><span class="k">else</span> <span class="o">{</span>
+                <span class="c1">// 如果抛出的异常，与回滚的异常定义不匹配，则提交事务。也就是说，抛出异常了，也不一定回滚。它存在一个异常类型匹配。
+</span><span class="c1"></span>                <span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionManager</span><span class="o">().</span><span class="na">commit</span><span class="o">(</span><span class="n">txInfo</span><span class="o">.</span><span class="na">getTransactionStatus</span><span class="o">());</span>
+			    <span class="c1">// 这里省略了 try catch 块...
+</span><span class="c1"></span>			<span class="o">}</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>首先判断是否存在事务，如果存在事务，则判断，抛出的异常是否符合是需要回滚的异常。</p>
+<p>具体哪些异常回滚是可以设置的，如果不设置，默认是 RuntimeException 和 Error。</p>
+<p>简单看下 rollBackOn()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RuleBasedTransactionAttribute</span> <span class="kd">extends</span> <span class="n">DefaultTransactionAttribute</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">rollbackOn</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">RollbackRuleAttribute</span> <span class="n">winner</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="kt">int</span> <span class="n">deepest</span> <span class="o">=</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">;</span>
+
+		<span class="c1">// 判断回滚规则
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">rollbackRules</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">for</span> <span class="o">(</span><span class="n">RollbackRuleAttribute</span> <span class="n">rule</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">rollbackRules</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// 递归调用异常的父类，如果异常名称中包含规则中封装的异常名称，则返回。
+</span><span class="c1"></span>				<span class="kt">int</span> <span class="n">depth</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="na">getDepth</span><span class="o">(</span><span class="n">ex</span><span class="o">);</span>
+				<span class="c1">// 如果不满足规则，会返回-1，如果满足了规则，会把这个规则赋值到winner临时变量中。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(</span><span class="n">depth</span> <span class="o">&gt;=</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="n">deepest</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">deepest</span> <span class="o">=</span> <span class="n">depth</span><span class="o">;</span>
+					<span class="n">winner</span> <span class="o">=</span> <span class="n">rule</span><span class="o">;</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="n">logger</span><span class="o">.</span><span class="na">isTraceEnabled</span><span class="o">())</span> <span class="o">{</span>
+			<span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;Winning rollback rule is: &#34;</span> <span class="o">+</span> <span class="n">winner</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 如果没有配置回滚异常或不回滚异常，则会走默认的。默认回滚运行时异常及Error：
+</span><span class="c1"></span>		<span class="c1">// (ex instanceof RuntimeException || ex instanceof Error);
+</span><span class="c1"></span>		<span class="c1">// User superclass behavior (rollback on unchecked) if no rule matches.
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">winner</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">logger</span><span class="o">.</span><span class="na">trace</span><span class="o">(</span><span class="s">&#34;No relevant rollback rule found: applying default rules&#34;</span><span class="o">);</span>
+			<span class="k">return</span> <span class="kd">super</span><span class="o">.</span><span class="na">rollbackOn</span><span class="o">(</span><span class="n">ex</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 判断规则如果是不回滚规则，则返回false，表示不需要回滚。
+</span><span class="c1"></span>		<span class="c1">// 判断规则如果不是不回滚规则，返回true，表示需要回滚
+</span><span class="c1"></span>		<span class="k">return</span> <span class="o">!(</span><span class="n">winner</span> <span class="k">instanceof</span> <span class="n">NoRollbackRuleAttribute</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果事务声明中配置了需要回滚的异常，就递归的匹配异常，获取其 RollbackRuleAttribute，如果获取的到，返回这个规则不属于不回滚的异常规则 true/fasle。</p>
+<p>如果匹配不到，就使用默认的回滚规则，默认回滚规则在 <code>super.rollbackOn(ex);</code> 中定义了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DefaultTransactionAttribute</span> <span class="kd">extends</span> <span class="n">DefaultTransactionDefinition</span> <span class="kd">implements</span> <span class="n">TransactionAttribute</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">rollbackOn</span><span class="o">(</span><span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="o">(</span><span class="n">ex</span> <span class="k">instanceof</span> <span class="n">RuntimeException</span> <span class="o">||</span> <span class="n">ex</span> <span class="k">instanceof</span> <span class="n">Error</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>回到 completeTransactionAfterThrowing() 中，接着看具体的回滚逻辑 rollback()，在这里会调用到 processRollback()。</p>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractPlatformTransactionManager</span> <span class="kd">implements</span> <span class="n">PlatformTransactionManager</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">processRollback</span><span class="o">(</span><span class="n">DefaultTransactionStatus</span> <span class="n">status</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">unexpected</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="kt">boolean</span> <span class="n">unexpectedRollback</span> <span class="o">=</span> <span class="n">unexpected</span><span class="o">;</span>
+
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="c1">// 如果是一个新建的事务，即到了事务的起点。
+</span><span class="c1"></span>                <span class="c1">// 在回滚之前会循环调用TransactionSynchronization的beforeCompletion方法，这里是一个回调函数
+</span><span class="c1"></span>                <span class="n">triggerBeforeCompletion</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+
+                <span class="c1">// 有保存点（或者叫回滚点），回滚到保存点位置
+</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">hasSavepoint</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Rolling back transaction to savepoint&#34;</span><span class="o">);</span>
+                    <span class="o">}</span>
+                    <span class="n">status</span><span class="o">.</span><span class="na">rollbackToHeldSavepoint</span><span class="o">();</span>
+                <span class="o">}</span><span class="c1">// 如果是一个新建的事务，即回到了事务的起点。
+</span><span class="c1"></span>                <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isNewTransaction</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Initiating transaction rollback&#34;</span><span class="o">);</span>
+                    <span class="o">}</span>
+                    <span class="c1">// 从当前事务状态对象中获取到链接对象，进行回滚操作
+</span><span class="c1"></span>                    <span class="n">doRollback</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">else</span> <span class="o">{</span>
+                    <span class="c1">// 如果是加入的已有事务，则将事务状态设置为仅回滚 rollbackOnly=true，最终返回到事务的起点时，是否向外抛出异常都会回滚。
+</span><span class="c1"></span>                    <span class="c1">// 所以在 REQUIRED 传播行为中，任何一个加入事务的方法异常，都会触发回滚。
+</span><span class="c1"></span>                    <span class="c1">// Participating in larger transaction
+</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">hasTransaction</span><span class="o">())</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isLocalRollbackOnly</span><span class="o">()</span> <span class="o">||</span> <span class="n">isGlobalRollbackOnParticipationFailure</span><span class="o">())</span> <span class="o">{</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+                                <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Participating transaction failed - marking existing transaction as rollback-only&#34;</span><span class="o">);</span>
+                            <span class="o">}</span>
+                            <span class="n">doSetRollbackOnly</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+                        <span class="o">}</span>
+                        <span class="k">else</span> <span class="o">{</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="n">status</span><span class="o">.</span><span class="na">isDebug</span><span class="o">())</span> <span class="o">{</span>
+                                <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Participating transaction failed - letting transaction originator decide on rollback&#34;</span><span class="o">);</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                    <span class="k">else</span> <span class="o">{</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Should roll back transaction but cannot - no transaction available&#34;</span><span class="o">);</span>
+                    <span class="o">}</span>
+                    <span class="c1">// Unexpected rollback only matters here if we&#39;re asked to fail early
+</span><span class="c1"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="n">isFailEarlyOnGlobalRollbackOnly</span><span class="o">())</span> <span class="o">{</span>
+                        <span class="n">unexpectedRollback</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">catch</span> <span class="o">(</span><span class="n">RuntimeException</span> <span class="o">|</span> <span class="n">Error</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// TransactionSynchronization 扩展点
+</span><span class="c1"></span>                <span class="n">triggerAfterCompletion</span><span class="o">(</span><span class="n">status</span><span class="o">,</span> <span class="n">TransactionSynchronization</span><span class="o">.</span><span class="na">STATUS_UNKNOWN</span><span class="o">);</span>
+                <span class="k">throw</span> <span class="n">ex</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="c1">// 事务提交后，获取事务同步器进行循环调用，TransactionSynchronization.afterCompletion
+</span><span class="c1"></span>            <span class="n">triggerAfterCompletion</span><span class="o">(</span><span class="n">status</span><span class="o">,</span> <span class="n">TransactionSynchronization</span><span class="o">.</span><span class="na">STATUS_ROLLED_BACK</span><span class="o">);</span>
+
+            <span class="c1">// Raise UnexpectedRollbackException if we had a global rollback-only marker
+</span><span class="c1"></span>            <span class="k">if</span> <span class="o">(</span><span class="n">unexpectedRollback</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="n">UnexpectedRollbackException</span><span class="o">(</span>
+                        <span class="s">&#34;Transaction rolled back because it has been marked as rollback-only&#34;</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">cleanupAfterCompletion</span><span class="o">(</span><span class="n">status</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>  
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>流程如下：</p>
+<ol>
+<li>首先执行已注册的 TransactionSynchronization 的一些回调方法。</li>
+<li>如果当前事务中有保存点（savePoint），就回滚至保存点。最终会通过 JDBC 来进行回滚。</li>
+<li>如果当前事务是一个事务创建的起点，就回滚事务。</li>
+<li>执行一些已注册的 TransactionSynchronization 进行后置处理。</li>
+</ol>
+<p>doRollback() 源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractPlatformTransactionManager</span> <span class="kd">implements</span> <span class="n">PlatformTransactionManager</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">doRollback</span><span class="o">(</span><span class="n">DefaultTransactionStatus</span> <span class="n">status</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 从事务状态对象中获取当前持有的链接，进行回滚操作
+</span><span class="c1"></span>		<span class="n">DataSourceTransactionObject</span> <span class="n">txObject</span> <span class="o">=</span> <span class="o">(</span><span class="n">DataSourceTransactionObject</span><span class="o">)</span> <span class="n">status</span><span class="o">.</span><span class="na">getTransaction</span><span class="o">();</span>
+		<span class="n">Connection</span> <span class="n">con</span> <span class="o">=</span> <span class="n">txObject</span><span class="o">.</span><span class="na">getConnectionHolder</span><span class="o">().</span><span class="na">getConnection</span><span class="o">();</span>
+		<span class="n">con</span><span class="o">.</span><span class="na">rollback</span><span class="o">();</span>
+		<span class="c1">// 省略 try catch 块...
+</span><span class="c1"></span>	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最终会调用 <code>con.rollback()</code> 进行事务的回滚。</p>
+<p>而通过回滚点回滚，最终会调用到这里：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">JdbcTransactionObjectSupport</span> <span class="kd">implements</span> <span class="n">SavepointManager</span><span class="o">,</span> <span class="n">SmartTransactionObject</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">rollbackToSavepoint</span><span class="o">(</span><span class="n">Object</span> <span class="n">savepoint</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">TransactionException</span> <span class="o">{</span>
+		<span class="n">ConnectionHolder</span> <span class="n">conHolder</span> <span class="o">=</span> <span class="n">getConnectionHolderForSavepoint</span><span class="o">();</span>
+        <span class="n">conHolder</span><span class="o">.</span><span class="na">getConnection</span><span class="o">().</span><span class="na">rollback</span><span class="o">((</span><span class="n">Savepoint</span><span class="o">)</span> <span class="n">savepoint</span><span class="o">);</span>
+        <span class="n">conHolder</span><span class="o">.</span><span class="na">resetRollbackOnly</span><span class="o">();</span>
+		<span class="c1">// 省略 try catch 块...
+</span><span class="c1"></span>	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="4-数据库连接的释放">4 数据库连接的释放</h2>
+<p>无论是事务提交或是回滚，之后，都会调用一个方法 triggerAfterCompletion()，在这个方法中，就完成了数据库连接的释放。</p>
+<p>在真正释放之前，同样也会调用已注册的 TransactionSynchronization 的一个扩展方法 resume()。</p>
+<p>连接的释放，实际上就是通过 TransactionSynchronization 的扩展方法来实现的，这个方法是 afterCompletion()。</p>
+<p>在 triggerAfterCompletion() 中，调用了 invokeAfterCompletion()。在这里就遍历了 synchronizations，进行 afterCompletion() 的调用。</p>
+<p>源码如下（省略了try catch 代码块）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">TransactionSynchronizationUtils</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">invokeAfterCompletion</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">TransactionSynchronization</span><span class="o">&gt;</span> <span class="n">synchronizations</span><span class="o">,</span>
+			<span class="kt">int</span> <span class="n">completionStatus</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">synchronizations</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">for</span> <span class="o">(</span><span class="n">TransactionSynchronization</span> <span class="n">synchronization</span> <span class="o">:</span> <span class="n">synchronizations</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">synchronization</span><span class="o">.</span><span class="na">afterCompletion</span><span class="o">(</span><span class="n">completionStatus</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>在 afterCompletion() 中经历了以下调用链：</p>
+<p>releaseConnection() -&gt; doReleaseConnection() -&gt; doCloseConnection() -&gt; con.close()</p>
+</blockquote>
+<p>以 druid 连接池为例，最终会调用到 recycle()，在recycle中，有这么一段代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DruidDataSource</span> <span class="kd">extends</span> <span class="n">DruidAbstractDataSource</span> <span class="kd">implements</span> <span class="n">DruidDataSourceMBean</span><span class="o">,</span> <span class="n">ManagedDataSource</span><span class="o">,</span> <span class="n">Referenceable</span><span class="o">,</span> <span class="n">Closeable</span><span class="o">,</span> <span class="n">Cloneable</span><span class="o">,</span> <span class="n">ConnectionPoolDataSource</span><span class="o">,</span> <span class="n">MBeanRegistration</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">volatile</span> <span class="n">DruidConnectionHolder</span><span class="o">[]</span> <span class="n">connections</span><span class="o">;</span>
+    <span class="c1">// 步骤一
+</span><span class="c1"></span>    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">recycle</span><span class="o">(</span><span class="n">DruidPooledConnection</span> <span class="n">pooledConnection</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">SQLException</span> <span class="o">{</span>
+        <span class="c1">// 省略无关代码...
+</span><span class="c1"></span>        <span class="n">lock</span><span class="o">.</span><span class="na">lock</span><span class="o">();</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">holder</span><span class="o">.</span><span class="na">active</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">activeCount</span><span class="o">--;</span>
+                <span class="n">holder</span><span class="o">.</span><span class="na">active</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="n">closeCount</span><span class="o">++;</span>
+            <span class="c1">// 这个方法，将连接归还。
+</span><span class="c1"></span>            <span class="n">result</span> <span class="o">=</span> <span class="n">putLast</span><span class="o">(</span><span class="n">holder</span><span class="o">,</span> <span class="n">currentTimeMillis</span><span class="o">);</span>
+            <span class="n">recycleCount</span><span class="o">++;</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">lock</span><span class="o">.</span><span class="na">unlock</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="c1">//省略无关代码...
+</span><span class="c1"></span>    <span class="o">}</span>
+
+    <span class="c1">// 步骤二
+</span><span class="c1"></span>    <span class="kt">boolean</span> <span class="nf">putLast</span><span class="o">(</span><span class="n">DruidConnectionHolder</span> <span class="n">e</span><span class="o">,</span> <span class="kt">long</span> <span class="n">lastActiveTimeMillis</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">poolingCount</span> <span class="o">&gt;=</span> <span class="n">maxActive</span> <span class="o">||</span> <span class="n">e</span><span class="o">.</span><span class="na">discard</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="n">e</span><span class="o">.</span><span class="na">lastActiveTimeMillis</span> <span class="o">=</span> <span class="n">lastActiveTimeMillis</span><span class="o">;</span>
+        <span class="c1">// 这里，将连接归还到数组的指定索引处。
+</span><span class="c1"></span>        <span class="n">connections</span><span class="o">[</span><span class="n">poolingCount</span><span class="o">]</span> <span class="o">=</span> <span class="n">e</span><span class="o">;</span>
+        <span class="n">incrementPoolingCount</span><span class="o">();</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">poolingCount</span> <span class="o">&gt;</span> <span class="n">poolingPeak</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">poolingPeak</span> <span class="o">=</span> <span class="n">poolingCount</span><span class="o">;</span>
+            <span class="n">poolingPeakTime</span> <span class="o">=</span> <span class="n">lastActiveTimeMillis</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="n">notEmpty</span><span class="o">.</span><span class="na">signal</span><span class="o">();</span>
+        <span class="n">notEmptySignalCount</span><span class="o">++;</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面代码中可以看到，在 <code>result = putLast(holder, currentTimeMillis);</code> 中，就将连接进行回收了。</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-07</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/18-transaction-source-ano-supports/" class="prev" rel="prev" title="18 事务注解@Transaction的解析原理"><i class="fas fa-angle-left fa-fw"></i>18 事务注解@Transaction的解析原理</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>

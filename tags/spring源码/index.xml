@@ -4,7 +4,21 @@
         <link>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</link>
         <description>spring源码 - 标签 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sun, 06 Dec 2020 14:28:12 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Mon, 07 Dec 2020 10:43:26 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml" /><item>
+    <title>19 事务的挂起、提交、回滚、连接的释放原理</title>
+    <link>https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/</link>
+    <pubDate>Mon, 07 Dec 2020 10:43:26 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/</guid>
+    <description><![CDATA[事务的挂起、提交、回滚源码分析]]></description>
+</item><item>
+    <title>18 事务注解@Transaction的解析原理</title>
+    <link>https://wlizhi.cc/posts/spring/18-transaction-source-ano-supports/</link>
+    <pubDate>Mon, 07 Dec 2020 09:18:50 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/18-transaction-source-ano-supports/</guid>
+    <description><![CDATA[事务注解 @Transaction 的支持，扫描原理。]]></description>
+</item><item>
     <title>17 声明式事务执行流程源码分析</title>
     <link>https://wlizhi.cc/posts/spring/17-transaction-source-process/</link>
     <pubDate>Sun, 06 Dec 2020 14:28:12 &#43;0800</pubDate>
@@ -60,19 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/10-aop-advisor-collect/</guid>
     <description><![CDATA[AOP Advisor 的搜集]]></description>
-</item><item>
-    <title>09 AOP AbstractAutoProxyCreator的注册</title>
-    <link>https://wlizhi.cc/posts/spring/09-aop-support-register/</link>
-    <pubDate>Sun, 29 Nov 2020 19:04:06 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/09-aop-support-register/</guid>
-    <description><![CDATA[AOP - AbstractAutoProxyCreator的注册流程解析]]></description>
-</item><item>
-    <title>08 ConfigurationClassPostProcessor源码解析</title>
-    <link>https://wlizhi.cc/posts/spring/08-configuration-class-post-processor/</link>
-    <pubDate>Sun, 29 Nov 2020 10:11:28 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/08-configuration-class-post-processor/</guid>
-    <description><![CDATA[这个 BeanDefinitionRegistryPostProcessor 的实现类 ConfigurationClassPostProcessor 很重要，有必要单独列举一下。]]></description>
 </item></channel>
 </rss>
