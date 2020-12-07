@@ -7,21 +7,21 @@
             <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Mon, 07 Dec 2020 14:14:56 &#43;0800</lastBuildDate>
             <atom:link href="https://wlizhi.cc/index.xml" rel="self" type="application/rss+xml" />
         <item>
-    <title>20 事务提交流程的扩展-TransactionSynchronization</title>
+    <title>20 声明式事务提交流程的扩展 TransactionSynchronization</title>
     <link>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</link>
     <pubDate>Mon, 07 Dec 2020 14:14:56 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</guid>
     <description><![CDATA[事务提交前后是可以自定义一些逻辑，嵌入到事务提交的流程中的，通过spring-tx包提供的TransactionSynchronization类、使用TransactionSynchronizationManager的静态方法registerSynchronization() 或者使用注解方式均可。]]></description>
 </item><item>
-    <title>19 事务的挂起、提交、回滚、连接的释放原理</title>
+    <title>19 声明式事务的挂起、提交、回滚、连接的释放原理</title>
     <link>https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/</link>
     <pubDate>Mon, 07 Dec 2020 10:43:26 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/</guid>
     <description><![CDATA[事务的挂起、提交、回滚源码分析]]></description>
 </item><item>
-    <title>18 事务注解@Transaction的解析原理</title>
+    <title>18 声明式事务注解@Transaction的解析原理</title>
     <link>https://wlizhi.cc/posts/spring/18-transaction-source-ano-supports/</link>
     <pubDate>Mon, 07 Dec 2020 09:18:50 &#43;0800</pubDate>
     <author>作者</author>
