@@ -391,7 +391,7 @@
 </div>
 </div><p>在上面源码中，获取到容器中所有的监听器，然后遍历，判断是否支持当前事件，如果支持，则将其添加到列表，最终经过一些处理后返回。</p>
 <p>其实在外层方法调用这里的时候，是做了缓存的。只有第一次调用的时候，会走到这里，进行遍历并判断。之后再获取，都是从缓存中获取的。</p>
-<p>在深入看的话，可以看一下 TransactionSynchronizationEventAdapter类，实际上注册的实例就是这个类型的。</p>
+<p>再深入看的话，可以看一下 TransactionSynchronizationEventAdapter类，实际上注册的实例就是这个类型的。</p>
 <p>源码如下:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
