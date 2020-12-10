@@ -15,7 +15,7 @@
     <description><![CDATA[<p>在web容器启动时为提供给第三方组件机会做一些初始化的工作，例如注册 servlet 或者 filter 等，servlet 规范中通过 ServletContainerInitializer 实现此功能。</p>
 <p>伴随着 ServletContainerInitializer 一起起作用的还有 @HandlesTypes 注解，通过这个注解会将指定的类注入到 ServletContainerInitializer 的 onStartup 方法参数中。</p>]]></description>
 </item><item>
-    <title>20 声明式事务提交流程的扩展 TransactionSynchronization</title>
+    <title>20 TransactionSynchronization 声明式事务扩展</title>
     <link>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</link>
     <pubDate>Mon, 07 Dec 2020 14:14:56 &#43;0800</pubDate>
     <author>作者</author>
