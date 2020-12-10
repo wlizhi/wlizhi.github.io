@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>21 web容器启动时ServletContainerInitializer的加载 - 暗夜零星</title><meta name="Description" content="暗夜零星，java程序员。这里是我的个人博客，交流技术，分享经验。"><meta property="og:title" content="21 web容器启动时ServletContainerInitializer的加载" />
+<meta property="og:description" content="在web容器启动时为提供给第三方组件机会做一些初始化的工作，例如注册 servlet 或者 filter 等，servlet 规范中通过 ServletContainerInitializer 实现此功能。
+伴随着 ServletContainerInitializer 一起起作用的还有 @HandlesTypes 注解，通过这个注解会将指定的类注入到 ServletContainerInitializer 的 onStartup 方法参数中。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/21-load-servlet-container-initializer-on-startup/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-12-10T19:32:37+08:00" />
+<meta property="article:modified_time" content="2020-12-10T19:32:37+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="21 web容器启动时ServletContainerInitializer的加载"/>
+<meta name="twitter:description" content="在web容器启动时为提供给第三方组件机会做一些初始化的工作，例如注册 servlet 或者 filter 等，servlet 规范中通过 ServletContainerInitializer 实现此功能。
+伴随着 ServletContainerInitializer 一起起作用的还有 @HandlesTypes 注解，通过这个注解会将指定的类注入到 ServletContainerInitializer 的 onStartup 方法参数中。"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/21-load-servlet-container-initializer-on-startup/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "21 web容器启动时ServletContainerInitializer的加载",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/21-load-servlet-container-initializer-on-startup\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  3236 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/21-load-servlet-container-initializer-on-startup\/","datePublished": "2020-12-10T19:32:37+08:00","dateModified": "2020-12-10T19:32:37+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">21 web容器启动时ServletContainerInitializer的加载</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-10">2020-12-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3236 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;<span id="/posts/spring/21-load-servlet-container-initializer-on-startup/" class="leancloud_visitors" data-flag-title="21 web容器启动时ServletContainerInitializer的加载">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>在web容器启动时为提供给第三方组件机会做一些初始化的工作，例如注册 servlet 或者 filter 等，servlet 规范中通过 ServletContainerInitializer 实现此功能。</p>
+<p>伴随着 ServletContainerInitializer 一起起作用的还有 @HandlesTypes 注解，通过这个注解会将指定的类注入到 ServletContainerInitializer 的 onStartup 方法参数中。</p>
+<p>ServletContainerInitializer 是通过 SPI 的方式扫描加载的，在对应 jar 包的 META-INF/services 下，会扫描 javax.servlet.ServletContainerInitializer 文件，加载文件中定义的实现类。</p>
+<p>SpringMvc 就是利用这种方式，完成 DispatcherServlet 的初始化工作。</p>
+<p>在 spring-web 包 META-INF/services 下就有 javax.servlet.ServletContainerInitializer 文件，文件中是这么定义的：</p>
+<p><code>org.springframework.web.SpringServletContainerInitializer</code></p>
+<p>SpringServletContainerInitializer 源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@HandlesTypes</span><span class="o">(</span><span class="n">WebApplicationInitializer</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SpringServletContainerInitializer</span> <span class="kd">implements</span> <span class="n">ServletContainerInitializer</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onStartup</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">Class</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">webAppInitializerClasses</span><span class="o">,</span> <span class="n">ServletContext</span> <span class="n">servletContext</span><span class="o">)</span>
+			<span class="kd">throws</span> <span class="n">ServletException</span> <span class="o">{</span>
+		<span class="c1">// 根据servlet规范，tomcat会在启动的时候，以SPI方式加载 services/javax.servlet.ServletContainerInitializer，并调用onStartup方法。
+</span><span class="c1"></span>		<span class="c1">// 而spring-web包下就定义了此类。所以服务器启动时，会执行到这里。
+</span><span class="c1"></span>
+		<span class="c1">// 这个列表封装了所有SPI加载的 WebApplicationInitializer 实例。
+</span><span class="c1"></span>		<span class="n">List</span><span class="o">&lt;</span><span class="n">WebApplicationInitializer</span><span class="o">&gt;</span> <span class="n">initializers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkedList</span><span class="o">&lt;&gt;();</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="n">webAppInitializerClasses</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">for</span> <span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">waiClass</span> <span class="o">:</span> <span class="n">webAppInitializerClasses</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// Be defensive: Some servlet containers provide us with invalid classes,
+</span><span class="c1"></span>				<span class="c1">// no matter what @HandlesTypes says...
+</span><span class="c1"></span>				<span class="c1">// 非接口、非抽象类，且是WebApplicationInitializer实现类的，将会反射创建对象。封装到上面定义的列表中。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(!</span><span class="n">waiClass</span><span class="o">.</span><span class="na">isInterface</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">Modifier</span><span class="o">.</span><span class="na">isAbstract</span><span class="o">(</span><span class="n">waiClass</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">())</span> <span class="o">&amp;&amp;</span>
+						<span class="n">WebApplicationInitializer</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">isAssignableFrom</span><span class="o">(</span><span class="n">waiClass</span><span class="o">))</span> <span class="o">{</span>
+					<span class="k">try</span> <span class="o">{</span>
+						<span class="n">initializers</span><span class="o">.</span><span class="na">add</span><span class="o">((</span><span class="n">WebApplicationInitializer</span><span class="o">)</span>
+								<span class="n">ReflectionUtils</span><span class="o">.</span><span class="na">accessibleConstructor</span><span class="o">(</span><span class="n">waiClass</span><span class="o">).</span><span class="na">newInstance</span><span class="o">());</span>
+					<span class="o">}</span>
+					<span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+						<span class="k">throw</span> <span class="k">new</span> <span class="n">ServletException</span><span class="o">(</span><span class="s">&#34;Failed to instantiate WebApplicationInitializer class&#34;</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 排序，按照排序后的顺序，遍历、调用onStartup()。
+</span><span class="c1"></span>		<span class="n">servletContext</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="n">initializers</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; Spring WebApplicationInitializers detected on classpath&#34;</span><span class="o">);</span>
+		<span class="n">AnnotationAwareOrderComparator</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">initializers</span><span class="o">);</span>
+		<span class="k">for</span> <span class="o">(</span><span class="n">WebApplicationInitializer</span> <span class="n">initializer</span> <span class="o">:</span> <span class="n">initializers</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">initializer</span><span class="o">.</span><span class="na">onStartup</span><span class="o">(</span><span class="n">servletContext</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>SpringServletContainerInitializer 类声明处定义了 <code>@HandlesTypes(WebApplicationInitializer.class)</code>，web容器启动时，会调用 SpringServletContainerInitializer 的 onStartup()，并将项目中存在的所有 WebApplicationInitializer 实现类的 Class 对象，作为参数传递给 onStartup()。</p>
+<p>遍历这个集合，将所有的实现类通过反射调用无参构造函数进行实例化。实例化后，得到一个实例列表，给这个列表中实例进行排序后，依次调用每个实例的 onStartup()。</p>
+<p>我们可以实现 WebApplicationInitializer，或者继承它的子类，通过实现一些特定的方法，来达到在容器启动时，加载一些内容的目的。</p>
+<p>首先看已经实现了一些方法的子类。以下是 AbstractDispatcherServletInitializer 中 onStartup() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractDispatcherServletInitializer</span> <span class="kd">extends</span> <span class="n">AbstractContextLoaderInitializer</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onStartup</span><span class="o">(</span><span class="n">ServletContext</span> <span class="n">servletContext</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ServletException</span> <span class="o">{</span>
+		<span class="c1">// 创建 RootApplicationContext，也就是spring父容器。
+</span><span class="c1"></span>		<span class="c1">// 后面的流程中，设置子容器的父容器时，就是通过servletContext作为桥梁，进行获取的。父容器实例化后，会注册到servletContext。
+</span><span class="c1"></span>		<span class="kd">super</span><span class="o">.</span><span class="na">onStartup</span><span class="o">(</span><span class="n">servletContext</span><span class="o">);</span>
+		<span class="n">registerDispatcherServlet</span><span class="o">(</span><span class="n">servletContext</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>主要调用了两个方法 <code>super.onStartup()</code> 和 <code>registerDispatcherServlet()</code>。</p>
+<hr>
+<p>super.onStartup() 源码中调用了 registerContextLoaderListener()，源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractContextLoaderInitializer</span> <span class="kd">implements</span> <span class="n">WebApplicationInitializer</span> <span class="o">{</span>
+
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">registerContextLoaderListener</span><span class="o">(</span><span class="n">ServletContext</span> <span class="n">servletContext</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 创建 RootApplicationContext，这里面会有一个回调 getRootConfigClasses。这个回调中获取了实现类方法中返回的配置类。
+</span><span class="c1"></span>		<span class="n">WebApplicationContext</span> <span class="n">rootAppContext</span> <span class="o">=</span> <span class="n">createRootApplicationContext</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">rootAppContext</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 创建监听器，监听器中封装了ApplicationContext，将这个监听器封装到servletContext中
+</span><span class="c1"></span>			<span class="n">ContextLoaderListener</span> <span class="n">listener</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ContextLoaderListener</span><span class="o">(</span><span class="n">rootAppContext</span><span class="o">);</span>
+			<span class="n">listener</span><span class="o">.</span><span class="na">setContextInitializers</span><span class="o">(</span><span class="n">getRootApplicationContextInitializers</span><span class="o">());</span>
+			<span class="n">servletContext</span><span class="o">.</span><span class="na">addListener</span><span class="o">(</span><span class="n">listener</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>创建了一个 ApplicationContext，这是spring父容器，后面会创建一个子容器。将其放到一个 ServletContextListener 监听器中。</p>
+<p>创建 ApplicationContext 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractAnnotationConfigDispatcherServletInitializer</span>
+		<span class="kd">extends</span> <span class="n">AbstractDispatcherServletInitializer</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="n">WebApplicationContext</span> <span class="nf">createRootApplicationContext</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// 这里获取到具体实现类中此方法返回的配置类型。
+</span><span class="c1"></span>		<span class="n">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">configClasses</span> <span class="o">=</span> <span class="n">getRootConfigClasses</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(!</span><span class="n">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">configClasses</span><span class="o">))</span> <span class="o">{</span>
+			<span class="c1">// 创建上下文对象，并将配置类注入到上下文对象中。
+</span><span class="c1"></span>			<span class="n">AnnotationConfigWebApplicationContext</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AnnotationConfigWebApplicationContext</span><span class="o">();</span>
+			<span class="n">context</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">configClasses</span><span class="o">);</span>
+			<span class="k">return</span> <span class="n">context</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="k">else</span> <span class="o">{</span>
+			<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里调用了 getRootConfigClasses()，这是一个模板方法，如果我们通过继承这个类的方式，来重写这个方法，就可以将容器启动的配置类，加载到spring父容器中。</p>
+<p>监听器的 contextInitialized() 方法中，会调用 initWebApplicationContext()。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ContextLoader</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="n">WebApplicationContext</span> <span class="nf">initWebApplicationContext</span><span class="o">(</span><span class="n">ServletContext</span> <span class="n">servletContext</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">servletContext</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="s">&#34;Initializing Spring root WebApplicationContext&#34;</span><span class="o">);</span>
+		<span class="n">Log</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LogFactory</span><span class="o">.</span><span class="na">getLog</span><span class="o">(</span><span class="n">ContextLoader</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="o">=</span> <span class="n">createWebApplicationContext</span><span class="o">(</span><span class="n">servletContext</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="k">instanceof</span> <span class="n">ConfigurableWebApplicationContext</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ConfigurableWebApplicationContext</span> <span class="n">cwac</span> <span class="o">=</span> <span class="o">(</span><span class="n">ConfigurableWebApplicationContext</span><span class="o">)</span> <span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">cwac</span><span class="o">.</span><span class="na">isActive</span><span class="o">())</span> <span class="o">{</span>
+                <span class="c1">// The context has not yet been refreshed -&gt; provide services such as
+</span><span class="c1"></span>                <span class="c1">// setting the parent context, setting the application context id, etc
+</span><span class="c1"></span>                <span class="k">if</span> <span class="o">(</span><span class="n">cwac</span><span class="o">.</span><span class="na">getParent</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c1">// The context instance was injected without an explicit parent -&gt;
+</span><span class="c1"></span>                    <span class="c1">// determine parent for root web application context, if any.
+</span><span class="c1"></span>                    <span class="n">ApplicationContext</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">loadParentContext</span><span class="o">(</span><span class="n">servletContext</span><span class="o">);</span>
+                    <span class="n">cwac</span><span class="o">.</span><span class="na">setParent</span><span class="o">(</span><span class="n">parent</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="c1">// TODO 调用了 refresh()
+</span><span class="c1"></span>                <span class="n">configureAndRefreshWebApplicationContext</span><span class="o">(</span><span class="n">cwac</span><span class="o">,</span> <span class="n">servletContext</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="c1">// 将WebApplicationContext添加到servletContext中，后面子容器设置父容器时，就会通过这个键值进行获取。
+</span><span class="c1"></span>        <span class="n">servletContext</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="n">WebApplicationContext</span><span class="o">.</span><span class="na">ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">);</span>
+
+        <span class="n">ClassLoader</span> <span class="n">ccl</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getContextClassLoader</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ccl</span> <span class="o">==</span> <span class="n">ContextLoader</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">currentContext</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">ccl</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">currentContextPerThread</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">ccl</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="c1">// 省略...
+</span><span class="c1"></span>        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">;</span>
+	
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里重点有两个</p>
+<ol>
+<li>
+<p>configureAndRefreshWebApplicationContext() 调用了 refresh() 方法，刷新容器。这时容器中已经封装了定义的配置类。会根据配置类进行递归扫描。</p>
+</li>
+<li>
+<p>servletContext.setAttribute()，将这个 ApplicationContext 保存到 ServletContext 中，这样，在子容器创建后，设置父容器，就可以从 ServletContext 中获取。</p>
+</li>
+</ol>
+<hr>
+<p>回到 onStartup()，在调用完 super.onStartup()之后，会调用 registerDispatcherServlet()，源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">AbstractDispatcherServletInitializer</span> <span class="kd">extends</span> <span class="n">AbstractContextLoaderInitializer</span> <span class="o">{</span>
+
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">registerDispatcherServlet</span><span class="o">(</span><span class="n">ServletContext</span> <span class="n">servletContext</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">String</span> <span class="n">servletName</span> <span class="o">=</span> <span class="n">getServletName</span><span class="o">();</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">hasLength</span><span class="o">(</span><span class="n">servletName</span><span class="o">,</span> <span class="s">&#34;getServletName() must not return null or empty&#34;</span><span class="o">);</span>
+		<span class="c1">// 创建spring子容器。这里面通过回调方法 getServletConfigClasses。
+</span><span class="c1"></span>		<span class="n">WebApplicationContext</span> <span class="n">servletAppContext</span> <span class="o">=</span> <span class="n">createServletApplicationContext</span><span class="o">();</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">notNull</span><span class="o">(</span><span class="n">servletAppContext</span><span class="o">,</span> <span class="s">&#34;createServletApplicationContext() must not return null&#34;</span><span class="o">);</span>
+		<span class="c1">// 创建 DispatcherServlet。
+</span><span class="c1"></span>		<span class="n">FrameworkServlet</span> <span class="n">dispatcherServlet</span> <span class="o">=</span> <span class="n">createDispatcherServlet</span><span class="o">(</span><span class="n">servletAppContext</span><span class="o">);</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">notNull</span><span class="o">(</span><span class="n">dispatcherServlet</span><span class="o">,</span> <span class="s">&#34;createDispatcherServlet(WebApplicationContext) must not return null&#34;</span><span class="o">);</span>
+		<span class="n">dispatcherServlet</span><span class="o">.</span><span class="na">setContextInitializers</span><span class="o">(</span><span class="n">getServletApplicationContextInitializers</span><span class="o">());</span>
+		<span class="c1">// 将servlet添加到servletContext中
+</span><span class="c1"></span>		<span class="n">ServletRegistration</span><span class="o">.</span><span class="na">Dynamic</span> <span class="n">registration</span> <span class="o">=</span> <span class="n">servletContext</span><span class="o">.</span><span class="na">addServlet</span><span class="o">(</span><span class="n">servletName</span><span class="o">,</span> <span class="n">dispatcherServlet</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">registration</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="n">IllegalStateException</span><span class="o">(</span><span class="s">&#34;Failed to register servlet with name &#39;&#34;</span> <span class="o">+</span> <span class="n">servletName</span> <span class="o">+</span> <span class="s">&#34;&#39;. &#34;</span> <span class="o">+</span>
+					<span class="s">&#34;Check if there is another servlet registered under the same name.&#34;</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="c1">// 如果该元素的值为负数或者没有设置，则容器会当Servlet被请求时再加载。
+</span><span class="c1"></span>		<span class="c1">// 如果值为正整数或者0时，表示容器在应用启动时就加载并初始化这个servlet，
+</span><span class="c1"></span>		<span class="c1">// 值越小，servlet的优先级越高，就越先被加载
+</span><span class="c1"></span>		<span class="n">registration</span><span class="o">.</span><span class="na">setLoadOnStartup</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+		<span class="n">registration</span><span class="o">.</span><span class="na">addMapping</span><span class="o">(</span><span class="n">getServletMappings</span><span class="o">());</span>
+		<span class="n">registration</span><span class="o">.</span><span class="na">setAsyncSupported</span><span class="o">(</span><span class="n">isAsyncSupported</span><span class="o">());</span>
+
+		<span class="n">Filter</span><span class="o">[]</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">getServletFilters</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(!</span><span class="n">ObjectUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">filters</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">for</span> <span class="o">(</span><span class="n">Filter</span> <span class="n">filter</span> <span class="o">:</span> <span class="n">filters</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">registerServletFilter</span><span class="o">(</span><span class="n">servletContext</span><span class="o">,</span> <span class="n">filter</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+
+		<span class="n">customizeRegistration</span><span class="o">(</span><span class="n">registration</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里创建了子容器 WebApplicationContext 和 DispatcherServlet，子容器就保存在 DispatcherServlet 中。</p>
+<p>DispatcherServlet.init() -&gt; initServletBean() -&gt; initWebApplicationContext()</p>
+<p>initWebApplicationContext() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">FrameworkServlet</span> <span class="kd">extends</span> <span class="n">HttpServletBean</span> <span class="kd">implements</span> <span class="n">ApplicationContextAware</span> <span class="o">{</span>
+
+    <span class="kd">protected</span> <span class="n">WebApplicationContext</span> <span class="nf">initWebApplicationContext</span><span class="o">()</span> <span class="o">{</span>
+		<span class="n">WebApplicationContext</span> <span class="n">rootContext</span> <span class="o">=</span>
+				<span class="n">WebApplicationContextUtils</span><span class="o">.</span><span class="na">getWebApplicationContext</span><span class="o">(</span><span class="n">getServletContext</span><span class="o">());</span>
+		<span class="n">WebApplicationContext</span> <span class="n">wac</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+		<span class="c1">// TODO 注解方式激活MVC功能时，会走到这里
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">webApplicationContext</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// A context instance was injected at construction time -&gt; use it
+</span><span class="c1"></span>			<span class="n">wac</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">webApplicationContext</span><span class="o">;</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">wac</span> <span class="k">instanceof</span> <span class="n">ConfigurableWebApplicationContext</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">ConfigurableWebApplicationContext</span> <span class="n">cwac</span> <span class="o">=</span> <span class="o">(</span><span class="n">ConfigurableWebApplicationContext</span><span class="o">)</span> <span class="n">wac</span><span class="o">;</span>
+				<span class="k">if</span> <span class="o">(!</span><span class="n">cwac</span><span class="o">.</span><span class="na">isActive</span><span class="o">())</span> <span class="o">{</span>
+					<span class="c1">// 设置父容器，这个父容器时从servletContext中获取的。
+</span><span class="c1"></span>					<span class="c1">// 父容器是在 ContextLoader.initWebApplicationContext()，调用完refresh()后设置到servletContext中的。
+</span><span class="c1"></span>					<span class="k">if</span> <span class="o">(</span><span class="n">cwac</span><span class="o">.</span><span class="na">getParent</span><span class="o">()</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+						<span class="c1">// The context instance was injected without an explicit parent -&gt; set
+</span><span class="c1"></span>						<span class="c1">// the root application context (if any; may be null) as the parent
+</span><span class="c1"></span>						<span class="n">cwac</span><span class="o">.</span><span class="na">setParent</span><span class="o">(</span><span class="n">rootContext</span><span class="o">);</span>
+					<span class="o">}</span>
+					<span class="c1">// TODO 配置、刷新WebApplicationContext，调用DispatcherServlet的init()
+</span><span class="c1"></span>					<span class="n">configureAndRefreshWebApplicationContext</span><span class="o">(</span><span class="n">cwac</span><span class="o">);</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="c1">// 省略...
+</span><span class="c1"></span>
+		<span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="na">refreshEventReceived</span><span class="o">)</span> <span class="o">{</span>
+			<span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">onRefreshMonitor</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// 初始化 initHandlerMappings、initHandlerAdapters 等
+</span><span class="c1"></span>				<span class="n">onRefresh</span><span class="o">(</span><span class="n">wac</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+    
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">publishContext</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// Publish the context as a servlet context attribute.
+</span><span class="c1"></span>			<span class="n">String</span> <span class="n">attrName</span> <span class="o">=</span> <span class="n">getServletContextAttributeName</span><span class="o">();</span>
+			<span class="n">getServletContext</span><span class="o">().</span><span class="na">setAttribute</span><span class="o">(</span><span class="n">attrName</span><span class="o">,</span> <span class="n">wac</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="k">return</span> <span class="n">wac</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>首先获取 rootContext，然后获取到 DispatcherServlet 中已经封装的 WebApplicationContext，将 rootContext 设置为 WebApplicationContext 的父容器。然后调用 configureAndRefreshWebApplicationContext()，进而调用子容器的 refresh()，完成上下文的加载。</p>
+<p>最后 onRefresh() 中完成了 DispatcherServlet 中很多必要组件的初始化，包括 initHandlerMappings、initHandlerAdapters 等。</p>
+<p>获取父容器会调用到这里：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">WebApplicationContextUtils</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">WebApplicationContext</span> <span class="nf">getWebApplicationContext</span><span class="o">(</span><span class="n">ServletContext</span> <span class="n">sc</span><span class="o">,</span> <span class="n">String</span> <span class="n">attrName</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">notNull</span><span class="o">(</span><span class="n">sc</span><span class="o">,</span> <span class="s">&#34;ServletContext must not be null&#34;</span><span class="o">);</span>
+		<span class="c1">// 从 servletContext中获取父容器 WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
+</span><span class="c1"></span>		<span class="n">Object</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="n">attrName</span><span class="o">);</span>
+		<span class="c1">// 省略...
+</span><span class="c1"></span>		<span class="k">return</span> <span class="o">(</span><span class="n">WebApplicationContext</span><span class="o">)</span> <span class="n">attr</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们在以XML的方式配置基础的springmvc项目时，在web.xml中通常有两个重要配置：ContextLoaderListener 和 DispatcherServlet。而上面的流程，就创建了这两个核心配置的内容。</p>
+<p>如果我们不适用XML方式配置，而是通过自定义一个 WebApplicationInitializer 实现类的方式，就可以做到无XML来启动基于springmvc的项目了。</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-10</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/20-transaction-extention-transaction-synchronization/" class="prev" rel="prev" title="20 声明式事务提交流程的扩展 TransactionSynchronization"><i class="fas fa-angle-left fa-fw"></i>20 声明式事务提交流程的扩展 TransactionSynchronization</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>

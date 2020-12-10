@@ -4,9 +4,17 @@
         <link>https://wlizhi.cc/</link>
         <description>暗夜零星，java程序员。这里是我的个人博客，交流技术，分享经验。</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Mon, 07 Dec 2020 14:14:56 &#43;0800</lastBuildDate>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Thu, 10 Dec 2020 19:32:37 &#43;0800</lastBuildDate>
             <atom:link href="https://wlizhi.cc/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>21 web容器启动时ServletContainerInitializer的加载</title>
+    <link>https://wlizhi.cc/posts/spring/21-load-servlet-container-initializer-on-startup/</link>
+    <pubDate>Thu, 10 Dec 2020 19:32:37 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/21-load-servlet-container-initializer-on-startup/</guid>
+    <description><![CDATA[<p>在web容器启动时为提供给第三方组件机会做一些初始化的工作，例如注册 servlet 或者 filter 等，servlet 规范中通过 ServletContainerInitializer 实现此功能。</p>
+<p>伴随着 ServletContainerInitializer 一起起作用的还有 @HandlesTypes 注解，通过这个注解会将指定的类注入到 ServletContainerInitializer 的 onStartup 方法参数中。</p>]]></description>
+</item><item>
     <title>20 声明式事务提交流程的扩展 TransactionSynchronization</title>
     <link>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</link>
     <pubDate>Mon, 07 Dec 2020 14:14:56 &#43;0800</pubDate>
@@ -69,12 +77,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/12-aop-proxy-execute-processor/</guid>
     <description><![CDATA[AOP 中代理对象生成后，在调用代理方法时，以 JDK 动态代理为例，执行链的生成、执行链火炬传递式的调用源码解析。]]></description>
-</item><item>
-    <title>11 AOP 代理实例的创建</title>
-    <link>https://wlizhi.cc/posts/spring/11-aop-proxy-create-processor/</link>
-    <pubDate>Tue, 01 Dec 2020 13:48:59 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/11-aop-proxy-create-processor/</guid>
-    <description><![CDATA[AOP 代理实例的创建]]></description>
 </item></channel>
 </rss>
