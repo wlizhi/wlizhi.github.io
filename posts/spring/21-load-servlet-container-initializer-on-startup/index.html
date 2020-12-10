@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/21-load-servlet-container-initializer-on-startup\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  3236 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  3249 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/21-load-servlet-container-initializer-on-startup\/","datePublished": "2020-12-10T19:32:37+08:00","dateModified": "2020-12-10T19:32:37+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -108,7 +108,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">21 web容器启动时ServletContainerInitializer的加载</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-10">2020-12-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3236 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-10">2020-12-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3249 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;<span id="/posts/spring/21-load-servlet-container-initializer-on-startup/" class="leancloud_visitors" data-flag-title="21 web容器启动时ServletContainerInitializer的加载">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -610,7 +610,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>我们在以XML的方式配置基础的springmvc项目时，在web.xml中通常有两个重要配置：ContextLoaderListener 和 DispatcherServlet。而上面的流程，就创建了这两个核心配置的内容。</p>
-<p>如果我们不适用XML方式配置，而是通过自定义一个 WebApplicationInitializer 实现类的方式，就可以做到无XML来启动基于springmvc的项目了。</p></div>
+<p>如果我们不用XML方式配置，而是通过自定义一个 WebApplicationInitializer 实现类的方式，就可以做到无XML来启动基于springmvc的项目，所有的配置通过注解方式来完成。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
