@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/"
-        },"genre": "posts","keywords": "spring源码","wordcount":  1854 ,
+        },"genre": "posts","keywords": "spring源码","wordcount":  1878 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/16-transaction-declare-attention\/","datePublished": "2020-12-05T18:30:10+08:00","dateModified": "2020-12-05T18:30:10+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">16 声明式事务注意事项</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1854 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-05">2020-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1878 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;<span id="/posts/spring/16-transaction-declare-attention/" class="leancloud_visitors" data-flag-title="16 声明式事务注意事项">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -297,7 +297,7 @@
 <p>道理很简单，addRequiredNew() 在等待数据库连接池给它链接，而连接池已经没有连接了，唯一的一个连接被外层方法给占用了，所以它也在等待 transactionExceptionRequiresNewRequiresNew() 释放连接，这样就产生了死锁。</p>
 <p>有限数量的资源，被多个线程并发的请求各自占有多个，就可能发生死锁。很有可能在占有过程中，资源已经用尽了。即使仅嵌套一个事务，假设总数100个数据库连接，
 也是有可能发生死锁的（有100个线程各占了一个连接，这100个线程就会等待在获取第二个连接处）。</p>
-<p>注：这和并发编程中死锁的概念是有区别的。并发编程中的死锁跟锁的获取顺序有关，获取多个锁对象，只要顺序一致就不会死锁。而这里占用数据库连接，跟获取顺序无关。</p></div>
+<p>注：这和并发编程中死锁的概念是有区别的。并发编程中的死锁跟锁的获取顺序有关，获取多个锁对象，只要顺序一致就不会死锁。而这里占用数据库连接，仅是资源的争抢，资源耗尽就会阻塞在争抢的过程中，跟获取顺序无关。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
