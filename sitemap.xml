@@ -2,13 +2,15 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>https://wlizhi.cc/categories/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/spring%E9%97%AE%E9%A2%98/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/posts/spring/an-issue-for-spring/</loc><lastmod>2020-12-11T12:47:01&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/21-load-servlet-container-initializer-on-startup/</loc><lastmod>2020-12-10T19:32:37&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/categories/</loc><lastmod>2020-12-10T19:32:37&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-12-10T19:32:37&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-12-10T19:32:37&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-12-10T19:32:37&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/</loc><lastmod>2020-12-10T19:32:37&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/</loc><lastmod>2020-12-10T19:32:37&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</loc><lastmod>2020-12-07T14:14:56&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/</loc><lastmod>2020-12-07T10:43:26&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/18-transaction-source-ano-supports/</loc><lastmod>2020-12-07T09:18:50&#43;08:00</lastmod></url><url>

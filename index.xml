@@ -4,9 +4,16 @@
         <link>https://wlizhi.cc/</link>
         <description>暗夜零星，java程序员。这里是我的个人博客，交流技术，分享经验。</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Thu, 10 Dec 2020 19:32:37 &#43;0800</lastBuildDate>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</lastBuildDate>
             <atom:link href="https://wlizhi.cc/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>给spring提了一个issue</title>
+    <link>https://wlizhi.cc/posts/spring/an-issue-for-spring/</link>
+    <pubDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/an-issue-for-spring/</guid>
+    <description><![CDATA[<p>昨天给spring提了一个issue，这个问题在 <a href="https://wlizhi.cc/posts/spring/16-transaction-declare-attention/" target="_blank" rel="noopener noreffer">声明式事务注意事项</a> 中有描述过。</p>]]></description>
+</item><item>
     <title>21 web容器启动时ServletContainerInitializer的加载</title>
     <link>https://wlizhi.cc/posts/spring/21-load-servlet-container-initializer-on-startup/</link>
     <pubDate>Thu, 10 Dec 2020 19:32:37 &#43;0800</pubDate>
@@ -69,12 +76,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/</guid>
     <description><![CDATA[AOP中代理方法执行时，自定义切面通知方法的MethodInterceptor执行原理解析。]]></description>
-</item><item>
-    <title>12 AOP 执行链的创建和执行原理</title>
-    <link>https://wlizhi.cc/posts/spring/12-aop-proxy-execute-processor/</link>
-    <pubDate>Tue, 01 Dec 2020 20:34:31 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/12-aop-proxy-execute-processor/</guid>
-    <description><![CDATA[AOP 中代理对象生成后，在调用代理方法时，以 JDK 动态代理为例，执行链的生成、执行链火炬传递式的调用源码解析。]]></description>
 </item></channel>
 </rss>

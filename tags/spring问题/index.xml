@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>spring问题 - 标签 - 暗夜零星</title>
+        <link>https://wlizhi.cc/tags/spring%E9%97%AE%E9%A2%98/</link>
+        <description>spring问题 - 标签 - 暗夜零星</description>
+        <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/spring%E9%97%AE%E9%A2%98/" rel="self" type="application/rss+xml" /><item>
+    <title>给spring提了一个issue</title>
+    <link>https://wlizhi.cc/posts/spring/an-issue-for-spring/</link>
+    <pubDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/an-issue-for-spring/</guid>
+    <description><![CDATA[<p>昨天给spring提了一个issue，这个问题在 <a href="https://wlizhi.cc/posts/spring/16-transaction-declare-attention/" target="_blank" rel="noopener noreffer">声明式事务注意事项</a> 中有描述过。</p>]]></description>
+</item></channel>
+</rss>
