@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/an-issue-for-spring\/"
-        },"genre": "posts","keywords": "spring源码, spring问题","wordcount":  2822 ,
+        },"genre": "posts","keywords": "spring源码, spring问题","wordcount":  2875 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/an-issue-for-spring\/","datePublished": "2020-12-11T12:47:01+08:00","dateModified": "2020-12-11T12:47:01+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">给spring提了一个issue</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-11">2020-12-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2822 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-11">2020-12-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2875 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/an-issue-for-spring/" class="leancloud_visitors" data-flag-title="给spring提了一个issue">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -402,7 +402,7 @@ application should deal REQUIRES_NEW properly, there is no bug or improve space 
 <hr>
 <p>如果项目中有事务的传播行为设置为 <code>REQUIRES_NEW</code>，一定要仔细思考当前这个节点，是否真的需要新启事务，或者如果打乱外围方法和它之间的执行顺序，是否会有所影响？考虑这些问题的目的就是为了，尽可能避免这种传播行为的使用。如果真的避不开，就做异步处理或者使用事务同步器，进行后置处理。</p>
 <p>如果这种方式还是会打乱原有业务，必须得使用 <code>REQUIRES_NEW</code>，也不允许做其他处理（我实在想不到这种场景），那最好对其进行限流。理论上进程中所有新启事务的方法个数要小于连接池连接数。允许的最大并发量要小于连接池连接数除以这种方法的个数，当然这是下下策。最终这些方法会以极慢的速度进行，甚至还不如直接塞到一个事务中。能拆分成两个事务解决的问题，使用一个事务一定也是可以解决的。</p>
-<p>替代 <code>REQUIRES_NEW</code> 这种传播行为的手段很多，何必要直接使用这种传播行为，埋下一个项目随时可能宕机（如果设置了超时，前文中说的结果被触发时，会一直卡顿到连接超时，事务回滚。）的隐患呢？</p>
+<p>我个人认为 <code>REQUIRES_NEW</code> 这种传播行为机制是有一定问题的，至少这个问题在上面代码案例中已经表现出来了，而且触发的几率极高。替代这种传播行为的手段很多，何必要直接使用这种传播行为，埋下一个项目随时可能宕机（如果设置了超时，前文中说的结果被触发时，会一直卡顿到连接超时，事务回滚。）的隐患呢？</p>
 <p>之所以没有直接发 issue 截图，是因为文章使用md文档写的，提交到其他博客网站时，图片链接可能会无法加载。所以以文字的形式先复制下来。后面再附上部分截图。</p>
 <p>github部分沟通时的截图</p>
 <p><figure><a class="lightgallery" href="https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-github-issue-transaction-01.png" title="spring-github-issue-transaction-01" data-thumbnail="https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-github-issue-transaction-01.png" data-sub-html="<h2>spring-github-issue-transaction-01</h2><p>spring-github-issue-transaction-01</p>">
