@@ -4,15 +4,22 @@
         <link>https://wlizhi.cc/</link>
         <description>暗夜零星，java程序员。这里是我的个人博客，交流技术，分享经验。</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 15 Dec 2020 10:51:00 &#43;0800</lastBuildDate>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 15 Dec 2020 20:27:00 &#43;0800</lastBuildDate>
             <atom:link href="https://wlizhi.cc/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>23 @EnableWebMvc 的作用及源码分析</title>
+    <link>https://wlizhi.cc/posts/spring/23-enable-web-mvc-principle/</link>
+    <pubDate>Tue, 15 Dec 2020 20:27:00 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/23-enable-web-mvc-principle/</guid>
+    <description><![CDATA[注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。]]></description>
+</item><item>
     <title>22 MVC的支持入口及嵌入式Tomcat的使用</title>
     <link>https://wlizhi.cc/posts/spring/22-enable-web-mvc-main-embedded-tomcat/</link>
     <pubDate>Tue, 15 Dec 2020 10:51:00 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/22-enable-web-mvc-main-embedded-tomcat/</guid>
-    <description><![CDATA[注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。]]></description>
+    <description><![CDATA[MVC的支持、执行入口及嵌入式 Tomcat 的使用案例。]]></description>
 </item><item>
     <title>向spring提交了一个issue</title>
     <link>https://wlizhi.cc/posts/spring/an-issue-for-spring/</link>
@@ -69,12 +76,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/15-transaction-propagation-example/</guid>
     <description><![CDATA[spring声明式事务的传播行为，严格来说是spring特有的，数据库本身并没有这个概念。本文会列举出spring事务其中传播行为，以案例的方式展示不同的传播行为的表现是怎样的。]]></description>
-</item><item>
-    <title>14 声明式事务中XML配置及注解方式的注册入口</title>
-    <link>https://wlizhi.cc/posts/spring/14-transaction-xml-annotation-registry/</link>
-    <pubDate>Thu, 03 Dec 2020 11:06:30 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/14-transaction-xml-annotation-registry/</guid>
-    <description><![CDATA[事务以xml配置方式使用时，xml是怎么解析，并将事务功能注册到容器中的？注解方式启动时，是怎么扫描注解将事务功能注册到容器中的？本文给出了详细的解析。]]></description>
 </item></channel>
 </rss>

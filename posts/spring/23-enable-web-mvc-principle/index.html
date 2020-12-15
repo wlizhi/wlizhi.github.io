@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>23 @EnableWebMvc 的作用及源码分析 - 暗夜零星</title><meta name="Description" content="注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。"><meta property="og:title" content="23 @EnableWebMvc 的作用及源码分析" />
+<meta property="og:description" content="注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/spring/23-enable-web-mvc-principle/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-12-15T20:27:00+08:00" />
+<meta property="article:modified_time" content="2020-12-15T20:27:00+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="23 @EnableWebMvc 的作用及源码分析"/>
+<meta name="twitter:description" content="注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/spring/23-enable-web-mvc-principle/" /><link rel="prev" href="https://wlizhi.cc/posts/spring/22-enable-web-mvc-main-embedded-tomcat/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "23 @EnableWebMvc 的作用及源码分析",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/spring\/23-enable-web-mvc-principle\/"
+        },"genre": "posts","keywords": "spring源码","wordcount":  2626 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/spring\/23-enable-web-mvc-principle\/","datePublished": "2020-12-15T20:27:00+08:00","dateModified": "2020-12-15T20:27:00+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": "注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">23 @EnableWebMvc 的作用及源码分析</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-15">2020-12-15</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2626 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/23-enable-web-mvc-principle/" class="leancloud_visitors" data-flag-title="23 @EnableWebMvc 的作用及源码分析">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#enablewebmvc的声明">@EnableWebMvc的声明</a></li>
+    <li><a href="#delegatingwebmvcconfiguration-中的配置聚合">DelegatingWebMvcConfiguration 中的配置聚合</a></li>
+    <li><a href="#delegatingwebmvcconfiguration-中的组件注册">DelegatingWebMvcConfiguration 中的组件注册</a>
+      <ul>
+        <li><a href="#主要成员">主要成员</a></li>
+        <li><a href="#注册-requestmappinghandlermapping">注册 RequestMappingHandlerMapping</a></li>
+        <li><a href="#注册-requestmappinghandleradapter">注册 RequestMappingHandlerAdapter</a></li>
+        <li><a href="#异常处理器-handlerexceptionresolver">异常处理器 HandlerExceptionResolver</a></li>
+        <li><a href="#其他">其他</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="enablewebmvc的声明">@EnableWebMvc的声明</h2>
+<p>@EnableWebMvc 的声明源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Retention</span><span class="o">(</span><span class="n">RetentionPolicy</span><span class="o">.</span><span class="na">RUNTIME</span><span class="o">)</span>
+<span class="nd">@Target</span><span class="o">(</span><span class="n">ElementType</span><span class="o">.</span><span class="na">TYPE</span><span class="o">)</span>
+<span class="nd">@Documented</span>
+<span class="c1">// 这里支持了激活mvc各种组件功能，其中父类中有很多@Bean注解的方法，创建了许多可能需要的组件，
+</span><span class="c1">// 比如RequestMappingHandlerMapping就是在这时候生成的URL-对象方法的映射，
+</span><span class="c1">// RequestMappingHandlerMapping实现了InitializingBean，afterPropertiesSet方法中初始化了映射关系
+</span><span class="c1"></span><span class="nd">@Import</span><span class="o">(</span><span class="n">DelegatingWebMvcConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">EnableWebMvc</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 @EnableWebMvc 声明处，使用 @Import 注解导入了一个类，这个类是 DelegatingWebMvcConfiguration，这是一个配置类，使用了注解 @Configuration 标注。</p>
+<h2 id="delegatingwebmvcconfiguration-中的配置聚合">DelegatingWebMvcConfiguration 中的配置聚合</h2>
+<p>在 DelegatingWebMvcConfiguration 中，聚合了项目中所有的 WebMvcConfigurer 实现类实例。在这个类中，有很多 @Bean 注解标注的方法，来完成一些 mvc 组件的注册。</p>
+<p>而对这些组件的注册的一些配置，会通过调用 DelegatingWebMvcConfiguration 的一些回调方法来完成，这些回调方法中，遍历了搜集到的 WebMvcConfigurer，将对应的方法进行依次调用。</p>
+<p>在 DelegatingWebMvcConfiguration 中，聚合 WebMvcConfigurer 实例的源码如下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DelegatingWebMvcConfiguration</span> <span class="kd">extends</span> <span class="n">WebMvcConfigurationSupport</span> <span class="o">{</span>
+	<span class="c1">// 这个类合成了容器中所有实例化的 WebMvcConfigurer
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">WebMvcConfigurerComposite</span> <span class="n">configurers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WebMvcConfigurerComposite</span><span class="o">();</span>
+
+	<span class="cm">/** 将容器中所有实例化的 WebMvcConfigurer 根据类型注入到方法参数，将其封装起来，之后所有的配置方法中，
+</span><span class="cm">	 * 会遍历这里搜集到的所有的实例，依次进行配置。 */</span>
+	<span class="nd">@Autowired</span><span class="o">(</span><span class="n">required</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setConfigurers</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">WebMvcConfigurer</span><span class="o">&gt;</span> <span class="n">configurers</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(!</span><span class="n">CollectionUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">configurers</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">this</span><span class="o">.</span><span class="na">configurers</span><span class="o">.</span><span class="na">addWebMvcConfigurers</span><span class="o">(</span><span class="n">configurers</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 DelegatingWebMvcConfiguration 中，声明了一个成员变量 configurers，这个类是 WebMvcConfigurerComposite，同时它也是一个 WebMvcConfigurer 的实现。</p>
+<p>在 setConfigurers() 中，注入了子容器中所有的 WebMvcConfigurer 实例，并将其封装到 configurers 中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">WebMvcConfigurerComposite</span> <span class="kd">implements</span> <span class="n">WebMvcConfigurer</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">WebMvcConfigurer</span><span class="o">&gt;</span> <span class="n">delegates</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">addWebMvcConfigurers</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">WebMvcConfigurer</span><span class="o">&gt;</span> <span class="n">configurers</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(!</span><span class="n">CollectionUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">configurers</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">this</span><span class="o">.</span><span class="na">delegates</span><span class="o">.</span><span class="na">addAll</span><span class="o">(</span><span class="n">configurers</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">configureViewResolvers</span><span class="o">(</span><span class="n">ViewResolverRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">for</span> <span class="o">(</span><span class="n">WebMvcConfigurer</span> <span class="n">delegate</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="na">delegates</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">delegate</span><span class="o">.</span><span class="na">configureViewResolvers</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+    <span class="c1">// 省略一系列方法实现...
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过 addWebMvcConfigurers() 方法，将所有的实现类，封装到成员 delegates 中。</p>
+<p>WebMvcConfigurerComposite 本身并不提供任何组件的配置，而是通过搜集容器中注入的 WebMvcConfigurer 实例，调用各个配置方法时，通过遍历这些实例，依次调用其同名方法来进行配置。</p>
+<p>比如 configureViewResolvers()，它会遍历所有封装的实例，依次调用这些实例的 configureViewResolvers()，来进行组件的配置。</p>
+<h2 id="delegatingwebmvcconfiguration-中的组件注册">DelegatingWebMvcConfiguration 中的组件注册</h2>
+<p>在 DelegatingWebMvcConfiguration 继承了 WebMvcConfigurationSupport，在这个类中，通过 @Bean的方式，完成了很多 mvc 相关组件的注册。</p>
+<h3 id="主要成员">主要成员</h3>
+<p>DelegatingWebMvcConfiguration 的主要成员变量如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebMvcConfigurationSupport</span> <span class="kd">implements</span> <span class="n">ApplicationContextAware</span><span class="o">,</span> <span class="n">ServletContextAware</span> <span class="o">{</span>
+	<span class="cm">/** spring容器的上下文对象 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">ApplicationContext</span> <span class="n">applicationContext</span><span class="o">;</span>
+	<span class="cm">/** servlet 上下文对象 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">ServletContext</span> <span class="n">servletContext</span><span class="o">;</span>
+    <span class="cm">/** springmvc 拦截器封装 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">interceptors</span><span class="o">;</span>
+	<span class="cm">/** 帮助配置HandlerMappings路径匹配类的封装 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">PathMatchConfigurer</span> <span class="n">pathMatchConfigurer</span><span class="o">;</span>
+	<span class="cm">/** 内容协商机制 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">ContentNegotiationManager</span> <span class="n">contentNegotiationManager</span><span class="o">;</span>
+	<span class="cm">/** 方法的参数处理 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">HandlerMethodArgumentResolver</span><span class="o">&gt;</span> <span class="n">argumentResolvers</span><span class="o">;</span>
+	<span class="cm">/** 方法的返回值处理 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">HandlerMethodReturnValueHandler</span><span class="o">&gt;</span> <span class="n">returnValueHandlers</span><span class="o">;</span>
+	<span class="cm">/** 消息转换器 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">HttpMessageConverter</span><span class="o">&lt;?&gt;&gt;</span> <span class="n">messageConverters</span><span class="o">;</span>
+	<span class="cm">/** cros 跨域相关 */</span>
+	<span class="nd">@Nullable</span>
+	<span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">CorsConfiguration</span><span class="o">&gt;</span> <span class="n">corsConfigurations</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里面封装了上下文对象、拦截器、方法参数处理、返回值处理、消息转换器等实例。</p>
+<h3 id="注册-requestmappinghandlermapping">注册 RequestMappingHandlerMapping</h3>
+<p>通过 @Bean，注册了 RequestMappingHandlerMapping ：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebMvcConfigurationSupport</span> <span class="kd">implements</span> <span class="n">ApplicationContextAware</span><span class="o">,</span> <span class="n">ServletContextAware</span> <span class="o">{</span>
+
+    <span class="nd">@Bean</span>
+	<span class="kd">public</span> <span class="n">RequestMappingHandlerMapping</span> <span class="nf">requestMappingHandlerMapping</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// RequestMappingHandlerMapping 实现了  InitializingBean，所以它在实例化后，会调用 afterPropertiesSet() 进行初始化。
+</span><span class="c1"></span>
+		<span class="c1">// 创建 RequestMappingHandlerMapping。
+</span><span class="c1"></span>		<span class="n">RequestMappingHandlerMapping</span> <span class="n">mapping</span> <span class="o">=</span> <span class="n">createRequestMappingHandlerMapping</span><span class="o">();</span>
+		<span class="n">mapping</span><span class="o">.</span><span class="na">setOrder</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+		<span class="c1">// getInterceptors()中调用了钩子方法，可通过 WebMvcConfigurer进行扩展
+</span><span class="c1"></span>		<span class="n">mapping</span><span class="o">.</span><span class="na">setInterceptors</span><span class="o">(</span><span class="n">getInterceptors</span><span class="o">());</span>
+		<span class="n">mapping</span><span class="o">.</span><span class="na">setContentNegotiationManager</span><span class="o">(</span><span class="n">mvcContentNegotiationManager</span><span class="o">());</span>
+		<span class="c1">// getCorsConfigurations() 调用了钩子犯法
+</span><span class="c1"></span>		<span class="n">mapping</span><span class="o">.</span><span class="na">setCorsConfigurations</span><span class="o">(</span><span class="n">getCorsConfigurations</span><span class="o">());</span>
+
+		<span class="n">PathMatchConfigurer</span> <span class="n">configurer</span> <span class="o">=</span> <span class="n">getPathMatchConfigurer</span><span class="o">();</span>
+
+		<span class="n">Boolean</span> <span class="n">useSuffixPatternMatch</span> <span class="o">=</span> <span class="n">configurer</span><span class="o">.</span><span class="na">isUseSuffixPatternMatch</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">useSuffixPatternMatch</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">mapping</span><span class="o">.</span><span class="na">setUseSuffixPatternMatch</span><span class="o">(</span><span class="n">useSuffixPatternMatch</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="n">Boolean</span> <span class="n">useRegisteredSuffixPatternMatch</span> <span class="o">=</span> <span class="n">configurer</span><span class="o">.</span><span class="na">isUseRegisteredSuffixPatternMatch</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">useRegisteredSuffixPatternMatch</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">mapping</span><span class="o">.</span><span class="na">setUseRegisteredSuffixPatternMatch</span><span class="o">(</span><span class="n">useRegisteredSuffixPatternMatch</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="n">Boolean</span> <span class="n">useTrailingSlashMatch</span> <span class="o">=</span> <span class="n">configurer</span><span class="o">.</span><span class="na">isUseTrailingSlashMatch</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">useTrailingSlashMatch</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">mapping</span><span class="o">.</span><span class="na">setUseTrailingSlashMatch</span><span class="o">(</span><span class="n">useTrailingSlashMatch</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="n">UrlPathHelper</span> <span class="n">pathHelper</span> <span class="o">=</span> <span class="n">configurer</span><span class="o">.</span><span class="na">getUrlPathHelper</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">pathHelper</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">mapping</span><span class="o">.</span><span class="na">setUrlPathHelper</span><span class="o">(</span><span class="n">pathHelper</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="n">PathMatcher</span> <span class="n">pathMatcher</span> <span class="o">=</span> <span class="n">configurer</span><span class="o">.</span><span class="na">getPathMatcher</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">pathMatcher</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">mapping</span><span class="o">.</span><span class="na">setPathMatcher</span><span class="o">(</span><span class="n">pathMatcher</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Predicate</span><span class="o">&lt;</span><span class="n">Class</span><span class="o">&lt;?&gt;&gt;&gt;</span> <span class="n">pathPrefixes</span> <span class="o">=</span> <span class="n">configurer</span><span class="o">.</span><span class="na">getPathPrefixes</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">pathPrefixes</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">mapping</span><span class="o">.</span><span class="na">setPathPrefixes</span><span class="o">(</span><span class="n">pathPrefixes</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="k">return</span> <span class="n">mapping</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在创建 RequestMappingHandlerMapping 的过程中，调用了 getInterceptors()、getCorsConfigurations() 等的回调方法。</p>
+<hr>
+<p>getInterceptors() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebMvcConfigurationSupport</span> <span class="kd">implements</span> <span class="n">ApplicationContextAware</span><span class="o">,</span> <span class="n">ServletContextAware</span> <span class="o">{</span>
+
+	<span class="kd">protected</span> <span class="kd">final</span> <span class="n">Object</span><span class="o">[]</span> <span class="nf">getInterceptors</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">interceptors</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">InterceptorRegistry</span> <span class="n">registry</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InterceptorRegistry</span><span class="o">();</span>
+			<span class="c1">// 钩子方法，如果我们定义了一个WebMvcConfigurer，它就会回调到对应实现的方法中。
+</span><span class="c1"></span>			<span class="c1">// 遍历所有注册到容器中的WebMvcConfigurer，依次进行添加操作
+</span><span class="c1"></span>			<span class="n">addInterceptors</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+			<span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="k">new</span> <span class="n">ConversionServiceExposingInterceptor</span><span class="o">(</span><span class="n">mvcConversionService</span><span class="o">()));</span>
+			<span class="n">registry</span><span class="o">.</span><span class="na">addInterceptor</span><span class="o">(</span><span class="k">new</span> <span class="n">ResourceUrlProviderExposingInterceptor</span><span class="o">(</span><span class="n">mvcResourceUrlProvider</span><span class="o">()));</span>
+			<span class="k">this</span><span class="o">.</span><span class="na">interceptors</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="na">getInterceptors</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">interceptors</span><span class="o">.</span><span class="na">toArray</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里调用了 addInterceptors():</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DelegatingWebMvcConfiguration</span> <span class="kd">extends</span> <span class="n">WebMvcConfigurationSupport</span> <span class="o">{</span>
+	<span class="c1">// 这个类合成了容器中所有实例化的 WebMvcConfigurer
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">WebMvcConfigurerComposite</span> <span class="n">configurers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WebMvcConfigurerComposite</span><span class="o">();</span>
+    <span class="nd">@Override</span>
+	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">addInterceptors</span><span class="o">(</span><span class="n">InterceptorRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 遍历，依次进行添加操作。
+</span><span class="c1"></span>		<span class="k">this</span><span class="o">.</span><span class="na">configurers</span><span class="o">.</span><span class="na">addInterceptors</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，在 addInterceptors() 中，就遍历了 DelegatingWebMvcConfiguration 中封装的所有的 WebMvcConfigurer 实例的 addInterceptors()。依次调用对 RequestMappingHandlerMapping 实例进行相关配置。</p>
+<hr>
+<p>getCorsConfigurations() 源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebMvcConfigurationSupport</span> <span class="kd">implements</span> <span class="n">ApplicationContextAware</span><span class="o">,</span> <span class="n">ServletContextAware</span> <span class="o">{</span>
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">CorsConfiguration</span><span class="o">&gt;</span> <span class="nf">getCorsConfigurations</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">corsConfigurations</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">CorsRegistry</span> <span class="n">registry</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CorsRegistry</span><span class="o">();</span>
+			<span class="n">addCorsMappings</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span><span class="c1">// 这里遍历了DelegatingWebMvcConfiguration中封装的 WebMvcConfigurer，依次将对应方法调用
+</span><span class="c1"></span>			<span class="k">this</span><span class="o">.</span><span class="na">corsConfigurations</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="na">getCorsConfigurations</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">corsConfigurations</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同样的，这里调用了 addCorsMappings()，进入源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DelegatingWebMvcConfiguration</span> <span class="kd">extends</span> <span class="n">WebMvcConfigurationSupport</span> <span class="o">{</span>
+    <span class="c1">// 这个类合成了容器中所有实例化的 WebMvcConfigurer
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">WebMvcConfigurerComposite</span> <span class="n">configurers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WebMvcConfigurerComposite</span><span class="o">();</span>
+	<span class="nd">@Override</span>
+	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">addCorsMappings</span><span class="o">(</span><span class="n">CorsRegistry</span> <span class="n">registry</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">configurers</span><span class="o">.</span><span class="na">addCorsMappings</span><span class="o">(</span><span class="n">registry</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同样遍历了 WebMvcConfigurer 实例，依次调用同名的配置方法。</p>
+<h3 id="注册-requestmappinghandleradapter">注册 RequestMappingHandlerAdapter</h3>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebMvcConfigurationSupport</span> <span class="kd">implements</span> <span class="n">ApplicationContextAware</span><span class="o">,</span> <span class="n">ServletContextAware</span> <span class="o">{</span>
+	<span class="nd">@Bean</span>
+	<span class="kd">public</span> <span class="n">RequestMappingHandlerAdapter</span> <span class="nf">requestMappingHandlerAdapter</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// 创建 RequestMappingHandlerAdapter
+</span><span class="c1"></span>		<span class="n">RequestMappingHandlerAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="n">createRequestMappingHandlerAdapter</span><span class="o">();</span>
+		<span class="c1">// 这里设置的每一个参数，都触发了相应的回调，如果实现了对应方法，就会将配置注册到这个组件中，否则就注册默认的配置。
+</span><span class="c1"></span>		<span class="n">adapter</span><span class="o">.</span><span class="na">setContentNegotiationManager</span><span class="o">(</span><span class="n">mvcContentNegotiationManager</span><span class="o">());</span>
+		<span class="n">adapter</span><span class="o">.</span><span class="na">setMessageConverters</span><span class="o">(</span><span class="n">getMessageConverters</span><span class="o">());</span>
+		<span class="n">adapter</span><span class="o">.</span><span class="na">setWebBindingInitializer</span><span class="o">(</span><span class="n">getConfigurableWebBindingInitializer</span><span class="o">());</span>
+		<span class="n">adapter</span><span class="o">.</span><span class="na">setCustomArgumentResolvers</span><span class="o">(</span><span class="n">getArgumentResolvers</span><span class="o">());</span>
+		<span class="n">adapter</span><span class="o">.</span><span class="na">setCustomReturnValueHandlers</span><span class="o">(</span><span class="n">getReturnValueHandlers</span><span class="o">());</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="n">jackson2Present</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">adapter</span><span class="o">.</span><span class="na">setRequestBodyAdvice</span><span class="o">(</span><span class="n">Collections</span><span class="o">.</span><span class="na">singletonList</span><span class="o">(</span><span class="k">new</span> <span class="n">JsonViewRequestBodyAdvice</span><span class="o">()));</span>
+			<span class="n">adapter</span><span class="o">.</span><span class="na">setResponseBodyAdvice</span><span class="o">(</span><span class="n">Collections</span><span class="o">.</span><span class="na">singletonList</span><span class="o">(</span><span class="k">new</span> <span class="n">JsonViewResponseBodyAdvice</span><span class="o">()));</span>
+		<span class="o">}</span>
+
+		<span class="n">AsyncSupportConfigurer</span> <span class="n">configurer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AsyncSupportConfigurer</span><span class="o">();</span>
+		<span class="n">configureAsyncSupport</span><span class="o">(</span><span class="n">configurer</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">configurer</span><span class="o">.</span><span class="na">getTaskExecutor</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">adapter</span><span class="o">.</span><span class="na">setTaskExecutor</span><span class="o">(</span><span class="n">configurer</span><span class="o">.</span><span class="na">getTaskExecutor</span><span class="o">());</span>
+		<span class="o">}</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">configurer</span><span class="o">.</span><span class="na">getTimeout</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">adapter</span><span class="o">.</span><span class="na">setAsyncRequestTimeout</span><span class="o">(</span><span class="n">configurer</span><span class="o">.</span><span class="na">getTimeout</span><span class="o">());</span>
+		<span class="o">}</span>
+		<span class="c1">// 触发了对应的回调
+</span><span class="c1"></span>		<span class="n">adapter</span><span class="o">.</span><span class="na">setCallableInterceptors</span><span class="o">(</span><span class="n">configurer</span><span class="o">.</span><span class="na">getCallableInterceptors</span><span class="o">());</span>
+		<span class="n">adapter</span><span class="o">.</span><span class="na">setDeferredResultInterceptors</span><span class="o">(</span><span class="n">configurer</span><span class="o">.</span><span class="na">getDeferredResultInterceptors</span><span class="o">());</span>
+
+		<span class="k">return</span> <span class="n">adapter</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>创建 RequestMappingHandlerAdapter，并对其进行一些设置，这些设置大多都是通过遍历并依次回调前面封装的 WebMvcConfigurer 对应方法进行的。</p>
+<p>RequestMappingHandlerMapping 和 RequestMappingHandlerAdapter 都实现了接口 InitializingBean，那么在他们通过 @Bean 将自身实例注入到容器中时，也会调用 afterPropertiesSet() 做一些事情，具体做了什么，在后面文章中列举。</p>
+<h3 id="异常处理器-handlerexceptionresolver">异常处理器 HandlerExceptionResolver</h3>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebMvcConfigurationSupport</span> <span class="kd">implements</span> <span class="n">ApplicationContextAware</span><span class="o">,</span> <span class="n">ServletContextAware</span> <span class="o">{</span>
+	<span class="nd">@Bean</span>
+	<span class="kd">public</span> <span class="n">HandlerExceptionResolver</span> <span class="nf">handlerExceptionResolver</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// 全局异常处理器的创建注册
+</span><span class="c1"></span>		<span class="n">List</span><span class="o">&lt;</span><span class="n">HandlerExceptionResolver</span><span class="o">&gt;</span> <span class="n">exceptionResolvers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+		<span class="c1">// 钩子方法，遍历依次回调封装的 WebMvcConfigurer
+</span><span class="c1"></span>		<span class="n">configureHandlerExceptionResolvers</span><span class="o">(</span><span class="n">exceptionResolvers</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">exceptionResolvers</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+			<span class="c1">// 如果没有定义，则添加默认的异常处理器
+</span><span class="c1"></span>			<span class="n">addDefaultHandlerExceptionResolvers</span><span class="o">(</span><span class="n">exceptionResolvers</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="n">extendHandlerExceptionResolvers</span><span class="o">(</span><span class="n">exceptionResolvers</span><span class="o">);</span>
+		<span class="n">HandlerExceptionResolverComposite</span> <span class="n">composite</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HandlerExceptionResolverComposite</span><span class="o">();</span>
+		<span class="n">composite</span><span class="o">.</span><span class="na">setOrder</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+		<span class="n">composite</span><span class="o">.</span><span class="na">setExceptionResolvers</span><span class="o">(</span><span class="n">exceptionResolvers</span><span class="o">);</span>
+		<span class="k">return</span> <span class="n">composite</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里通过 @Bean 向容器中注入了异常处理器 HandlerExceptionResolver，如果在 WebMvcConfigurer 实现类中，配置了异常处理类，就会加载。否则就会使用默认的异常处理类 ExceptionHandlerExceptionResolver。</p>
+<p>在 ExceptionHandlerExceptionResolver 中定义了@ControllerAdvice的支持，在 getExceptionHandlerMethod() 中，通过创建 ExceptionHandlerMethodResolver 对 @HandlerException 进行了支持。</p>
+<h3 id="其他">其他</h3>
+<p>在 WebMvcConfigurationSupport 中，还有很多其他的组件注册。不再列举。</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-15</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/spring/22-enable-web-mvc-main-embedded-tomcat/" class="prev" rel="prev" title="22 MVC的支持入口及嵌入式Tomcat的使用"><i class="fas fa-angle-left fa-fw"></i>22 MVC的支持入口及嵌入式Tomcat的使用</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>
