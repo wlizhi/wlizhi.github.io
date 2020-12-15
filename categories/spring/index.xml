@@ -12,7 +12,7 @@
     <guid>https://wlizhi.cc/posts/spring/22-enable-web-mvc-main-embedded-tomcat/</guid>
     <description><![CDATA[注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。]]></description>
 </item><item>
-    <title>向spring提了一个issue</title>
+    <title>向spring提交了一个issue</title>
     <link>https://wlizhi.cc/posts/spring/an-issue-for-spring/</link>
     <pubDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</pubDate>
     <author>作者</author>
