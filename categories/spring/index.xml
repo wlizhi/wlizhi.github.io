@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/categories/spring/</link>
         <description>spring - 分类 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/categories/spring/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 15 Dec 2020 10:51:00 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/categories/spring/" rel="self" type="application/rss+xml" /><item>
+    <title>22 MVC的支持入口及嵌入式Tomcat的使用</title>
+    <link>https://wlizhi.cc/posts/spring/22-enable-web-mvc-main-embedded-tomcat/</link>
+    <pubDate>Tue, 15 Dec 2020 10:51:00 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/22-enable-web-mvc-main-embedded-tomcat/</guid>
+    <description><![CDATA[注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。]]></description>
+</item><item>
     <title>向spring提了一个issue</title>
     <link>https://wlizhi.cc/posts/spring/an-issue-for-spring/</link>
     <pubDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/14-transaction-xml-annotation-registry/</guid>
     <description><![CDATA[事务以xml配置方式使用时，xml是怎么解析，并将事务功能注册到容器中的？注解方式启动时，是怎么扫描注解将事务功能注册到容器中的？本文给出了详细的解析。]]></description>
-</item><item>
-    <title>13 AOP 内置的五种MethodInterceptor源码解析</title>
-    <link>https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/</link>
-    <pubDate>Wed, 02 Dec 2020 10:11:35 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/13-aop-method-interceptor-execute/</guid>
-    <description><![CDATA[AOP中代理方法执行时，自定义切面通知方法的MethodInterceptor执行原理解析。]]></description>
 </item></channel>
 </rss>
