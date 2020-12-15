@@ -4,7 +4,19 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 15 Dec 2020 22:41:32 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Wed, 16 Dec 2020 00:07:13 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>Spring缓存管理器多级缓存的实现</title>
+    <link>https://wlizhi.cc/posts/spring/layering-cache/</link>
+    <pubDate>Wed, 16 Dec 2020 00:07:13 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/layering-cache/</guid>
+    <description><![CDATA[<p>大概今年9月份时，闲来无事，写的一个多级缓存的实现，本地缓存基于guava。如果需要使用，直接将这些类copy过去就可以。或者这些类抽取到单独的模块，自定义一个 autoconfigurer、start包，就可以无缝整合到 springboot，导包即可自动配置。</p>
+<p>基于 RedisCacheManager、RedisCache 等核心类继承扩展。</p>
+<p>如需更深层次定制，也可以将本地缓存的一些配置信息，抽取到配置文件中。</p>
+<blockquote>
+<p>实现中的核心在 LayeringCache、ChannelTopicEnum、RedisTopicListener 这三个类。</p>
+</blockquote>]]></description>
+</item><item>
     <title>24 DispatcherServlet的初始化</title>
     <link>https://wlizhi.cc/posts/spring/24-dispatcher-servlet-init/</link>
     <pubDate>Tue, 15 Dec 2020 22:41:32 &#43;0800</pubDate>
@@ -67,12 +79,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/17-transaction-source-process/</guid>
     <description><![CDATA[事务执行的主要流程源码分析]]></description>
-</item><item>
-    <title>16 声明式事务注意事项</title>
-    <link>https://wlizhi.cc/posts/spring/16-transaction-declare-attention/</link>
-    <pubDate>Sat, 05 Dec 2020 18:30:10 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/16-transaction-declare-attention/</guid>
-    <description><![CDATA[详细描述不正确使用声明式事务的危害，像本类自调用问题、事务方法嵌套等。]]></description>
 </item></channel>
 </rss>
