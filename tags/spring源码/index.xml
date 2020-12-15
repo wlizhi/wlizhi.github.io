@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</link>
         <description>spring源码 - 标签 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 15 Dec 2020 20:27:00 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 15 Dec 2020 22:41:32 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml" /><item>
+    <title>24 DispatcherServlet的初始化</title>
+    <link>https://wlizhi.cc/posts/spring/24-dispatcher-servlet-init/</link>
+    <pubDate>Tue, 15 Dec 2020 22:41:32 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/24-dispatcher-servlet-init/</guid>
+    <description><![CDATA[DispatcherServlet的初始化的初始化源码分析。包括 handlerMapping、handlerAdapter等的初始化设置。]]></description>
+</item><item>
     <title>23 @EnableWebMvc 的作用及源码分析</title>
     <link>https://wlizhi.cc/posts/spring/23-enable-web-mvc-principle/</link>
     <pubDate>Tue, 15 Dec 2020 20:27:00 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/16-transaction-declare-attention/</guid>
     <description><![CDATA[详细描述不正确使用声明式事务的危害，像本类自调用问题、事务方法嵌套等。]]></description>
-</item><item>
-    <title>15 声明式事务七种传播行为的表现形式案例</title>
-    <link>https://wlizhi.cc/posts/spring/15-transaction-propagation-example/</link>
-    <pubDate>Sat, 05 Dec 2020 09:49:50 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/15-transaction-propagation-example/</guid>
-    <description><![CDATA[spring声明式事务的传播行为，严格来说是spring特有的，数据库本身并没有这个概念。本文会列举出spring事务其中传播行为，以案例的方式展示不同的传播行为的表现是怎样的。]]></description>
 </item></channel>
 </rss>
