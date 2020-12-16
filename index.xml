@@ -12,8 +12,7 @@
     <pubDate>Wed, 16 Dec 2020 17:11:54 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/25-request-mapping-and-adapter-init/</guid>
-    <description><![CDATA[<p>在@EnableWebMvc注解，激活mvc的一些组件时，其中就创建了 RequestMappingHandlerMapping 和 RequestMappingHandlerAdapter。</p>
-<p>这两个类本身也是 InitializingBean 的实现，所以在创建后会调用 afterPropertiesSet() 初始化。</p>]]></description>
+    <description><![CDATA[在@EnableWebMvc注解，激活mvc的一些组件时，其中就创建了 RequestMappingHandlerMapping 和 RequestMappingHandlerAdapter。这两个类本身也是 InitializingBean 的实现，所以在创建后会调用 afterPropertiesSet() 初始化。]]></description>
 </item><item>
     <title>Spring缓存管理器多级缓存的实现</title>
     <link>https://wlizhi.cc/posts/spring/layering-cache/</link>
