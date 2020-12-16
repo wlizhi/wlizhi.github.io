@@ -2,13 +2,14 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>https://wlizhi.cc/posts/spring/26-dispatcher-servlet-core-process/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/categories/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/25-request-mapping-and-adapter-init/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/categories/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/posts/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/spring/</loc><lastmod>2020-12-16T00:07:13&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/layering-cache/</loc><lastmod>2020-12-16T00:07:13&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</loc><lastmod>2020-12-16T00:07:13&#43;08:00</lastmod></url><url>
