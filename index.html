@@ -11,7 +11,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wlizhi.cc/" />
 <meta property="og:image" content="https://wlizhi.cc/logo.png"/>
-<meta property="og:updated_time" content="2020-12-16T17:11:54+08:00" />
+<meta property="og:updated_time" content="2020-12-16T19:30:41+08:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
 
@@ -103,8 +103,13 @@
         alt="https://oss.wlizhi.cc/blog/head_portrait.png"
         title="https://oss.wlizhi.cc/blog/head_portrait.png" /></a></div><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="links"><a href="https://github.com/@wlizhi" title="Wlizhi" target="_blank" rel="noopener noreffer me"></a><a href="https://github.com/wlizhi" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="https://twitter.com/Eddie42358406" title="Twitter" target="_blank" rel="noopener noreffer me"><i class="fab fa-twitter fa-fw"></i></a><a href="mailto:wlizhicc@163.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a><a href="/index.xml" title="RSS" target="_blank" rel="noopener noreffer me"><i class="fas fa-rss fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/posts/spring/26-dispatcher-servlet-core-process/">26 DispatcherServlet 处理请求的核心流程</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-12-16">2020-12-16</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content">在 springmvc 中，所有的请求都会交给 DispatcherServlet 处理，由 DispatcherServlet 分发给下游组件，进行具体的处理。本文详细罗列出 DispatcherServlet 在处理请求时的核心流程，源码的流转。</div><div class="post-footer">
+        <a href="/posts/spring/26-dispatcher-servlet-core-process/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/posts/spring/25-request-mapping-and-adapter-init/">25 RequestMappingHandlerMapping和RequestMappingHandlerAdapter初始化</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-12-16">2020-12-16</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content">在@EnableWebMvc注解，激活mvc的一些组件时，其中就创建了 RequestMappingHandlerMapping 和 RequestMappingHandlerAdapter。这两个类本身也是 InitializingBean 的实现，所以在创建后会调用 afterPropertiesSet() 初始化。</div><div class="post-footer">
+    </h1><div class="post-meta"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-12-16">2020-12-16</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content">在@EnableWebMvc注解，激活mvc的一些组件时，其中就创建了 RequestMappingHandlerMapping 和 RequestMappingHandlerAdapter。这两个类也是 InitializingBean 的实现，所以在创建后会调用 afterPropertiesSet() 初始化。</div><div class="post-footer">
         <a href="/posts/spring/25-request-mapping-and-adapter-init/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
 </article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
@@ -146,11 +151,6 @@
         <a href="/posts/spring/19-transaction-source-suspend-rollback-commit/">19 声明式事务的挂起、提交、回滚、连接的释放原理</a>
     </h1><div class="post-meta"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-12-07">2020-12-07</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content">事务的挂起、提交、回滚源码分析</div><div class="post-footer">
         <a href="/posts/spring/19-transaction-source-suspend-rollback-commit/">阅读全文</a><div class="post-tags">
-                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/spring/18-transaction-source-ano-supports/">18 声明式事务注解@Transaction的解析原理</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-12-07">2020-12-07</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div><div class="content">事务注解 @Transaction 的支持，扫描原理。</div><div class="post-footer">
-        <a href="/posts/spring/18-transaction-source-ano-supports/">阅读全文</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/spring%E6%BA%90%E7%A0%81/">spring源码</a></div></div>
 </article><ul class="pagination"><li class="page-item active">
                     <span class="page-link">
