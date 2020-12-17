@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Wed, 16 Dec 2020 19:30:41 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Thu, 17 Dec 2020 10:09:53 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>27 DispatcherServlet具体业务方法的调用</title>
+    <link>https://wlizhi.cc/posts/spring/27-dispatcher-servlet-handler-adapter-handle/</link>
+    <pubDate>Thu, 17 Dec 2020 10:09:53 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/27-dispatcher-servlet-handler-adapter-handle/</guid>
+    <description><![CDATA[DispatcherServlet.doDispatch()中，具体业务方法是通过HandlerAdapter.handle()来调用的，本文性详细列举handle()的实现流程。]]></description>
+</item><item>
     <title>26 DispatcherServlet 处理请求的核心流程</title>
     <link>https://wlizhi.cc/posts/spring/26-dispatcher-servlet-core-process/</link>
     <pubDate>Wed, 16 Dec 2020 19:30:41 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</guid>
     <description><![CDATA[事务提交前后是可以自定义一些逻辑，嵌入到事务提交的流程中的，通过spring-tx包提供的TransactionSynchronization类、使用TransactionSynchronizationManager的静态方法registerSynchronization() 或者使用注解方式均可。]]></description>
-</item><item>
-    <title>19 声明式事务的挂起、提交、回滚、连接的释放原理</title>
-    <link>https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/</link>
-    <pubDate>Mon, 07 Dec 2020 10:43:26 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/19-transaction-source-suspend-rollback-commit/</guid>
-    <description><![CDATA[事务的挂起、提交、回滚源码分析]]></description>
 </item></channel>
 </rss>
