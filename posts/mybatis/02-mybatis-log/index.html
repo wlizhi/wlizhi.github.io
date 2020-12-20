@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/mybatis\/02-mybatis-log\/"
-        },"genre": "posts","keywords": "mybatis源码","wordcount":  93 ,
+        },"genre": "posts","keywords": "mybatis源码","wordcount":  4194 ,
         "url": "https:\/\/wlizhi.cc\/posts\/mybatis\/02-mybatis-log\/","datePublished": "2020-12-20T10:02:59+08:00","dateModified": "2020-12-20T10:02:59+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">02 Mybatis Log 源码分析</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mybatis/"><i class="far fa-folder fa-fw"></i>mybatis</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-20">2020-12-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 93 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;<span id="/posts/mybatis/02-mybatis-log/" class="leancloud_visitors" data-flag-title="02 Mybatis Log 源码分析">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-20">2020-12-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4194 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;<span id="/posts/mybatis/02-mybatis-log/" class="leancloud_visitors" data-flag-title="02 Mybatis Log 源码分析">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -115,11 +115,37 @@
                     <span>目录</span>
                     <span><i class="details-icon fas fa-angle-right"></i></span>
                 </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-适配器模式">1 适配器模式</a></li>
+    <li><a href="#2-代理模式">2 代理模式</a></li>
+    <li><a href="#3-mybatis-log-模块核心类结构图">3 mybatis log 模块核心类结构图</a></li>
+    <li><a href="#4-mybatis-log-模块的核心类">4 mybatis log 模块的核心类</a></li>
+    <li><a href="#5-log工厂类-logfactory">5 Log工厂类 LogFactory</a></li>
+    <li><a href="#6-mybatis-log-规范-log">6 mybatis Log 规范 Log</a></li>
+    <li><a href="#7-日志增强基-basejdbclogger">7 日志增强基 BaseJdbcLogger</a></li>
+    <li><a href="#8-连接日志增强-connectionlogger">8 连接日志增强 ConnectionLogger</a></li>
+    <li><a href="#9-preparedstatementlogger">9 PreparedStatementLogger</a></li>
+    <li><a href="#10-结果集日志增强-resultsetlogger">10 结果集日志增强 ResultSetLogger</a></li>
+    <li><a href="#11-小结">11 小结</a></li>
+  </ul>
+</nav></div>
             </div><div class="content" id="content"><p>mybatis源码解析系列文章，示例中带有中文注释的源码 copy 自 <a href="https://gitee.com/wlizhi/mybatis-3" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/mybatis-3</a></p>
 <p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。</p>
 <hr>
-<p>mybatis log 模块核心类结构图：</p>
+<h2 id="1-适配器模式">1 适配器模式</h2>
+<p>适配器模式（Adapter Patter）是作为两个不兼容接口之间的桥梁，将一个类的接口转换成客户希望的另外一个接口。适配器模式使得原本由于接口不
+兼容而不能一起工作的那些类可以一起工作。</p>
+<p>适用场景：当调用双方都不太容易修改的时候，为了复用现有组件可以使用适配器模式；在系统中接入第三方组件的时候经常被使用到。</p>
+<p>注意：如果系统中存在过多的适配器，会增加系统的复杂性，设计人员应考虑对其进行重构。</p>
+<h2 id="2-代理模式">2 代理模式</h2>
+<p>定义：给目标对象提供一个代理对象，并由代理对象控制对目标对象的引用。</p>
+<p>目的：</p>
+<ol>
+<li>通过引入代理对象的方式来间接访问目标对象，防止直接访问目标对象给系统带来不必要的复杂性。</li>
+<li>通过代理对象对原有的业务增强。</li>
+</ol>
+<h2 id="3-mybatis-log-模块核心类结构图">3 mybatis log 模块核心类结构图</h2>
 <p><img
         class="lazyload"
         src="/svg/loading.min.svg"
@@ -128,7 +154,697 @@
         data-sizes="auto"
         alt="https://oss.wlizhi.cc/blog/mybatis/mybatis-log-class-structure.png"
         title="mybatis-log-class-structure.png" /></p>
-<p>未完待续&hellip;</p></div>
+<h2 id="4-mybatis-log-模块的核心类">4 mybatis log 模块的核心类</h2>
+<ul>
+<li>LogFactory log对象工厂</li>
+<li>Log mybatis 中自定义的一个 log 接口。使用了适配器模式，所有的第三方日志组件引入后，通过适配类，最终都会被转换为 Log 类型，mybatis 源码中的日志，统一使用 Log 接口。</li>
+<li>BaseJdbcLogger jdbc包中所有日志增强的抽象基类，使用动态代理对目标进行日志增强。
+<ul>
+<li>ConnectionLogger 对 Connection 的日志增强类。</li>
+<li>PreparedStatementLogger 对 PreparedStatement 的日志增强类。</li>
+<li>ResultSetLogger 对 ResultSet 的日志增强类。</li>
+<li>StatementLogger 对 Statement 的日志增强类。（一般使用 PreparedStatementLogger，且与前者原理相同，不列举。）</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-log工厂类-logfactory">5 Log工厂类 LogFactory</h2>
+<p>在类加载器加载 LogFactory 时，通过静态代码块，按照一定顺序，加载第三方日志组件，只要有一个加载成功，下面的就不再加载。</p>
+<p>第三方日志组件加载优先级：<code>slf4j -&gt; commonsLogging -&gt; log4J2 -&gt; log4j -&gt; JdkLog</code></p>
+<p>加载后将对应的日志组件的构造函数缓存到静态成员中。最终通过 <code>LogFactory.getLog(Class&lt;?&gt; clazz)</code> 进行日志对象的获取。</p>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">LogFactory</span> <span class="o">{</span>
+
+  <span class="cm">/**
+</span><span class="cm">   * Marker to be used by logging implementations that support markers.
+</span><span class="cm">   */</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">MARKER</span> <span class="o">=</span> <span class="s">&#34;MYBATIS&#34;</span><span class="o">;</span>
+  <span class="c1">// 选择的第三方日志组件适配器的构造方法
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">static</span> <span class="n">Constructor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Log</span><span class="o">&gt;</span> <span class="n">logConstructor</span><span class="o">;</span>
+  <span class="kd">static</span> <span class="o">{</span>
+    <span class="c1">// 注意这里实在静态代码块中执行，在类加载器，第一次加载 LogFactory 时，就会执行这块代码，进行日志具体实现的初始化。
+</span><span class="c1"></span>    <span class="c1">// 按照优先级尝试加载日志实现类。第三方日志插件加载优先级： slf4j -&gt; commonsLogging -&gt; log4J2 -&gt; log4j -&gt; JdkLog
+</span><span class="c1"></span>    <span class="n">tryImplementation</span><span class="o">(</span><span class="n">LogFactory</span><span class="o">::</span><span class="n">useSlf4jLogging</span><span class="o">);</span>
+    <span class="n">tryImplementation</span><span class="o">(</span><span class="n">LogFactory</span><span class="o">::</span><span class="n">useCommonsLogging</span><span class="o">);</span>
+    <span class="n">tryImplementation</span><span class="o">(</span><span class="n">LogFactory</span><span class="o">::</span><span class="n">useLog4J2Logging</span><span class="o">);</span>
+    <span class="n">tryImplementation</span><span class="o">(</span><span class="n">LogFactory</span><span class="o">::</span><span class="n">useLog4JLogging</span><span class="o">);</span>
+    <span class="n">tryImplementation</span><span class="o">(</span><span class="n">LogFactory</span><span class="o">::</span><span class="n">useJdkLogging</span><span class="o">);</span>
+    <span class="n">tryImplementation</span><span class="o">(</span><span class="n">LogFactory</span><span class="o">::</span><span class="n">useNoLogging</span><span class="o">);</span>
+  <span class="o">}</span>
+  
+  <span class="cm">/** 构造函数私有，不允许外界创建该类实例 */</span>
+  <span class="kd">private</span> <span class="nf">LogFactory</span><span class="o">()</span> <span class="o">{</span> <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">Log</span> <span class="nf">getLog</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">getLog</span><span class="o">(</span><span class="n">clazz</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">Log</span> <span class="nf">getLog</span><span class="o">(</span><span class="n">String</span> <span class="n">logger</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span><span class="c1">// 获取log对象，通过静态块中加载log实现类时，缓存的log实现构造函数，以反射的方式创建log对象。
+</span><span class="c1"></span>      <span class="k">return</span> <span class="n">logConstructor</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">logger</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="n">LogException</span><span class="o">(</span><span class="s">&#34;Error creating logger for logger &#34;</span> <span class="o">+</span> <span class="n">logger</span> <span class="o">+</span> <span class="s">&#34;.  Cause: &#34;</span> <span class="o">+</span> <span class="n">t</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+  <span class="c1">// 省略部分方法...
+</span><span class="c1"></span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">tryImplementation</span><span class="o">(</span><span class="n">Runnable</span> <span class="n">runnable</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 这个方法是加载log的方法。当构造方法为空，才执行方法。如果加载不到，则会忽略异常。
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">logConstructor</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">try</span> <span class="o">{</span>
+        <span class="n">runnable</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// 注意这里忽略了异常，即当加载一个log实现，加载不到时，就会尝试加载另一种实现。
+</span><span class="c1"></span>        <span class="c1">// 而加载不到的实现会抛出 java.lang.NoClassDefFoundError 到这里，最终会忽略掉异常。
+</span><span class="c1"></span>        <span class="c1">// ignore
+</span><span class="c1"></span>      <span class="o">}</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="c1">// 通过指定的 log 类来初始化构造方法
+</span><span class="c1"></span>  <span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setImplementation</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Log</span><span class="o">&gt;</span> <span class="n">implClass</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">try</span> <span class="o">{</span>
+      <span class="c1">// 反射创建 log 实例。
+</span><span class="c1"></span>      <span class="n">Constructor</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Log</span><span class="o">&gt;</span> <span class="n">candidate</span> <span class="o">=</span> <span class="n">implClass</span><span class="o">.</span><span class="na">getConstructor</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+      <span class="n">Log</span> <span class="n">log</span> <span class="o">=</span> <span class="n">candidate</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">LogFactory</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+      <span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Logging initialized using &#39;&#34;</span> <span class="o">+</span> <span class="n">implClass</span> <span class="o">+</span> <span class="s">&#34;&#39; adapter.&#34;</span><span class="o">);</span>
+      <span class="o">}</span>
+      <span class="n">logConstructor</span> <span class="o">=</span> <span class="n">candidate</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="n">LogException</span><span class="o">(</span><span class="s">&#34;Error setting Log implementation.  Cause: &#34;</span> <span class="o">+</span> <span class="n">t</span><span class="o">,</span> <span class="n">t</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>tryImplementation() 中调用了具体加载日志组件的方法，如果项目中未配置对象的组件，则会在 run() 中抛出异常
+<code>java.lang.NoClassDefFoundError</code>，并在此方法中捕获，这里会忽略掉加载的异常。</p>
+<p>注意判断条件 <code>logConstructor == null</code> 也就是说，只有加载失败时，才会向下执行继续加载下一个组件，如果加载成功了，则 logConstructor
+是有值的。</p>
+<p>setImplementation() 是具体加载日志组件的方法，如果加载成功，会对 logConstructor 进行赋值，并将具体使用的日志实现类进行日志打印。</p>
+<h2 id="6-mybatis-log-规范-log">6 mybatis Log 规范 Log</h2>
+<p>mybatis将不同组件的日志，统一封装成了四种日志级别。分别是 trace、debug、warn、error。</p>
+<p>这四种日志级别，在 Log 接口中进行了定义。</p>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Log</span> <span class="o">{</span>
+	
+  <span class="kt">boolean</span> <span class="nf">isDebugEnabled</span><span class="o">();</span>
+  <span class="kt">boolean</span> <span class="nf">isTraceEnabled</span><span class="o">();</span>
+  <span class="kt">void</span> <span class="nf">error</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">e</span><span class="o">);</span>
+  <span class="kt">void</span> <span class="nf">error</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">);</span>
+  <span class="kt">void</span> <span class="nf">debug</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">);</span>
+  <span class="kt">void</span> <span class="nf">trace</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">);</span>
+  <span class="kt">void</span> <span class="nf">warn</span><span class="o">(</span><span class="n">String</span> <span class="n">s</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="7-日志增强基-basejdbclogger">7 日志增强基 BaseJdbcLogger</h2>
+<p>BaseJdbcLogger 是所有 jdbc 相关日志增强的基类，在这里定义了一些变量，用于缓存与数据库交互中传递的一些参数信息。</p>
+<p>BaseJdbcLogger 数据结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">BaseJdbcLogger</span> <span class="o">{</span>
+
+	<span class="cm">/** 保存preparestatment中常用的set方法（占位符赋值） */</span>
+	<span class="kd">protected</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">SET_METHODS</span><span class="o">;</span>
+	<span class="cm">/** 保存preparestatment中常用的执行sql语句的方法 */</span>
+	<span class="kd">protected</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">EXECUTE_METHODS</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+
+	<span class="cm">/** 保存preparestatment中set方法的键值对 */</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">columnMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+
+	<span class="cm">/** 保存preparestatment中set方法的key值 */</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">columnNames</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+	<span class="cm">/** 保存preparestatment中set方法的value值 */</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">columnValues</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+	<span class="cm">/** 日志对象 */</span>
+	<span class="kd">protected</span> <span class="kd">final</span> <span class="n">Log</span> <span class="n">statementLog</span><span class="o">;</span>
+	<span class="kd">protected</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">queryStack</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在静态块中，对 SET_METHODS 以及 EXECUTE_METHODS 进行了初始化。</p>
+<p>初始化源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">BaseJdbcLogger</span> <span class="o">{</span>
+
+	<span class="kd">static</span> <span class="o">{</span>
+		<span class="c1">// 反射获取 PreparedStatement 中所有 set 开头且有参数的方法名称
+</span><span class="c1"></span>		<span class="n">SET_METHODS</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">stream</span><span class="o">(</span><span class="n">PreparedStatement</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredMethods</span><span class="o">())</span>
+				<span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">method</span> <span class="o">-&gt;</span> <span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">startsWith</span><span class="o">(</span><span class="s">&#34;set&#34;</span><span class="o">))</span>
+				<span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="n">method</span> <span class="o">-&gt;</span> <span class="n">method</span><span class="o">.</span><span class="na">getParameterCount</span><span class="o">()</span> <span class="o">&gt;</span> <span class="n">1</span><span class="o">)</span>
+				<span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">Method</span><span class="o">::</span><span class="n">getName</span><span class="o">)</span>
+				<span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toSet</span><span class="o">());</span>
+
+		<span class="n">EXECUTE_METHODS</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&#34;execute&#34;</span><span class="o">);</span>
+		<span class="n">EXECUTE_METHODS</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&#34;executeUpdate&#34;</span><span class="o">);</span>
+		<span class="n">EXECUTE_METHODS</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&#34;executeQuery&#34;</span><span class="o">);</span>
+		<span class="n">EXECUTE_METHODS</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&#34;addBatch&#34;</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>并提供了一些设置参数以及获取参数值的字符串表示的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">BaseJdbcLogger</span> <span class="o">{</span>
+	
+	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">setColumn</span><span class="o">(</span><span class="n">Object</span> <span class="n">key</span><span class="o">,</span> <span class="n">Object</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">columnMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+		<span class="n">columnNames</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+		<span class="n">columnValues</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+	<span class="o">}</span>
+	
+	<span class="kd">protected</span> <span class="n">String</span> <span class="nf">getParameterValueString</span><span class="o">()</span> <span class="o">{</span>
+		<span class="c1">// 将参数的值、参数类型，封装成string返回。
+</span><span class="c1"></span>		<span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">typeList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">columnValues</span><span class="o">.</span><span class="na">size</span><span class="o">());</span>
+		<span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">value</span> <span class="o">:</span> <span class="n">columnValues</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">typeList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="s">&#34;null&#34;</span><span class="o">);</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+				<span class="n">typeList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">objectValueString</span><span class="o">(</span><span class="n">value</span><span class="o">)</span> <span class="o">+</span> <span class="s">&#34;(&#34;</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="na">getClass</span><span class="o">().</span><span class="na">getSimpleName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;)&#34;</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="kd">final</span> <span class="n">String</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">typeList</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+		<span class="k">return</span> <span class="n">parameters</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">1</span><span class="o">,</span> <span class="n">parameters</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">-</span> <span class="n">1</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>还有一些其他方法，不再列举。</p>
+<h2 id="8-连接日志增强-connectionlogger">8 连接日志增强 ConnectionLogger</h2>
+<p>ConnectionLogger 实现了 InvocationHandler，且内部持有了 Connection 实例。它是 Connection 的日志增强类，从这个实现接口可以看出，使用的是 jdk 动态代理。</p>
+<p>它的核心在 invoke 方法，源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ConnectionLogger</span> <span class="kd">extends</span> <span class="n">BaseJdbcLogger</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+	<span class="cm">/** 使用代理模式对连接进行日志增强。这里封装了连接对象 */</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">Connection</span> <span class="n">connection</span><span class="o">;</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">)</span>
+			<span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c1">// 如果是 Object 中声明的方法，则直接跳过，执行业务方法。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getDeclaringClass</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="c1">// 如果是 prepareStatement 或者 prepareCall 方法，则参数列表中，第一个参数一定是 sql 语句，这里打印 sql 语句。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="s">&#34;prepareStatement&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">())</span> <span class="o">||</span> <span class="s">&#34;prepareCall&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+					<span class="c1">// 在打印sql语句的时候，将sql中的多余空白去除，替换为单个空格。
+</span><span class="c1"></span>					<span class="n">debug</span><span class="o">(</span><span class="s">&#34; Preparing: &#34;</span> <span class="o">+</span> <span class="n">removeExtraWhitespace</span><span class="o">((</span><span class="n">String</span><span class="o">)</span> <span class="n">params</span><span class="o">[</span><span class="n">0</span><span class="o">]),</span> <span class="kc">true</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="c1">// 调用业务方法
+</span><span class="c1"></span>				<span class="n">PreparedStatement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="o">(</span><span class="n">PreparedStatement</span><span class="o">)</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">connection</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+				<span class="c1">// 创建 PreparedStatement 的代理对象，即对其进行日志增强，与此类相似。使用 PreparedStatementLogger 作为增强类。
+</span><span class="c1"></span>				<span class="n">stmt</span> <span class="o">=</span> <span class="n">PreparedStatementLogger</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">stmt</span><span class="o">,</span> <span class="n">statementLog</span><span class="o">,</span> <span class="n">queryStack</span><span class="o">);</span>
+				<span class="k">return</span> <span class="n">stmt</span><span class="o">;</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="s">&#34;createStatement&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="c1">// 如果是 createStatement 方法，执行业务方法
+</span><span class="c1"></span>				<span class="n">Statement</span> <span class="n">stmt</span> <span class="o">=</span> <span class="o">(</span><span class="n">Statement</span><span class="o">)</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">connection</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+				<span class="c1">// 对 Statement 创建代理，使用 StatementLogger 作为增强类。
+</span><span class="c1"></span>				<span class="n">stmt</span> <span class="o">=</span> <span class="n">StatementLogger</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">stmt</span><span class="o">,</span> <span class="n">statementLog</span><span class="o">,</span> <span class="n">queryStack</span><span class="o">);</span>
+				<span class="k">return</span> <span class="n">stmt</span><span class="o">;</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c1">// 如果以上方法都不是，则直接执行业务方法。即只对上面两个 if 分支中判断的方法进行日志增强。
+</span><span class="c1"></span>				<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">connection</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="n">ExceptionUtil</span><span class="o">.</span><span class="na">unwrapThrowable</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 invoke() 中，对 Connection 进行了日志增强，针对 prepareStatement()、prepareCall()、createStatement() 进行日志打印，并对其返回值生成代理。</p>
+<p>还有一个生成 Connection 代理的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ConnectionLogger</span> <span class="kd">extends</span> <span class="n">BaseJdbcLogger</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+    
+	<span class="kd">public</span> <span class="kd">static</span> <span class="n">Connection</span> <span class="nf">newInstance</span><span class="o">(</span><span class="n">Connection</span> <span class="n">conn</span><span class="o">,</span> <span class="n">Log</span> <span class="n">statementLog</span><span class="o">,</span> <span class="kt">int</span> <span class="n">queryStack</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">InvocationHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionLogger</span><span class="o">(</span><span class="n">conn</span><span class="o">,</span> <span class="n">statementLog</span><span class="o">,</span> <span class="n">queryStack</span><span class="o">);</span>
+		<span class="n">ClassLoader</span> <span class="n">cl</span> <span class="o">=</span> <span class="n">Connection</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">();</span>
+		<span class="k">return</span> <span class="o">(</span><span class="n">Connection</span><span class="o">)</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">cl</span><span class="o">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span><span class="n">Connection</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="n">handler</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="9-preparedstatementlogger">9 PreparedStatementLogger</h2>
+<p>与 ConnectionLogger 类似，它也是一个 InvocationHandler 实现类。内部持有了 PreparedStatement 对象。对一些特定方法添加了日志增强，
+并对方法的返回值 ResultSet 生成代理对象。</p>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">PreparedStatementLogger</span> <span class="kd">extends</span> <span class="n">BaseJdbcLogger</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">PreparedStatement</span> <span class="n">statement</span><span class="o">;</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c1">// 这个方法的增强内容，都是打印 debug 日志，在打印之前，判断 isDebugEnabled()，为了提高性能，
+</span><span class="c1"></span>			<span class="c1">// 因为打印的内容可能存在字符串拼装，相对判断一个布尔值，相对要消耗性能许多，而 debug 一般在生产环境并不会激活。
+</span><span class="c1"></span>
+			<span class="c1">// 如果是 Object 中声明的方法，则直接跳过，执行业务方法。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getDeclaringClass</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="c1">// BaseJdbcLogger 中静态块中声明的方法集合。如果当前方法是集合中的方法，则打印日志。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">EXECUTE_METHODS</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="c1">// 如果 debug 级别是开启的，则打印日志。打印内容是参数，比如一个 insert 语句，则这里会打印 mapper 方法中传递的参数及类型。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(</span><span class="n">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+					<span class="n">debug</span><span class="o">(</span><span class="s">&#34;Parameters: &#34;</span> <span class="o">+</span> <span class="n">getParameterValueString</span><span class="o">(),</span> <span class="kc">true</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="c1">// 清除字段信息
+</span><span class="c1"></span>				<span class="n">clearColumnInfo</span><span class="o">();</span>
+				<span class="c1">// 如果是 executeQuery 方法，则直接调用方法。并对 ResultSet 生成代理对象。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(</span><span class="s">&#34;executeQuery&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+					<span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="o">(</span><span class="n">ResultSet</span><span class="o">)</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">statement</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+					<span class="k">return</span> <span class="n">rs</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">ResultSetLogger</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">rs</span><span class="o">,</span> <span class="n">statementLog</span><span class="o">,</span> <span class="n">queryStack</span><span class="o">);</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+					<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">statement</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="c1">// 如果是 setXXX 方法，且有方法参数，则将这些参数封装起来。 封装后执行具体的方法。
+</span><span class="c1"></span>			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">SET_METHODS</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="s">&#34;setNull&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+					<span class="n">setColumn</span><span class="o">(</span><span class="n">params</span><span class="o">[</span><span class="n">0</span><span class="o">],</span> <span class="kc">null</span><span class="o">);</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+					<span class="n">setColumn</span><span class="o">(</span><span class="n">params</span><span class="o">[</span><span class="n">0</span><span class="o">],</span> <span class="n">params</span><span class="o">[</span><span class="n">1</span><span class="o">]);</span>
+				<span class="o">}</span>
+				<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">statement</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+				<span class="c1">// 如果是 getResultSet 方法，则执行方法后，将 ResultSet 生成代理，进行日志增强。
+</span><span class="c1"></span>			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="s">&#34;getResultSet&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="n">ResultSet</span> <span class="n">rs</span> <span class="o">=</span> <span class="o">(</span><span class="n">ResultSet</span><span class="o">)</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">statement</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+				<span class="k">return</span> <span class="n">rs</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="n">ResultSetLogger</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="n">rs</span><span class="o">,</span> <span class="n">statementLog</span><span class="o">,</span> <span class="n">queryStack</span><span class="o">);</span>
+				<span class="c1">// 如果是 getUpdateCount 方法，则在执行方法后，打印 debug 日志。
+</span><span class="c1"></span>			<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="s">&#34;getUpdateCount&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="kt">int</span> <span class="n">updateCount</span> <span class="o">=</span> <span class="o">(</span><span class="n">Integer</span><span class="o">)</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">statement</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">updateCount</span> <span class="o">!=</span> <span class="o">-</span><span class="n">1</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">debug</span><span class="o">(</span><span class="s">&#34;   Updates: &#34;</span> <span class="o">+</span> <span class="n">updateCount</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="k">return</span> <span class="n">updateCount</span><span class="o">;</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">statement</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="n">ExceptionUtil</span><span class="o">.</span><span class="na">unwrapThrowable</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>创建 PreparedStatement 代理的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">PreparedStatementLogger</span> <span class="kd">extends</span> <span class="n">BaseJdbcLogger</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="n">PreparedStatement</span> <span class="nf">newInstance</span><span class="o">(</span><span class="n">PreparedStatement</span> <span class="n">stmt</span><span class="o">,</span> <span class="n">Log</span> <span class="n">statementLog</span><span class="o">,</span> <span class="kt">int</span> <span class="n">queryStack</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 使用当前类作为增强类，创建 PreparedStatement 的代理对象。
+</span><span class="c1"></span>		<span class="c1">// 符合单一职责原则，创建目标代理对象的工作应该交给与之相关的类来做，而本类就是目标类的增强。
+</span><span class="c1"></span>		<span class="n">InvocationHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PreparedStatementLogger</span><span class="o">(</span><span class="n">stmt</span><span class="o">,</span> <span class="n">statementLog</span><span class="o">,</span> <span class="n">queryStack</span><span class="o">);</span>
+		<span class="n">ClassLoader</span> <span class="n">cl</span> <span class="o">=</span> <span class="n">PreparedStatement</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">();</span>
+		<span class="k">return</span> <span class="o">(</span><span class="n">PreparedStatement</span><span class="o">)</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">cl</span><span class="o">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span><span class="n">PreparedStatement</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">CallableStatement</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="n">handler</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="10-结果集日志增强-resultsetlogger">10 结果集日志增强 ResultSetLogger</h2>
+<p>ResultSetLogger 实现了 InvocationHandler，是对 ResultSet 的日志增强。</p>
+<p>invoke() 源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ResultSetLogger</span> <span class="kd">extends</span> <span class="n">BaseJdbcLogger</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">params</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c1">// 如果是 Object 中声明的方法，则直接跳过，执行业务方法。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getDeclaringClass</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="n">Object</span> <span class="n">o</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">rs</span><span class="o">,</span> <span class="n">params</span><span class="o">);</span>
+			<span class="c1">// 执行 next 方法，判断是否还有数据。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="s">&#34;next&#34;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="c1">// 如果当前方法是 next，返回值为 true，对变量自增，如果启用了 trace（比debug更低的级别） 级别，则打印 ResultSet 中的值。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">((</span><span class="n">Boolean</span><span class="o">)</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">rows</span><span class="o">++;</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">isTraceEnabled</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">ResultSetMetaData</span> <span class="n">rsmd</span> <span class="o">=</span> <span class="n">rs</span><span class="o">.</span><span class="na">getMetaData</span><span class="o">();</span>
+						<span class="kd">final</span> <span class="kt">int</span> <span class="n">columnCount</span> <span class="o">=</span> <span class="n">rsmd</span><span class="o">.</span><span class="na">getColumnCount</span><span class="o">();</span>
+						<span class="k">if</span> <span class="o">(</span><span class="n">first</span><span class="o">)</span> <span class="o">{</span>
+							<span class="n">first</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+							<span class="n">printColumnHeaders</span><span class="o">(</span><span class="n">rsmd</span><span class="o">,</span> <span class="n">columnCount</span><span class="o">);</span>
+						<span class="o">}</span>
+						<span class="n">printColumnValues</span><span class="o">(</span><span class="n">columnCount</span><span class="o">);</span>
+					<span class="o">}</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+					<span class="n">debug</span><span class="o">(</span><span class="s">&#34;     Total: &#34;</span> <span class="o">+</span> <span class="n">rows</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+			<span class="c1">// 清楚字段信息。
+</span><span class="c1"></span>			<span class="n">clearColumnInfo</span><span class="o">();</span>
+			<span class="k">return</span> <span class="n">o</span><span class="o">;</span>
+		<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="n">ExceptionUtil</span><span class="o">.</span><span class="na">unwrapThrowable</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>创建 ResultSet 代理对象的方法源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ResultSetLogger</span> <span class="kd">extends</span> <span class="n">BaseJdbcLogger</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="kd">static</span> <span class="n">ResultSet</span> <span class="nf">newInstance</span><span class="o">(</span><span class="n">ResultSet</span> <span class="n">rs</span><span class="o">,</span> <span class="n">Log</span> <span class="n">statementLog</span><span class="o">,</span> <span class="kt">int</span> <span class="n">queryStack</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// 使用当前类作为增强类，创建 ResultSet 的代理对象。
+</span><span class="c1"></span>		<span class="c1">// 符合单一职责原则，创建目标代理对象的工作应该交给与之相关的类来做，而本类就是目标类的增强。
+</span><span class="c1"></span>		<span class="n">InvocationHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ResultSetLogger</span><span class="o">(</span><span class="n">rs</span><span class="o">,</span> <span class="n">statementLog</span><span class="o">,</span> <span class="n">queryStack</span><span class="o">);</span>
+		<span class="n">ClassLoader</span> <span class="n">cl</span> <span class="o">=</span> <span class="n">ResultSet</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getClassLoader</span><span class="o">();</span>
+		<span class="k">return</span> <span class="o">(</span><span class="n">ResultSet</span><span class="o">)</span> <span class="n">Proxy</span><span class="o">.</span><span class="na">newProxyInstance</span><span class="o">(</span><span class="n">cl</span><span class="o">,</span> <span class="k">new</span> <span class="n">Class</span><span class="o">[]{</span><span class="n">ResultSet</span><span class="o">.</span><span class="na">class</span><span class="o">},</span> <span class="n">handler</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="11-小结">11 小结</h2>
+<p>对第三方日志组件的支出，通过适配器模式，对不同的日志组件，提供不同的适配器类，进行转换支持。</p>
+<p>对不同节点的日志的打印支持，通过动态代理的方式，进行日志信息的增强。这样的好处是对原有业务方法是无侵入的，与业务功能解耦。</p>
+<p>相较于 spring 中 aop 的实现原理是不同的，spring 中如果定义了许多增强方法，会将这些增强统一封装成一个 Advisor 列表。执行的时候，
+会生成 MethodInterceptor 执行链。而代理对象，最终只生成一个，只是在代理对象的增强方法中，封装了这个执行链。</p>
+<p>而 mybatis 中相对简单暴力一些，只是生成代理，就像使用 ConnectionLogger 增强创建 Connection 代理对象时，其内部封装的其实也是一个代理对象，
+并非是原始链接。也就是说，在 mybatis 中对一个实例的多次增强，最终每一个增强都会创建代理对象。即对代理对象进行代理。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
