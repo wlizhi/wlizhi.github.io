@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/an-issue-for-spring\/"
-        },"genre": "posts","keywords": "spring源码, spring问题","wordcount":  2877 ,
+        },"genre": "posts","keywords": "spring源码, spring问题","wordcount":  2931 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/an-issue-for-spring\/","datePublished": "2020-12-11T12:47:01+08:00","dateModified": "2020-12-11T12:47:01+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">向spring提交了一个issue</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-11">2020-12-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2877 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-11">2020-12-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2931 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/spring/an-issue-for-spring/" class="leancloud_visitors" data-flag-title="向spring提交了一个issue">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -121,6 +121,18 @@
 <p><a href="https://github.com/spring-projects/spring-framework/issues/26250" target="_blank" rel="noopener noreffer">issue链接传送门</a></p>
 <p>当多个线程争用资源时，每个线程必须在结束任务之前抢占多个资源，这可能是一个隐患。因为此方法可能导致多个线程仅抢夺它们需要的部分资源，它们无法获得所需要的所有资源而释放所获得的东西。但是，到这个时候，资源已经用尽了。</p>
 <p>spring声明式事务中的传播行为 <code>REQUIRES_NEW</code> 正是以上情况的表现。</p>
+<p>最终的沟通结果截图：</p>
+<p><figure><a class="lightgallery" href="https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-issue-from-github.png" title="沟通结果截图" data-thumbnail="https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-issue-from-github.png" data-sub-html="<h2>spring-issue-from-github.png</h2><p>沟通结果截图</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-issue-from-github.png"
+            data-srcset="https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-issue-from-github.png, https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-issue-from-github.png 1.5x, https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-issue-from-github.png 2x"
+            data-sizes="auto"
+            alt="https://oss.wlizhi.cc/blog/spring/spring-github-transaction-propagation-issue/spring-issue-from-github.png" />
+    </a><figcaption class="image-caption">spring-issue-from-github.png</figcaption>
+    </figure></p>
+<p>详细的沟通过程：</p>
 <p>最初提交的issue，我仅仅发了一段伪代码。内容如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
