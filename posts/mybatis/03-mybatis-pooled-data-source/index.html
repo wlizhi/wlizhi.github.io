@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>03 Mybatis连接池的实现原理 - 暗夜零星</title><meta name="Description" content="mybatis 连接池的实现源码、原理解析。"><meta property="og:title" content="03 Mybatis连接池的实现原理" />
+<meta property="og:description" content="mybatis 连接池的实现源码、原理解析。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wlizhi.cc/posts/mybatis/03-mybatis-pooled-data-source/" />
+<meta property="og:image" content="https://wlizhi.cc/logo.png"/>
+<meta property="article:published_time" content="2020-12-20T16:12:43+08:00" />
+<meta property="article:modified_time" content="2020-12-20T16:12:43+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
+
+<meta name="twitter:title" content="03 Mybatis连接池的实现原理"/>
+<meta name="twitter:description" content="mybatis 连接池的实现源码、原理解析。"/>
+<meta name="application-name" content="暗夜零星">
+<meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/mybatis/03-mybatis-pooled-data-source/" /><link rel="prev" href="https://wlizhi.cc/posts/mybatis/02-mybatis-log/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "03 Mybatis连接池的实现原理",
+        "inLanguage": "",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/wlizhi.cc\/posts\/mybatis\/03-mybatis-pooled-data-source\/"
+        },"genre": "posts","keywords": "mybatis源码","wordcount":  3384 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/mybatis\/03-mybatis-pooled-data-source\/","datePublished": "2020-12-20T16:12:43+08:00","dateModified": "2020-12-20T16:12:43+08:00","publisher": {
+            "@type": "Organization",
+            "name": "Wlizhi"},"author": {
+                "@type": "Person",
+                "name": "Wlizhi"
+            },"description": "mybatis 连接池的实现源码、原理解析。"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="点击搜索..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="点击搜索..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/message-board/" title="">留言</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">03 Mybatis连接池的实现原理</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mybatis/"><i class="far fa-folder fa-fw"></i>mybatis</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-20">2020-12-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3384 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;<span id="/posts/mybatis/03-mybatis-pooled-data-source/" class="leancloud_visitors" data-flag-title="03 Mybatis连接池的实现原理">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#pooledconnection">PooledConnection</a></li>
+    <li><a href="#poolstate">PoolState</a></li>
+    <li><a href="#pooleddatasource">PooledDataSource</a>
+      <ul>
+        <li><a href="#连接的获取-popconnection">连接的获取 popConnection</a></li>
+        <li><a href="#连接的归还-pushconnection">连接的归还 pushConnection</a></li>
+      </ul>
+    </li>
+    <li><a href="#小结">小结</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>mybatis源码解析系列文章，示例中带有中文注释的源码 copy 自 <a href="https://gitee.com/wlizhi/mybatis-3" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/mybatis-3</a></p>
+<p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。</p>
+<hr>
+<h2 id="pooledconnection">PooledConnection</h2>
+<p>PooledConnection 实现了 InvocationHandler 接口，内部持有了 Connection 对象，是对 Connection 的增强类。</p>
+<p>内部封装了一些连接相关的一些状态信息，以及对 close() 的重新定义。原本 Connection 的 close() 是关闭连接，而这里是将连接归还到连接池。</p>
+<p>数据结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">PooledConnection</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">CLOSE</span> <span class="o">=</span> <span class="s">&#34;close&#34;</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Class</span><span class="o">&lt;?&gt;[]</span> <span class="n">IFACES</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Class</span><span class="o">&lt;?&gt;[]{</span><span class="n">Connection</span><span class="o">.</span><span class="na">class</span><span class="o">};</span>
+
+	<span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">hashCode</span><span class="o">;</span>
+	<span class="c1">// 记录当前连接所在的数据源对象，本次连接是有这个数据源创建的，关闭后也是回到这个数据源
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">PooledDataSource</span> <span class="n">dataSource</span><span class="o">;</span>
+	<span class="c1">// 真正的连接对象
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">Connection</span> <span class="n">realConnection</span><span class="o">;</span>
+	<span class="c1">// 连接的代理对象
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kd">final</span> <span class="n">Connection</span> <span class="n">proxyConnection</span><span class="o">;</span>
+	<span class="c1">// 从数据源取出来连接的时间戳
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kt">long</span> <span class="n">checkoutTimestamp</span><span class="o">;</span>
+	<span class="c1">// 连接创建的的时间戳
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kt">long</span> <span class="n">createdTimestamp</span><span class="o">;</span>
+	<span class="c1">// 连接最后一次使用的时间戳
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kt">long</span> <span class="n">lastUsedTimestamp</span><span class="o">;</span>
+	<span class="c1">// 根据数据库url、用户名、密码生成一个hash值，唯一标识一个连接池
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kt">int</span> <span class="n">connectionTypeCode</span><span class="o">;</span>
+	<span class="c1">// 连接是否有效
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kt">boolean</span> <span class="n">valid</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>增强方法 invoke()：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">class</span> <span class="nc">PooledConnection</span> <span class="kd">implements</span> <span class="n">InvocationHandler</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">Object</span> <span class="nf">invoke</span><span class="o">(</span><span class="n">Object</span> <span class="n">proxy</span><span class="o">,</span> <span class="n">Method</span> <span class="n">method</span><span class="o">,</span> <span class="n">Object</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Throwable</span> <span class="o">{</span>
+		<span class="n">String</span> <span class="n">methodName</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
+		<span class="c1">// 针对连接的 close() ，进行替换，连接的关闭，修改为将连接归还到连接池。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">CLOSE</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">methodName</span><span class="o">))</span> <span class="o">{</span>
+			<span class="n">dataSource</span><span class="o">.</span><span class="na">pushConnection</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+			<span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c1">// 对于其他方法，逻辑不变，直接执行目标对象的方法。
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(!</span><span class="n">Object</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">method</span><span class="o">.</span><span class="na">getDeclaringClass</span><span class="o">()))</span> <span class="o">{</span>
+				<span class="c1">// issue #579 toString() should never fail
+</span><span class="c1"></span>				<span class="c1">// throw an SQLException instead of a Runtime
+</span><span class="c1"></span>				<span class="n">checkConnection</span><span class="o">();</span>
+			<span class="o">}</span>
+			<span class="k">return</span> <span class="n">method</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="n">realConnection</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+		<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="n">ExceptionUtil</span><span class="o">.</span><span class="na">unwrapThrowable</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在 invoke() 中，如果是 close() 方法，则将连接归还到连接池，而不是关闭连接。以达到连接复用的目的。</p>
+<h2 id="poolstate">PoolState</h2>
+<p>PoolState 是连接池数据结构的封装，其中有空闲连接列表、活跃连接列表、以及一些统计数据等。</p>
+<p>数据结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PoolState</span> <span class="o">{</span>
+
+	<span class="kd">protected</span> <span class="n">PooledDataSource</span> <span class="n">dataSource</span><span class="o">;</span>
+
+	<span class="c1">// 空闲的连接池资源集合
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">PooledConnection</span><span class="o">&gt;</span> <span class="n">idleConnections</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+	<span class="c1">// 活跃的连接池资源集合
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">PooledConnection</span><span class="o">&gt;</span> <span class="n">activeConnections</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+	<span class="c1">// 请求的次数
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">requestCount</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+	<span class="c1">// 累计的获得连接的时间
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">accumulatedRequestTime</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+	<span class="c1">// 累计的使用连接的时间。从连接取出到归还，算一次使用的时间；
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">accumulatedCheckoutTime</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+	<span class="c1">// 使用连接超时的次数
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">claimedOverdueConnectionCount</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+	<span class="c1">// 累计超时时间
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">accumulatedCheckoutTimeOfOverdueConnections</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+	<span class="c1">// 累计等待时间
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">accumulatedWaitTime</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+	<span class="c1">// 等待次数
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">hadToWaitCount</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+	<span class="c1">// 无效的连接次数
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">long</span> <span class="n">badConnectionCount</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="pooleddatasource">PooledDataSource</h2>
+<p>PooledDataSource 是 DataSource 的一个池化的简单实现。其中封装了 DataSource 相关的配置信息以及连接池信息 PoolState，
+包括最大活跃连接数、最大限制连接数、等等。</p>
+<p>数据结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="cm">/**
+</span><span class="cm"> * This is a simple, synchronous, thread-safe database connection pool.
+</span><span class="cm"> * 一个简单，同步的、线程安全的数据库连接池
+</span><span class="cm"> * @author Clinton Begin
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PooledDataSource</span> <span class="kd">implements</span> <span class="n">DataSource</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Log</span> <span class="n">log</span> <span class="o">=</span> <span class="n">LogFactory</span><span class="o">.</span><span class="na">getLog</span><span class="o">(</span><span class="n">PooledDataSource</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+	<span class="cm">/** 连接池状态 */</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">PoolState</span> <span class="n">state</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PoolState</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">UnpooledDataSource</span> <span class="n">dataSource</span><span class="o">;</span>
+
+	<span class="c1">// OPTIONAL CONFIGURATION FIELDS
+</span><span class="c1"></span>	<span class="c1">// 最大活跃连接数
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">int</span> <span class="n">poolMaximumActiveConnections</span> <span class="o">=</span> <span class="n">10</span><span class="o">;</span>
+	<span class="c1">// 最大闲置连接数
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">int</span> <span class="n">poolMaximumIdleConnections</span> <span class="o">=</span> <span class="n">5</span><span class="o">;</span>
+	<span class="c1">// 最大checkout时长（最长使用时间）
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">int</span> <span class="n">poolMaximumCheckoutTime</span> <span class="o">=</span> <span class="n">20000</span><span class="o">;</span>
+	<span class="c1">// 无法取得连接是最大的等待时间
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">int</span> <span class="n">poolTimeToWait</span> <span class="o">=</span> <span class="n">20000</span><span class="o">;</span>
+	<span class="c1">// 最多允许几次无效连接
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">int</span> <span class="n">poolMaximumLocalBadConnectionTolerance</span> <span class="o">=</span> <span class="n">3</span><span class="o">;</span>
+	<span class="c1">// 测试连接是否有效的sql语句
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="n">String</span> <span class="n">poolPingQuery</span> <span class="o">=</span> <span class="s">&#34;NO PING QUERY SET&#34;</span><span class="o">;</span>
+	<span class="c1">// 是否允许测试连接
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">boolean</span> <span class="n">poolPingEnabled</span><span class="o">;</span>
+	<span class="c1">// 配置一段时间，当连接在这段时间内没有被使用，才允许测试连接是否有效
+</span><span class="c1"></span>	<span class="kd">protected</span> <span class="kt">int</span> <span class="n">poolPingConnectionsNotUsedFor</span><span class="o">;</span>
+
+	<span class="c1">// 根据数据库url、用户名、密码生成一个hash值，唯一标识一个连接池，由这个连接池生成的连接都会带上这个值
+</span><span class="c1"></span>	<span class="kd">private</span> <span class="kt">int</span> <span class="n">expectedConnectionTypeCode</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>里面核心方法有两个，分别是 popConnection() 、 pushConnection() 。</p>
+<p>popConnection() 用于获取连接，pushConnection() 用于归还连接。</p>
+<h3 id="连接的获取-popconnection">连接的获取 popConnection</h3>
+<p>连接的获取源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PooledDataSource</span> <span class="kd">implements</span> <span class="n">DataSource</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="n">PooledConnection</span> <span class="nf">popConnection</span><span class="o">(</span><span class="n">String</span> <span class="n">username</span><span class="o">,</span> <span class="n">String</span> <span class="n">password</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">SQLException</span> <span class="o">{</span>
+		<span class="kt">boolean</span> <span class="n">countedWait</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+		<span class="n">PooledConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="kt">long</span> <span class="n">t</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">();</span>
+		<span class="kt">int</span> <span class="n">localBadConnectionCount</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+
+		<span class="k">while</span> <span class="o">(</span><span class="n">conn</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 添加同步控制，锁对象是 PoolState。
+</span><span class="c1"></span>			<span class="kd">synchronized</span> <span class="o">(</span><span class="n">state</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// 如果还有空闲连接，则直接从空闲连接中获取一个，获取到的这个连接从空闲连接列表中移除。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(!</span><span class="n">state</span><span class="o">.</span><span class="na">idleConnections</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+					<span class="c1">// Pool has available connection
+</span><span class="c1"></span>					<span class="n">conn</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="na">idleConnections</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Checked out connection &#34;</span> <span class="o">+</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRealHashCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; from pool.&#34;</span><span class="o">);</span>
+					<span class="o">}</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+					<span class="c1">// 空闲连接列表中，已经没有空闲连接
+</span><span class="c1"></span>
+					<span class="c1">// 如果当前活跃连接数，小于最大活跃连接数，直接创建新链接。
+</span><span class="c1"></span>					<span class="c1">// Pool does not have available connection
+</span><span class="c1"></span>					<span class="k">if</span> <span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">activeConnections</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;</span> <span class="n">poolMaximumActiveConnections</span><span class="o">)</span> <span class="o">{</span>
+						<span class="c1">// Can create new connection
+</span><span class="c1"></span>						<span class="n">conn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PooledConnection</span><span class="o">(</span><span class="n">dataSource</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(),</span> <span class="k">this</span><span class="o">);</span>
+						<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+							<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Created connection &#34;</span> <span class="o">+</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRealHashCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;.&#34;</span><span class="o">);</span>
+						<span class="o">}</span>
+					<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+						<span class="c1">// 如果当前活跃链接数，达到了最大活跃连接数，且没有了空闲连接。
+</span><span class="c1"></span>
+						<span class="c1">// 获取最早创建的连接，判断是否超时
+</span><span class="c1"></span>						<span class="c1">// Cannot create new connection
+</span><span class="c1"></span>						<span class="n">PooledConnection</span> <span class="n">oldestActiveConnection</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="na">activeConnections</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">0</span><span class="o">);</span>
+						<span class="kt">long</span> <span class="n">longestCheckoutTime</span> <span class="o">=</span> <span class="n">oldestActiveConnection</span><span class="o">.</span><span class="na">getCheckoutTime</span><span class="o">();</span>
+						<span class="c1">// 如果已经超时
+</span><span class="c1"></span>						<span class="k">if</span> <span class="o">(</span><span class="n">longestCheckoutTime</span> <span class="o">&gt;</span> <span class="n">poolMaximumCheckoutTime</span><span class="o">)</span> <span class="o">{</span>
+							<span class="c1">// Can claim overdue connection
+</span><span class="c1"></span>							<span class="c1">// 使用连接超时的次数 +1
+</span><span class="c1"></span>							<span class="n">state</span><span class="o">.</span><span class="na">claimedOverdueConnectionCount</span><span class="o">++;</span>
+							<span class="c1">// 累计超时时间增加。
+</span><span class="c1"></span>							<span class="n">state</span><span class="o">.</span><span class="na">accumulatedCheckoutTimeOfOverdueConnections</span> <span class="o">+=</span> <span class="n">longestCheckoutTime</span><span class="o">;</span>
+							<span class="c1">// 累计的使用连接的时间增加。
+</span><span class="c1"></span>							<span class="n">state</span><span class="o">.</span><span class="na">accumulatedCheckoutTime</span> <span class="o">+=</span> <span class="n">longestCheckoutTime</span><span class="o">;</span>
+							<span class="c1">// 将这个旧的超时连接，从活跃的连接列表中移除。
+</span><span class="c1"></span>							<span class="n">state</span><span class="o">.</span><span class="na">activeConnections</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">oldestActiveConnection</span><span class="o">);</span>
+							<span class="c1">// 如果这个旧的超时连接，存在尚未完成的事务，进行回滚，如果回滚抛出异常，则忽略异常。
+</span><span class="c1"></span>							<span class="k">if</span> <span class="o">(!</span><span class="n">oldestActiveConnection</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">getAutoCommit</span><span class="o">())</span> <span class="o">{</span>
+								<span class="k">try</span> <span class="o">{</span>
+									<span class="n">oldestActiveConnection</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">rollback</span><span class="o">();</span>
+								<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">SQLException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+									<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Bad connection. Could not roll back&#34;</span><span class="o">);</span>
+								<span class="o">}</span>
+							<span class="o">}</span>
+							<span class="c1">// 没有空闲连接，已达最大活跃连接数，最早的连接已经超时，则在移除超时连接后，创建新的连接。
+</span><span class="c1"></span>							<span class="n">conn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PooledConnection</span><span class="o">(</span><span class="n">oldestActiveConnection</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">(),</span> <span class="k">this</span><span class="o">);</span>
+							<span class="n">conn</span><span class="o">.</span><span class="na">setCreatedTimestamp</span><span class="o">(</span><span class="n">oldestActiveConnection</span><span class="o">.</span><span class="na">getCreatedTimestamp</span><span class="o">());</span>
+							<span class="n">conn</span><span class="o">.</span><span class="na">setLastUsedTimestamp</span><span class="o">(</span><span class="n">oldestActiveConnection</span><span class="o">.</span><span class="na">getLastUsedTimestamp</span><span class="o">());</span>
+							<span class="c1">// 将旧的超时连接置为无效。
+</span><span class="c1"></span>							<span class="n">oldestActiveConnection</span><span class="o">.</span><span class="na">invalidate</span><span class="o">();</span>
+							<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+								<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Claimed overdue connection &#34;</span> <span class="o">+</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRealHashCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;.&#34;</span><span class="o">);</span>
+							<span class="o">}</span>
+						<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+							<span class="c1">// 没有空闲连接，已达最大活跃连接数，最早的连接没有超时。只能阻塞。
+</span><span class="c1"></span>							<span class="c1">// Must wait
+</span><span class="c1"></span>							<span class="k">try</span> <span class="o">{</span>
+								<span class="k">if</span> <span class="o">(!</span><span class="n">countedWait</span><span class="o">)</span> <span class="o">{</span>
+									<span class="n">state</span><span class="o">.</span><span class="na">hadToWaitCount</span><span class="o">++;</span>
+									<span class="n">countedWait</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+								<span class="o">}</span>
+								<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+									<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Waiting as long as &#34;</span> <span class="o">+</span> <span class="n">poolTimeToWait</span> <span class="o">+</span> <span class="s">&#34; milliseconds for connection.&#34;</span><span class="o">);</span>
+								<span class="o">}</span>
+								<span class="kt">long</span> <span class="n">wt</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">();</span>
+								<span class="c1">// 阻塞时间设置为无法取得连接是最大的等待时间。这里的阻塞会释放掉锁，在这期间，有可能会被其他线程唤醒。
+</span><span class="c1"></span>								<span class="n">state</span><span class="o">.</span><span class="na">wait</span><span class="o">(</span><span class="n">poolTimeToWait</span><span class="o">);</span>
+								<span class="c1">// 累积等待时间累加上以上阻塞的时间。
+</span><span class="c1"></span>								<span class="n">state</span><span class="o">.</span><span class="na">accumulatedWaitTime</span> <span class="o">+=</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">()</span> <span class="o">-</span> <span class="n">wt</span><span class="o">;</span>
+							<span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+								<span class="k">break</span><span class="o">;</span>
+							<span class="o">}</span>
+						<span class="o">}</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+				<span class="c1">// 如果最终连接不为空。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(</span><span class="n">conn</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="c1">// ping to server and check the connection is valid or not
+</span><span class="c1"></span>					<span class="c1">// 连接有效
+</span><span class="c1"></span>					<span class="k">if</span> <span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">isValid</span><span class="o">())</span> <span class="o">{</span>
+						<span class="c1">// 真实连接没有自动提交，则回滚掉存在的旧事务。
+</span><span class="c1"></span>						<span class="k">if</span> <span class="o">(!</span><span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">getAutoCommit</span><span class="o">())</span> <span class="o">{</span>
+							<span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">rollback</span><span class="o">();</span>
+						<span class="o">}</span>
+						<span class="n">conn</span><span class="o">.</span><span class="na">setConnectionTypeCode</span><span class="o">(</span><span class="n">assembleConnectionTypeCode</span><span class="o">(</span><span class="n">dataSource</span><span class="o">.</span><span class="na">getUrl</span><span class="o">(),</span> <span class="n">username</span><span class="o">,</span> <span class="n">password</span><span class="o">));</span>
+						<span class="n">conn</span><span class="o">.</span><span class="na">setCheckoutTimestamp</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">());</span>
+						<span class="n">conn</span><span class="o">.</span><span class="na">setLastUsedTimestamp</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">());</span>
+						<span class="c1">// 将获取到的连接放入到活跃连接列表中、请求的次数自增、累积获得连接的时间增加。
+</span><span class="c1"></span>						<span class="n">state</span><span class="o">.</span><span class="na">activeConnections</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">conn</span><span class="o">);</span>
+						<span class="n">state</span><span class="o">.</span><span class="na">requestCount</span><span class="o">++;</span>
+						<span class="n">state</span><span class="o">.</span><span class="na">accumulatedRequestTime</span> <span class="o">+=</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">()</span> <span class="o">-</span> <span class="n">t</span><span class="o">;</span>
+					<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+						<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+							<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;A bad connection (&#34;</span> <span class="o">+</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRealHashCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;) was returned from the pool, getting another connection.&#34;</span><span class="o">);</span>
+						<span class="o">}</span>
+						<span class="c1">// 连接不为空，但是无效。无效连接统计次数自增。
+</span><span class="c1"></span>						<span class="n">state</span><span class="o">.</span><span class="na">badConnectionCount</span><span class="o">++;</span>
+						<span class="n">localBadConnectionCount</span><span class="o">++;</span>
+						<span class="n">conn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+						<span class="c1">// 如果获取无效连接的次数 大于 最大闲置连接数+最大重试次数，则抛出异常，否则继续尝试获取连接。
+</span><span class="c1"></span>						<span class="k">if</span> <span class="o">(</span><span class="n">localBadConnectionCount</span> <span class="o">&gt;</span> <span class="o">(</span><span class="n">poolMaximumIdleConnections</span> <span class="o">+</span> <span class="n">poolMaximumLocalBadConnectionTolerance</span><span class="o">))</span> <span class="o">{</span>
+							<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+								<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;PooledDataSource: Could not get a good connection to the database.&#34;</span><span class="o">);</span>
+							<span class="o">}</span>
+							<span class="k">throw</span> <span class="k">new</span> <span class="n">SQLException</span><span class="o">(</span><span class="s">&#34;PooledDataSource: Could not get a good connection to the database.&#34;</span><span class="o">);</span>
+						<span class="o">}</span>
+					<span class="o">}</span>
+				<span class="o">}</span>
+			<span class="o">}</span>
+
+		<span class="o">}</span>
+
+		<span class="k">if</span> <span class="o">(</span><span class="n">conn</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+				<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.&#34;</span><span class="o">);</span>
+			<span class="o">}</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="n">SQLException</span><span class="o">(</span><span class="s">&#34;PooledDataSource: Unknown severe error condition.  The connection pool returned a null connection.&#34;</span><span class="o">);</span>
+		<span class="o">}</span>
+
+		<span class="k">return</span> <span class="n">conn</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>获取的流程：</p>
+<ul>
+<li>获取添加同步控制，一次只允许一个线程进行连接的获取。这里是线程安全的。</li>
+<li>如果空闲连接列表不为空，直接从连接列表头部获取一个连接，并连接从空闲列表中移除。</li>
+<li>如果空闲列表为空。
+<ul>
+<li>如果活跃连接数小于最大活跃连接数，创建一个新的连接。</li>
+<li>如果活跃连接数达到最大活跃连接数，获取最早创建的活跃连接，判断是否超时。
+<ul>
+<li>如果已经超时，设置相关统计数据，如果存在未提交事务，进行回滚。从活跃连接列表中移除，使用旧的真实连接封装一个新的 PooledConnection，
+并将旧的 PooledConnection 置为无效。</li>
+<li>如果未超时，阻塞线程。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>最终如果获取到的连接不为空。
+<ul>
+<li>如果连接有效，设置连接的一些统计数据，将连接设置到活跃连接列表中。</li>
+<li>如果连接无效，判断是否超出最大重试次数，如果超出抛出异常，否则重新尝试获取。</li>
+</ul>
+</li>
+<li>如果获取到的连接为空，打印 debug 日志后抛出异常。</li>
+</ul>
+<h3 id="连接的归还-pushconnection">连接的归还 pushConnection</h3>
+<p>pushConnection() 源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PooledDataSource</span> <span class="kd">implements</span> <span class="n">DataSource</span> <span class="o">{</span>
+
+	<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">pushConnection</span><span class="o">(</span><span class="n">PooledConnection</span> <span class="n">conn</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">SQLException</span> <span class="o">{</span>
+		<span class="c1">// 在归还连接时加上同步控制。锁对象是 PoolState。
+</span><span class="c1"></span>		<span class="kd">synchronized</span> <span class="o">(</span><span class="n">state</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// 从活跃连接列表中，移除此连接。
+</span><span class="c1"></span>			<span class="n">state</span><span class="o">.</span><span class="na">activeConnections</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">conn</span><span class="o">);</span>
+			<span class="c1">// 如果连接有效
+</span><span class="c1"></span>			<span class="k">if</span> <span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">isValid</span><span class="o">())</span> <span class="o">{</span>
+				<span class="c1">// 空闲连接数量 小于 最大空闲连接数 且 是从当前连接池中获取到的连接。
+</span><span class="c1"></span>				<span class="k">if</span> <span class="o">(</span><span class="n">state</span><span class="o">.</span><span class="na">idleConnections</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">&lt;</span> <span class="n">poolMaximumIdleConnections</span> <span class="o">&amp;&amp;</span> <span class="n">conn</span><span class="o">.</span><span class="na">getConnectionTypeCode</span><span class="o">()</span> <span class="o">==</span> <span class="n">expectedConnectionTypeCode</span><span class="o">)</span> <span class="o">{</span>
+					<span class="c1">// 累加累积使用连接的时间
+</span><span class="c1"></span>					<span class="n">state</span><span class="o">.</span><span class="na">accumulatedCheckoutTime</span> <span class="o">+=</span> <span class="n">conn</span><span class="o">.</span><span class="na">getCheckoutTime</span><span class="o">();</span>
+					<span class="c1">// 回滚掉可能存在的事务。
+</span><span class="c1"></span>					<span class="k">if</span> <span class="o">(!</span><span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">getAutoCommit</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">rollback</span><span class="o">();</span>
+					<span class="o">}</span>
+					<span class="c1">// 将原始连接封装成一个新的 PooledConnection，
+</span><span class="c1"></span>					<span class="n">PooledConnection</span> <span class="n">newConn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PooledConnection</span><span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">(),</span> <span class="k">this</span><span class="o">);</span>
+					<span class="n">state</span><span class="o">.</span><span class="na">idleConnections</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">newConn</span><span class="o">);</span>
+					<span class="n">newConn</span><span class="o">.</span><span class="na">setCreatedTimestamp</span><span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">getCreatedTimestamp</span><span class="o">());</span>
+					<span class="n">newConn</span><span class="o">.</span><span class="na">setLastUsedTimestamp</span><span class="o">(</span><span class="n">conn</span><span class="o">.</span><span class="na">getLastUsedTimestamp</span><span class="o">());</span>
+					<span class="c1">// 旧的 PooledConnection 设置为无效。
+</span><span class="c1"></span>					<span class="n">conn</span><span class="o">.</span><span class="na">invalidate</span><span class="o">();</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Returned connection &#34;</span> <span class="o">+</span> <span class="n">newConn</span><span class="o">.</span><span class="na">getRealHashCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34; to pool.&#34;</span><span class="o">);</span>
+					<span class="o">}</span>
+					<span class="c1">// 连接归还成功，唤醒其他正在等待获取连接的线程。
+</span><span class="c1"></span>					<span class="n">state</span><span class="o">.</span><span class="na">notifyAll</span><span class="o">();</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+					<span class="c1">// 空闲连接数量 大于等于 最大空闲连接数
+</span><span class="c1"></span>					<span class="n">state</span><span class="o">.</span><span class="na">accumulatedCheckoutTime</span> <span class="o">+=</span> <span class="n">conn</span><span class="o">.</span><span class="na">getCheckoutTime</span><span class="o">();</span>
+					<span class="c1">// 回滚掉可能存在的事务，将真实连接关闭，连接包装类设置为无效。
+</span><span class="c1"></span>					<span class="k">if</span> <span class="o">(!</span><span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">getAutoCommit</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">rollback</span><span class="o">();</span>
+					<span class="o">}</span>
+					<span class="n">conn</span><span class="o">.</span><span class="na">getRealConnection</span><span class="o">().</span><span class="na">close</span><span class="o">();</span>
+					<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+						<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;Closed connection &#34;</span> <span class="o">+</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRealHashCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;.&#34;</span><span class="o">);</span>
+					<span class="o">}</span>
+					<span class="n">conn</span><span class="o">.</span><span class="na">invalidate</span><span class="o">();</span>
+				<span class="o">}</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">log</span><span class="o">.</span><span class="na">isDebugEnabled</span><span class="o">())</span> <span class="o">{</span>
+					<span class="n">log</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&#34;A bad connection (&#34;</span> <span class="o">+</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRealHashCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;) attempted to return to the pool, discarding connection.&#34;</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="c1">// 归还的连接是无效的，则无效连接统计数量 +1。
+</span><span class="c1"></span>				<span class="n">state</span><span class="o">.</span><span class="na">badConnectionCount</span><span class="o">++;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>代码流程：</p>
+<ol>
+<li>添加同步控制，只允许一个线程归还连接，其他线程会阻塞。</li>
+<li>从活跃连接列表中移除此连接。</li>
+<li>如果连接有效。
+<ol>
+<li>如果空闲连接数小于最大空闲连接数，执行归还操作。归还时会将原始连接封装到新的 PooledConnection 实例中，旧的 PooledConnection 会标记为无效。</li>
+<li>如果空闲连接数达到最大空闲连接数，丢弃连接。</li>
+</ol>
+</li>
+<li>如果连接无效，设置统计变量，无效连接统计数量 +1。</li>
+</ol>
+<h2 id="小结">小结</h2>
+<p>这三个类，实际上就是实现一个简单的连接池。以达到连接复用的目的。还是有比较大的优化空间，一般开发环境也不会使用这个。如阿里的 druid 连接池就比这个性能要好，
+功能也更强。</p>
+<p>连接的获取和归还，同步控制使用的同一把监视锁，他们是互斥的。</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mybatis%E6%BA%90%E7%A0%81/">mybatis源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/mybatis/02-mybatis-log/" class="prev" rel="prev" title="02 Mybatis Log 源码分析"><i class="fas fa-angle-left fa-fw"></i>02 Mybatis Log 源码分析</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.78.2">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><script type="text/javascript" src="/lib/valine/Valine.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"valine":{"appId":"4yIHB0Rs1r3ykDVxayI5nqj3-gzGzoHsz","appKey":"ALr4H1hlK94girLDEUCGmp3o","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@5.0.1/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":true,"highlight":true,"lang":"zh-cn","meta":["nick","mail","link"],"pageSize":5,"placeholder":"昵称栏输入QQ，会使用QQ昵称和头像、并自动补充QQ邮箱到邮箱栏。\r\n正确填写邮箱更容易及时得到回复。\r\n说点什么吧...","recordIP":true,"visitor":true}},"search":{"algoliaAppID":"1U459KF21F","algoliaIndex":"LoveItSite","algoliaSearchKey":"0433ffe95d71201a4f7c3e04b0125ac5","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript" src="/js/donate.js"></script></body>
+</html>
