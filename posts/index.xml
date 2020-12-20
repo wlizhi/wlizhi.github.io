@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/posts/</link>
         <description>所有文章 | 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sun, 20 Dec 2020 10:02:59 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sun, 20 Dec 2020 16:12:43 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>03 Mybatis连接池的实现原理</title>
+    <link>https://wlizhi.cc/posts/mybatis/03-mybatis-pooled-data-source/</link>
+    <pubDate>Sun, 20 Dec 2020 16:12:43 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/mybatis/03-mybatis-pooled-data-source/</guid>
+    <description><![CDATA[mybatis 连接池的实现源码、原理解析。]]></description>
+</item><item>
     <title>02 Mybatis Log 源码分析</title>
     <link>https://wlizhi.cc/posts/mybatis/02-mybatis-log/</link>
     <pubDate>Sun, 20 Dec 2020 10:02:59 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/22-enable-web-mvc-main-embedded-tomcat/</guid>
     <description><![CDATA[MVC的支持、执行入口及嵌入式 Tomcat 的使用案例。]]></description>
-</item><item>
-    <title>向spring提交了一个issue</title>
-    <link>https://wlizhi.cc/posts/spring/an-issue-for-spring/</link>
-    <pubDate>Fri, 11 Dec 2020 12:47:01 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/an-issue-for-spring/</guid>
-    <description><![CDATA[<p>昨天给spring提了一个issue，这个问题在 <a href="https://wlizhi.cc/posts/spring/16-transaction-declare-attention/" target="_blank" rel="noopener noreffer">声明式事务注意事项</a> 中有描述过。</p>]]></description>
 </item></channel>
 </rss>
