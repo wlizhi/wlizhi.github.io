@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/tags/mybatis%E6%BA%90%E7%A0%81/</link>
         <description>mybatis源码 - 标签 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sun, 20 Dec 2020 16:12:43 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/mybatis%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Wed, 30 Dec 2020 17:08:55 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/mybatis%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml" /><item>
+    <title>04 Mybatis Cache</title>
+    <link>https://wlizhi.cc/posts/mybatis/04-mybatis-cache/</link>
+    <pubDate>Wed, 30 Dec 2020 17:08:55 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/mybatis/04-mybatis-cache/</guid>
+    <description><![CDATA[mybatis 缓存模块的实现，源码分析。]]></description>
+</item><item>
     <title>03 Mybatis连接池的实现原理</title>
     <link>https://wlizhi.cc/posts/mybatis/03-mybatis-pooled-data-source/</link>
     <pubDate>Sun, 20 Dec 2020 16:12:43 &#43;0800</pubDate>

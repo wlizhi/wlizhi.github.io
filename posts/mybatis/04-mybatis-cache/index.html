@@ -5,37 +5,37 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>留言板 - 暗夜零星</title><meta name="Description" content="留言板，留言给我"><meta property="og:title" content="留言板" />
-<meta property="og:description" content="留言板，留言给我" />
+        <title>04 Mybatis Cache - 暗夜零星</title><meta name="Description" content="mybatis 缓存模块的实现，源码分析。"><meta property="og:title" content="04 Mybatis Cache" />
+<meta property="og:description" content="mybatis 缓存模块的实现，源码分析。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://wlizhi.cc/message-board/" />
+<meta property="og:url" content="https://wlizhi.cc/posts/mybatis/04-mybatis-cache/" />
 <meta property="og:image" content="https://wlizhi.cc/logo.png"/>
-<meta property="article:published_time" content="2020-11-25T16:30:44+08:00" />
-<meta property="article:modified_time" content="2020-11-25T16:30:44+08:00" />
+<meta property="article:published_time" content="2020-12-30T17:08:55+08:00" />
+<meta property="article:modified_time" content="2020-12-30T17:08:55+08:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
 
-<meta name="twitter:title" content="留言板"/>
-<meta name="twitter:description" content="留言板，留言给我"/>
+<meta name="twitter:title" content="04 Mybatis Cache"/>
+<meta name="twitter:description" content="mybatis 缓存模块的实现，源码分析。"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/message-board/" /><link rel="prev" href="https://wlizhi.cc/about/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://wlizhi.cc/posts/mybatis/04-mybatis-cache/" /><link rel="prev" href="https://wlizhi.cc/posts/mybatis/03-mybatis-pooled-data-source/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "留言板",
+        "headline": "04 Mybatis Cache",
         "inLanguage": "",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/wlizhi.cc\/message-board\/"
-        },"genre": "page","wordcount":  5 ,
-        "url": "https:\/\/wlizhi.cc\/message-board\/","datePublished": "2020-11-25T16:30:44+08:00","dateModified": "2020-11-25T16:30:44+08:00","publisher": {
+            "@id": "https:\/\/wlizhi.cc\/posts\/mybatis\/04-mybatis-cache\/"
+        },"genre": "posts","keywords": "mybatis源码","wordcount":  744 ,
+        "url": "https:\/\/wlizhi.cc\/posts\/mybatis\/04-mybatis-cache\/","datePublished": "2020-12-30T17:08:55+08:00","dateModified": "2020-12-30T17:08:55+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
                 "@type": "Person",
                 "name": "Wlizhi"
-            },"description": "留言板，留言给我"
+            },"description": "mybatis 缓存模块的实现，源码分析。"
     }
     </script></head>
     <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
@@ -46,7 +46,7 @@
             <a href="/" title="暗夜零星"><span class="header-title-pre"><i class='far fa-moon fa-fw'></i></span>暗夜零星</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item active" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/message-board/"> 留言 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/wlizhi" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><a class="menu-item" href="https://gitee.com/wlizhi" title="Gitee" rel="noopener noreffer" target="_blank"><i class='fab fa-git fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="点击搜索..." id="search-input-desktop">
                         <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
@@ -101,9 +101,86 @@
     <div id="search-dropdown-mobile"></div>
 </div>
 <main class="main">
-                <div class="container"><div class="page single special"><h1 class="single-title animated pulse faster">留言板</h1><div class="content" id="content"><div style="width: 100%;text-align: center;">留言给我↓</div></div><div id="comments"><div id="valine" class="comment"></div><noscript>
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">04 Mybatis Cache</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mybatis/"><i class="far fa-folder fa-fw"></i>mybatis</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-30">2020-12-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 744 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;<span id="/posts/mybatis/04-mybatis-cache/" class="leancloud_visitors" data-flag-title="04 Mybatis Cache">
+                        <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-缓存模块概要">1 缓存模块概要</a></li>
+    <li><a href="#2-装饰器模式">2 装饰器模式</a></li>
+    <li><a href="#3-缓存key的创建方式---cachekey">3 缓存key的创建方式 - CacheKey</a></li>
+    <li><a href="#4-一级缓存">4 一级缓存</a></li>
+    <li><a href="#5-二级缓存">5 二级缓存</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>mybatis源码系列文章，示例中带有中文注释的源码 copy 自 <a href="https://gitee.com/wlizhi/mybatis-3" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/mybatis-3</a></p>
+<p>链接中源码是作者从 github 下载，并以自身理解对核心流程及主要节点做了详细的中文注释。</p>
+<hr>
+<h2 id="1-缓存模块概要">1 缓存模块概要</h2>
+<ol>
+<li>mybatis 的缓存模块是基于 Map 的，从缓存中读写数据是其基础功能。</li>
+<li>mybatis 提供了许多缓存的实现。如阻塞式缓存、先进先出缓存、日志缓存、缓存清空策略、软引用缓存、虚引用缓存、具有同步控制的缓存等。</li>
+<li>这些缓存实现可以任意的组合优雅的附加到基础功能上。</li>
+</ol>
+<p>如果使用继承、或动态代理的方式很难做到任意的组合（会有大量子类）。继承或动态代理方式在实现类的组合上来说是静态的，这是 mybatis 缓存模块实现的最大难题。
+使用装饰器模式可以解决此问题，mybatis 正是使用了装饰器模式实现的缓存模块。</p>
+<h2 id="2-装饰器模式">2 装饰器模式</h2>
+<p>意图：动态地给一个对象添加一些额外的职责。就增加功能来说，装饰器模式相比生成子类更为灵活。</p>
+<p>主要解决：一般的，我们为了扩展一个类经常使用继承方式实现，由于继承为类引入静态特征，并且随着扩展功能的增多，子类会很膨胀。</p>
+<p>何时使用：在不想增加很多子类的情况下扩展类。</p>
+<p>如何解决：将具体功能职责划分，同时继承装饰者模式。</p>
+<p>使用场景： 1、扩展一个类的功能。 2、动态增加功能，动态撤销。</p>
+<p>jdk 中 io 流就是典型的装饰器模式。</p>
+<p>类似这样：<code>new BufferedInputStream(new FileInputStream(&quot;xx.txt&quot;))</code></p>
+<p>使用装饰类，持有原始类的方式，对其进行功能增强。如果需要多层的装饰，则创建装饰实例，然后作为参数传递给下一个装饰实例即可。
+这样可以做到任意个数、任意顺序的装饰。装饰本身即是功能的增强。装饰类本身与原始类实现同一个接口/继承了同一个类。</p>
+<p>上面示例中，BufferedInputStream、FileInputStream 实际上都实现了 InputStream。</p>
+<p>Collections 类，对集合进行增强的一些静态方法，也是使用了装饰器模式。</p>
+<h2 id="3-缓存key的创建方式---cachekey">3 缓存key的创建方式 - CacheKey</h2>
+<h2 id="4-一级缓存">4 一级缓存</h2>
+<h2 id="5-二级缓存">5 二级缓存</h2>
+<p>bb</p></div>
+
+        <div id="donateDiv"><a id="donate">打赏</a></div>
+<div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-12-30</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mybatis%E6%BA%90%E7%A0%81/">mybatis源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/mybatis/03-mybatis-pooled-data-source/" class="prev" rel="prev" title="03 Mybatis连接池的实现原理"><i class="fas fa-angle-left fa-fw"></i>03 Mybatis连接池的实现原理</a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
-            </noscript></div></div></div>
+            </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
