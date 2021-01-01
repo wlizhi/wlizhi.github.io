@@ -12,7 +12,7 @@
     <guid>https://wlizhi.cc/posts/mybatis/04-mybatis-cache/</guid>
     <description><![CDATA[mybatis 缓存模块的实现，源码分析。]]></description>
 </item><item>
-    <title>03 Mybatis连接池的实现原理</title>
+    <title>03 Mybatis 连接池的实现原理</title>
     <link>https://wlizhi.cc/posts/mybatis/03-mybatis-pooled-data-source/</link>
     <pubDate>Sun, 20 Dec 2020 16:12:43 &#43;0800</pubDate>
     <author>作者</author>
