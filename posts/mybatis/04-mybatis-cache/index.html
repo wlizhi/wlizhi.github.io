@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/mybatis\/04-mybatis-cache\/"
-        },"genre": "posts","keywords": "mybatis源码","wordcount":  743 ,
+        },"genre": "posts","keywords": "mybatis源码","wordcount":  2862 ,
         "url": "https:\/\/wlizhi.cc\/posts\/mybatis\/04-mybatis-cache\/","datePublished": "2020-12-30T17:08:55+08:00","dateModified": "2020-12-30T17:08:55+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">04 Mybatis 缓存的实现原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mybatis/"><i class="far fa-folder fa-fw"></i>mybatis</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-30">2020-12-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 743 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;<span id="/posts/mybatis/04-mybatis-cache/" class="leancloud_visitors" data-flag-title="04 Mybatis 缓存的实现原理">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-12-30">2020-12-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2862 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/posts/mybatis/04-mybatis-cache/" class="leancloud_visitors" data-flag-title="04 Mybatis 缓存的实现原理">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -122,6 +122,7 @@
     <li><a href="#3-缓存key的创建方式---cachekey">3 缓存key的创建方式 - CacheKey</a></li>
     <li><a href="#4-一级缓存">4 一级缓存</a></li>
     <li><a href="#5-二级缓存">5 二级缓存</a></li>
+    <li><a href="#6-小结">6 小结</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><p>mybatis源码系列文章，示例中带有中文注释的源码 copy 自 <a href="https://gitee.com/wlizhi/mybatis-3" target="_blank" rel="noopener noreffer">https://gitee.com/wlizhi/mybatis-3</a></p>
@@ -148,8 +149,497 @@
 <p>上面示例中，BufferedInputStream、FileInputStream 实际上都实现了 InputStream。</p>
 <p>Collections 类，对集合进行增强的一些静态方法，也是使用了装饰器模式。</p>
 <h2 id="3-缓存key的创建方式---cachekey">3 缓存key的创建方式 - CacheKey</h2>
-<h2 id="4-一级缓存">4 一级缓存</h2>
-<h2 id="5-二级缓存">5 二级缓存</h2></div>
+<p>CacheKey 是对 mybatis 缓存的 key 值的封装。由于缓存时的 key 是根据多种元素来生成 key 的，这里需要通过一定的算法来进行封装，
+生成 hashcode 和 equals。其中关键方法有 update()、hashCode()、equals()。</p>
+<p>源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span><span class="lnt">94
+</span><span class="lnt">95
+</span><span class="lnt">96
+</span><span class="lnt">97
+</span><span class="lnt">98
+</span><span class="lnt">99
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CacheKey</span> <span class="kd">implements</span> <span class="n">Cloneable</span><span class="o">,</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="o">=</span> <span class="n">1146682552656046210L</span><span class="o">;</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">DEFAULT_MULTIPLIER</span> <span class="o">=</span> <span class="n">37</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">DEFAULT_HASHCODE</span> <span class="o">=</span> <span class="n">17</span><span class="o">;</span>
+
+  <span class="cm">/** 参与 hash 计算的乘数 */</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">multiplier</span><span class="o">;</span>
+  <span class="cm">/** CacheKey 的 hash 值，在 update 函数中运算出来的 */</span>
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">hashcode</span><span class="o">;</span>
+  <span class="cm">/** 校验和，hash值的和 */</span>
+  <span class="kd">private</span> <span class="kt">long</span> <span class="n">checksum</span><span class="o">;</span>
+  <span class="cm">/** 参与计算元素的个数 */</span>
+  <span class="kd">private</span> <span class="kt">int</span> <span class="n">count</span><span class="o">;</span>
+  <span class="c1">// 8/21/2017 - Sonarlint flags this as needing to be marked transient. While true if content is not serializable, this
+</span><span class="c1"></span>  <span class="c1">// is not always true and thus should not be marked transient.
+</span><span class="c1"></span>  <span class="cm">/** 该集合中的元素决定两个 CacheKey 是否相等 */</span>
+  <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">updateList</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">CacheKey</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">hashcode</span> <span class="o">=</span> <span class="n">DEFAULT_HASHCODE</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">multiplier</span> <span class="o">=</span> <span class="n">DEFAULT_MULTIPLIER</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">count</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">updateList</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="nf">CacheKey</span><span class="o">(</span><span class="n">Object</span><span class="o">[]</span> <span class="n">objects</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">();</span>
+    <span class="n">updateAll</span><span class="o">(</span><span class="n">objects</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getUpdateCount</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">updateList</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">Object</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 获取object的hash值
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">baseHashCode</span> <span class="o">=</span> <span class="n">object</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="n">1</span> <span class="o">:</span> <span class="n">ArrayUtil</span><span class="o">.</span><span class="na">hashCode</span><span class="o">(</span><span class="n">object</span><span class="o">);</span>
+
+    <span class="c1">// 更新count、checksum以及hashcode的值
+</span><span class="c1"></span>    <span class="n">count</span><span class="o">++;</span>
+    <span class="n">checksum</span> <span class="o">+=</span> <span class="n">baseHashCode</span><span class="o">;</span>
+    <span class="n">baseHashCode</span> <span class="o">*=</span> <span class="n">count</span><span class="o">;</span>
+
+    <span class="n">hashcode</span> <span class="o">=</span> <span class="n">multiplier</span> <span class="o">*</span> <span class="n">hashcode</span> <span class="o">+</span> <span class="n">baseHashCode</span><span class="o">;</span>
+
+    <span class="c1">// 将对象添加到updateList中
+</span><span class="c1"></span>    <span class="n">updateList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">object</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">updateAll</span><span class="o">(</span><span class="n">Object</span><span class="o">[]</span> <span class="n">objects</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="n">Object</span> <span class="n">o</span> <span class="o">:</span> <span class="n">objects</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">update</span><span class="o">(</span><span class="n">o</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="n">Object</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// 比较是不是同一个对象
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="o">==</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="c1">// 是否类型相同
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(!(</span><span class="n">object</span> <span class="k">instanceof</span> <span class="n">CacheKey</span><span class="o">))</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">final</span> <span class="n">CacheKey</span> <span class="n">cacheKey</span> <span class="o">=</span> <span class="o">(</span><span class="n">CacheKey</span><span class="o">)</span> <span class="n">object</span><span class="o">;</span>
+
+    <span class="c1">// hashcode 是否相同
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">hashcode</span> <span class="o">!=</span> <span class="n">cacheKey</span><span class="o">.</span><span class="na">hashcode</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="c1">// checksum 是否相同
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">checksum</span> <span class="o">!=</span> <span class="n">cacheKey</span><span class="o">.</span><span class="na">checksum</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="c1">// count是否相同
+</span><span class="c1"></span>    <span class="k">if</span> <span class="o">(</span><span class="n">count</span> <span class="o">!=</span> <span class="n">cacheKey</span><span class="o">.</span><span class="na">count</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 以上都相同，才按顺序比较 updateList 中元素是否相等，只有全部相等，才返回 true。
+</span><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">updateList</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+      <span class="n">Object</span> <span class="n">thisObject</span> <span class="o">=</span> <span class="n">updateList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+      <span class="n">Object</span> <span class="n">thatObject</span> <span class="o">=</span> <span class="n">cacheKey</span><span class="o">.</span><span class="na">updateList</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+      <span class="k">if</span> <span class="o">(!</span><span class="n">ArrayUtil</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">thisObject</span><span class="o">,</span> <span class="n">thatObject</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">hashCode</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">hashcode</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>CacheKey 是通过 MapperStatement 的id、offset、limit、以及 sql 中占位符的参数。来计算出对应的 hashcode，并且会将这些信息封装在一个 List 中。</p>
+<p>在进行比较的时候，会先进行 hashcode、checksum 的比较，之后对封装的列表中的元素依次比较，如果全部相等，返回true，中途有一个比较不成立，则返回false。</p>
+<p>这么做是为了提高效率。</p>
+<p>hashcode 和 checkSum 的生成，是根据 updateList 中的元素计算的。</p>
+<p>关键的成员变量：</p>
+<ol>
+<li>hashcode：CacheKey 的 hash 值，在 update 函数中实时运算出来的</li>
+<li>checksum：校验和，hash值的和</li>
+<li>count：参与计算元素的个数</li>
+<li>updateList：该集合中的元素决定两个 CacheKey 是否相等</li>
+</ol>
+<p>cacheKey 的创建源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">BaseExecutor</span> <span class="kd">implements</span> <span class="n">Executor</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="n">CacheKey</span> <span class="nf">createCacheKey</span><span class="o">(</span><span class="n">MappedStatement</span> <span class="n">ms</span><span class="o">,</span> <span class="n">Object</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="n">RowBounds</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">BoundSql</span> <span class="n">boundSql</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">closed</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="n">ExecutorException</span><span class="o">(</span><span class="s">&#34;Executor was closed.&#34;</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 创建缓存 key
+</span><span class="c1"></span>		<span class="n">CacheKey</span> <span class="n">cacheKey</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CacheKey</span><span class="o">();</span>
+		<span class="c1">// id、limit、sql等属性，计算 hash值，生成 cacheKey。
+</span><span class="c1"></span>		<span class="n">cacheKey</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">ms</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+		<span class="n">cacheKey</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">rowBounds</span><span class="o">.</span><span class="na">getOffset</span><span class="o">());</span>
+		<span class="n">cacheKey</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">rowBounds</span><span class="o">.</span><span class="na">getLimit</span><span class="o">());</span>
+		<span class="n">cacheKey</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">boundSql</span><span class="o">.</span><span class="na">getSql</span><span class="o">());</span>
+		<span class="c1">// 如果存在参数映射，将参数也加入cacheKey的生成元素中。
+</span><span class="c1"></span>		<span class="n">List</span><span class="o">&lt;</span><span class="n">ParameterMapping</span><span class="o">&gt;</span> <span class="n">parameterMappings</span> <span class="o">=</span> <span class="n">boundSql</span><span class="o">.</span><span class="na">getParameterMappings</span><span class="o">();</span>
+		<span class="n">TypeHandlerRegistry</span> <span class="n">typeHandlerRegistry</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getTypeHandlerRegistry</span><span class="o">();</span>
+		<span class="c1">// mimic DefaultParameterHandler logic
+</span><span class="c1"></span>		<span class="k">for</span> <span class="o">(</span><span class="n">ParameterMapping</span> <span class="n">parameterMapping</span> <span class="o">:</span> <span class="n">parameterMappings</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">parameterMapping</span><span class="o">.</span><span class="na">getMode</span><span class="o">()</span> <span class="o">!=</span> <span class="n">ParameterMode</span><span class="o">.</span><span class="na">OUT</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">Object</span> <span class="n">value</span><span class="o">;</span>
+				<span class="n">String</span> <span class="n">propertyName</span> <span class="o">=</span> <span class="n">parameterMapping</span><span class="o">.</span><span class="na">getProperty</span><span class="o">();</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">boundSql</span><span class="o">.</span><span class="na">hasAdditionalParameter</span><span class="o">(</span><span class="n">propertyName</span><span class="o">))</span> <span class="o">{</span>
+					<span class="n">value</span> <span class="o">=</span> <span class="n">boundSql</span><span class="o">.</span><span class="na">getAdditionalParameter</span><span class="o">(</span><span class="n">propertyName</span><span class="o">);</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">parameterObject</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="n">value</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">typeHandlerRegistry</span><span class="o">.</span><span class="na">hasTypeHandler</span><span class="o">(</span><span class="n">parameterObject</span><span class="o">.</span><span class="na">getClass</span><span class="o">()))</span> <span class="o">{</span>
+					<span class="n">value</span> <span class="o">=</span> <span class="n">parameterObject</span><span class="o">;</span>
+				<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+					<span class="n">MetaObject</span> <span class="n">metaObject</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">newMetaObject</span><span class="o">(</span><span class="n">parameterObject</span><span class="o">);</span>
+					<span class="n">value</span> <span class="o">=</span> <span class="n">metaObject</span><span class="o">.</span><span class="na">getValue</span><span class="o">(</span><span class="n">propertyName</span><span class="o">);</span>
+				<span class="o">}</span>
+				<span class="n">cacheKey</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">configuration</span><span class="o">.</span><span class="na">getEnvironment</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">// issue #176
+</span><span class="c1"></span>			<span class="n">cacheKey</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">configuration</span><span class="o">.</span><span class="na">getEnvironment</span><span class="o">().</span><span class="na">getId</span><span class="o">());</span>
+		<span class="o">}</span>
+		<span class="k">return</span> <span class="n">cacheKey</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="4-一级缓存">4 一级缓存</h2>
+<p>mybatis 中的缓存是通过 Cache 接口来实现的。它负责存储缓存的 key-value 内容。</p>
+<p>一级缓存的生命周期与 sqlSession 相同，即是线程隔离的。它的触发点是在二级缓存之后，也就是说，二级缓存中没有内容时，才会从一级缓存中获取，最后从数据库获取。</p>
+<p>在 BaseExecutor 中有成员变量 localCache，这里就保存了一级缓存的内容。</p>
+<p>默认的缓存实现类是 PerpetualCache，它通过 HashMap 来存储数据，其数据结构源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PerpetualCache</span> <span class="kd">implements</span> <span class="n">Cache</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">id</span><span class="o">;</span>
+
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">cache</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果我们调用一个查询语句，触发一级缓存的源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">BaseExecutor</span> <span class="kd">implements</span> <span class="n">Executor</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">MappedStatement</span> <span class="n">ms</span><span class="o">,</span> <span class="n">Object</span> <span class="n">parameter</span><span class="o">,</span> <span class="n">RowBounds</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">ResultHandler</span> <span class="n">resultHandler</span><span class="o">,</span> <span class="n">CacheKey</span> <span class="n">key</span><span class="o">,</span> <span class="n">BoundSql</span> <span class="n">boundSql</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">SQLException</span> <span class="o">{</span>
+		<span class="n">ErrorContext</span><span class="o">.</span><span class="na">instance</span><span class="o">().</span><span class="na">resource</span><span class="o">(</span><span class="n">ms</span><span class="o">.</span><span class="na">getResource</span><span class="o">()).</span><span class="na">activity</span><span class="o">(</span><span class="s">&#34;executing a query&#34;</span><span class="o">).</span><span class="na">object</span><span class="o">(</span><span class="n">ms</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+		<span class="c1">// 检查当前 executor 是否关闭。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">closed</span><span class="o">)</span> <span class="o">{</span>
+			<span class="k">throw</span> <span class="k">new</span> <span class="n">ExecutorException</span><span class="o">(</span><span class="s">&#34;Executor was closed.&#34;</span><span class="o">);</span>
+		<span class="o">}</span>
+		<span class="c1">// 非嵌套查询，并且 flushCacheRequired 配置为 true，则需要清空一级缓存。
+</span><span class="c1"></span>		<span class="k">if</span> <span class="o">(</span><span class="n">queryStack</span> <span class="o">==</span> <span class="n">0</span> <span class="o">&amp;&amp;</span> <span class="n">ms</span><span class="o">.</span><span class="na">isFlushCacheRequired</span><span class="o">())</span> <span class="o">{</span>
+			<span class="n">clearLocalCache</span><span class="o">();</span>
+		<span class="o">}</span>
+		<span class="n">List</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">;</span>
+		<span class="k">try</span> <span class="o">{</span>
+			<span class="c1">// 查询层次 +1
+</span><span class="c1"></span>			<span class="n">queryStack</span><span class="o">++;</span>
+			<span class="c1">// 查询一级缓存
+</span><span class="c1"></span>			<span class="n">list</span> <span class="o">=</span> <span class="n">resultHandler</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;)</span> <span class="n">localCache</span><span class="o">.</span><span class="na">getObject</span><span class="o">(</span><span class="n">key</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">list</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// 针对调用存储过程的结果处理。
+</span><span class="c1"></span>				<span class="n">handleLocallyCachedOutputParameters</span><span class="o">(</span><span class="n">ms</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">parameter</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+			<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+				<span class="c1">// 从数据库查询数据。
+</span><span class="c1"></span>				<span class="n">list</span> <span class="o">=</span> <span class="n">queryFromDatabase</span><span class="o">(</span><span class="n">ms</span><span class="o">,</span> <span class="n">parameter</span><span class="o">,</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">resultHandler</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+			<span class="o">}</span>
+		<span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+			<span class="n">queryStack</span><span class="o">--;</span>
+		<span class="o">}</span>
+		<span class="c1">// 其余源码省略...
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">list</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>根据 cacheKey 从一级缓存中获取数据，如果存在，直接返回。如果不存在，则从数据库中查询数据。</p>
+<h2 id="5-二级缓存">5 二级缓存</h2>
+<p>二级缓存存储在 MappedStatement 的变量 cache 中，也就是与 Mapper 文件的封装类实例生命周期一致，是应用级的。</p>
+<p>触发点源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CachingExecutor</span> <span class="kd">implements</span> <span class="n">Executor</span> <span class="o">{</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">MappedStatement</span> <span class="n">ms</span><span class="o">,</span> <span class="n">Object</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="n">RowBounds</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">ResultHandler</span> <span class="n">resultHandler</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">SQLException</span> <span class="o">{</span>
+		<span class="c1">// 获取 sql 语句信息，包括占位符、参数等信息。
+</span><span class="c1"></span>		<span class="n">BoundSql</span> <span class="n">boundSql</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="na">getBoundSql</span><span class="o">(</span><span class="n">parameterObject</span><span class="o">);</span>
+		<span class="c1">// 拼装缓存 key 值
+</span><span class="c1"></span>		<span class="n">CacheKey</span> <span class="n">key</span> <span class="o">=</span> <span class="n">createCacheKey</span><span class="o">(</span><span class="n">ms</span><span class="o">,</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+		<span class="c1">// 执行查询
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">query</span><span class="o">(</span><span class="n">ms</span><span class="o">,</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">resultHandler</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+	<span class="o">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="nf">query</span><span class="o">(</span><span class="n">MappedStatement</span> <span class="n">ms</span><span class="o">,</span> <span class="n">Object</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="n">RowBounds</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">ResultHandler</span> <span class="n">resultHandler</span><span class="o">,</span> <span class="n">CacheKey</span> <span class="n">key</span><span class="o">,</span> <span class="n">BoundSql</span> <span class="n">boundSql</span><span class="o">)</span>
+			<span class="kd">throws</span> <span class="n">SQLException</span> <span class="o">{</span>
+		<span class="c1">// 从 MappedStatement 中获取二级缓存
+</span><span class="c1"></span>		<span class="n">Cache</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="na">getCache</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">cache</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">flushCacheIfRequired</span><span class="o">(</span><span class="n">ms</span><span class="o">);</span>
+			<span class="k">if</span> <span class="o">(</span><span class="n">ms</span><span class="o">.</span><span class="na">isUseCache</span><span class="o">()</span> <span class="o">&amp;&amp;</span> <span class="n">resultHandler</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+				<span class="n">ensureNoOutParams</span><span class="o">(</span><span class="n">ms</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+                <span class="c1">// 从二级缓存中获取数据。
+</span><span class="c1"></span>				<span class="nd">@SuppressWarnings</span><span class="o">(</span><span class="s">&#34;unchecked&#34;</span><span class="o">)</span>
+				<span class="n">List</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;)</span> <span class="n">tcm</span><span class="o">.</span><span class="na">getObject</span><span class="o">(</span><span class="n">cache</span><span class="o">,</span> <span class="n">key</span><span class="o">);</span>
+				<span class="k">if</span> <span class="o">(</span><span class="n">list</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+					<span class="c1">// 二级缓存为空，才会调用 BaseExecutor.query()。
+</span><span class="c1"></span>					<span class="n">list</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">ms</span><span class="o">,</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">resultHandler</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+					<span class="n">tcm</span><span class="o">.</span><span class="na">putObject</span><span class="o">(</span><span class="n">cache</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">list</span><span class="o">);</span> <span class="c1">// issue #578 and #116
+</span><span class="c1"></span>				<span class="o">}</span>
+				<span class="k">return</span> <span class="n">list</span><span class="o">;</span>
+			<span class="o">}</span>
+		<span class="o">}</span>
+		<span class="c1">// 执行查询
+</span><span class="c1"></span>		<span class="k">return</span> <span class="n">delegate</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">ms</span><span class="o">,</span> <span class="n">parameterObject</span><span class="o">,</span> <span class="n">rowBounds</span><span class="o">,</span> <span class="n">resultHandler</span><span class="o">,</span> <span class="n">key</span><span class="o">,</span> <span class="n">boundSql</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>二级缓存和一级缓存 cacheKey 的生成并无区别。仅仅是存储的位置不同，导致其生命周期不同，这是他们最大的区别。</p>
+<h2 id="6-小结">6 小结</h2>
+<p>一级缓存和二级缓存只是作用范围、生命周期不同。一级缓存是在sqlSession中，查询时保存到缓存、更新时清除缓存。二级缓存是在 MappedStatement 中，更新时会清除对应id的 MappedStatement 中的二级缓存。</p>
+<p>二级缓存可能存在跨 MappedStatement 的情况，所以存在一致性问题，一般不使用。</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
@@ -182,7 +672,7 @@
             </noscript></div></article></div>
             </main><footer class="footer">
         <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2020 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://wlizhi.cc" target="_blank">Wlizhi</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
                     <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>豫ICP备17048163号<a/></span></div>
         </div>
     </footer></div>
