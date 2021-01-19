@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>并发编程 - 标签 - 暗夜零星</title>
+        <link>https://wlizhi.cc/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</link>
+        <description>并发编程 - 标签 - 暗夜零星</description>
+        <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 19 Jan 2021 10:24:51 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="self" type="application/rss+xml" /><item>
+    <title>自定义分布式可重入锁</title>
+    <link>https://wlizhi.cc/posts/concurrent/reentrant-distributed-lock/</link>
+    <pubDate>Tue, 19 Jan 2021 10:24:51 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/concurrent/reentrant-distributed-lock/</guid>
+    <description><![CDATA[基于redis原子操作、ReentrantLock（进程内独占锁）实现的一个分布式可重入锁]]></description>
+</item></channel>
+</rss>
