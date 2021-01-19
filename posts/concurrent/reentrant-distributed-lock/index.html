@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/concurrent\/reentrant-distributed-lock\/"
-        },"genre": "posts","keywords": "编发编程, 锁","wordcount":  781 ,
+        },"genre": "posts","keywords": "编发编程, 锁","wordcount":  1047 ,
         "url": "https:\/\/wlizhi.cc\/posts\/concurrent\/reentrant-distributed-lock\/","datePublished": "2021-01-19T10:24:51+08:00","dateModified": "2021-01-19T10:24:51+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,8 +106,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">自定义分布式可重入锁</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"><i class="far fa-folder fa-fw"></i>并发编程</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-19">2021-01-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 781 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;<span id="/posts/concurrent/reentrant-distributed-lock/" class="leancloud_visitors" data-flag-title="自定义分布式可重入锁">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-19">2021-01-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1047 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;<span id="/posts/concurrent/reentrant-distributed-lock/" class="leancloud_visitors" data-flag-title="自定义分布式可重入锁">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -455,7 +455,8 @@
 <span class="o">}</span>
 </code></pre></td></tr></table>
 </div>
-</div></div>
+</div><p>此实现存在的问题：以上代码默认超时时间5秒，如果不加锁超时时间，如果网络抖动或者抢到锁的线程问题导致未能释放锁，就会造成死锁问题；如果加了超时时间，锁超时与下次竞争锁，这之间会存在数据一致性问题。</p>
+<p>其他的优化空间：以上的实现中，抢到进程内独占锁的线程，会一直循环，抢不到等待一段时间再抢，这种机制不是很好。可以通过redis发布订阅机制来完善，抢不到redis锁的线程进行休眠，当抢到锁的线程释放了锁，且重入次数归零后，通过发布消息的机制来唤醒其他进程内在等待的线程。唤醒可以使用LockSupport.unpark(thread)；</p></div>
 
         <div id="donateDiv"><a id="donate">打赏</a></div>
 <div class="post-footer" id="post-footer">
