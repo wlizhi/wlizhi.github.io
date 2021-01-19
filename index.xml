@@ -4,9 +4,16 @@
         <link>https://wlizhi.cc/</link>
         <description>暗夜零星，java程序员。这里是我的个人博客，交流技术，分享经验。</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Wed, 30 Dec 2020 17:08:55 &#43;0800</lastBuildDate>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 19 Jan 2021 10:24:51 &#43;0800</lastBuildDate>
             <atom:link href="https://wlizhi.cc/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>自定义分布式可重入锁</title>
+    <link>https://wlizhi.cc/posts/concurrent/reentrant-distributed-lock/</link>
+    <pubDate>Tue, 19 Jan 2021 10:24:51 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/concurrent/reentrant-distributed-lock/</guid>
+    <description><![CDATA[基于redis原子操作、ReentrantLock（进程内独占锁）实现的一个分布式可重入锁]]></description>
+</item><item>
     <title>04 Mybatis 缓存的实现原理</title>
     <link>https://wlizhi.cc/posts/mybatis/04-mybatis-cache/</link>
     <pubDate>Wed, 30 Dec 2020 17:08:55 &#43;0800</pubDate>
@@ -69,12 +76,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/24-dispatcher-servlet-init/</guid>
     <description><![CDATA[DispatcherServlet的初始化的初始化源码分析。包括 handlerMapping、handlerAdapter等的初始化设置。]]></description>
-</item><item>
-    <title>23 @EnableWebMvc 的作用及源码分析</title>
-    <link>https://wlizhi.cc/posts/spring/23-enable-web-mvc-principle/</link>
-    <pubDate>Tue, 15 Dec 2020 20:27:00 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/23-enable-web-mvc-principle/</guid>
-    <description><![CDATA[注解@EnableWebMvc的实现原理，这个注解中主流程源码分析。]]></description>
 </item></channel>
 </rss>

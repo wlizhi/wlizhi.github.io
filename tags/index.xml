@@ -4,7 +4,21 @@
         <link>https://wlizhi.cc/tags/</link>
         <description>Tags - 标签 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Wed, 30 Dec 2020 17:08:55 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Tue, 19 Jan 2021 10:24:51 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/" rel="self" type="application/rss+xml" /><item>
+    <title>编发编程</title>
+    <link>https://wlizhi.cc/tags/%E7%BC%96%E5%8F%91%E7%BC%96%E7%A8%8B/</link>
+    <pubDate>Tue, 19 Jan 2021 10:24:51 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/tags/%E7%BC%96%E5%8F%91%E7%BC%96%E7%A8%8B/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>锁</title>
+    <link>https://wlizhi.cc/tags/%E9%94%81/</link>
+    <pubDate>Tue, 19 Jan 2021 10:24:51 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/tags/%E9%94%81/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
     <title>mybatis源码</title>
     <link>https://wlizhi.cc/tags/mybatis%E6%BA%90%E7%A0%81/</link>
     <pubDate>Wed, 30 Dec 2020 17:08:55 &#43;0800</pubDate>
@@ -59,20 +73,6 @@
     <pubDate>Sat, 21 Nov 2020 12:20:48 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://wlizhi.cc/tags/%E5%8D%9A%E5%AE%A2/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>linux</title>
-    <link>https://wlizhi.cc/tags/linux/</link>
-    <pubDate>Wed, 18 Nov 2020 20:59:11 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/tags/linux/</guid>
-    <description><![CDATA[]]></description>
-</item><item>
-    <title>logback</title>
-    <link>https://wlizhi.cc/tags/logback/</link>
-    <pubDate>Mon, 16 Nov 2020 15:15:09 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/tags/logback/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>
