@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/wlizhi.cc\/posts\/spring\/transaction-attention\/"
-        },"genre": "posts","keywords": "spring, 事务","wordcount":  864 ,
+        },"genre": "posts","keywords": "spring, 事务","wordcount":  847 ,
         "url": "https:\/\/wlizhi.cc\/posts\/spring\/transaction-attention\/","datePublished": "2021-03-14T18:49:18+08:00","dateModified": "2021-03-14T18:49:18+08:00","publisher": {
             "@type": "Organization",
             "name": "Wlizhi"},"author": {
@@ -106,7 +106,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">事务、非事务状态获取、释放连接的区别</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://wlizhi.cc" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw"></i>Wlizhi</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/spring/"><i class="far fa-folder fa-fw"></i>spring</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-03-14">2021-03-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 864 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-03-14">2021-03-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 847 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;<span id="/posts/spring/transaction-attention/" class="leancloud_visitors" data-flag-title="事务、非事务状态获取、释放连接的区别">
                         <i class="far fa-eye fa-fw"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
                     </span>&nbsp;</div>
@@ -135,7 +135,7 @@
 <p>而执行业务方法同样可以分为几个步骤，这里和orm框架集成spring的机制有关，以mybatis为例：</p>
 <ol>
 <li>事务切面前置增强执行完毕，进入业务方法。</li>
-<li>业务方法中有访问数据库，则使用TransactionManager中与线程绑定的连接，进行操作。</li>
+<li>业务方法中有访问数据库，则使用 TransactionSynchronizationManager 中与线程绑定的连接，进行操作。</li>
 <li>如果有多条sql语句，则会使用上述连接，也就是说，这多条sql使用的同一个连接。（非事务方式是直接从连接池获取连接）</li>
 <li>如果这多条sql之间夹杂一些业务代码，那么，执行这些业务代码时，同样会保持对这个连接的占用。</li>
 <li>直到业务方法执行完毕，回到事务切面的后置通知，提交或回滚事务后，才会释放连接。</li>
