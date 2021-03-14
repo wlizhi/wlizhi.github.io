@@ -4,7 +4,14 @@
         <link>https://wlizhi.cc/categories/spring/</link>
         <description>spring - 分类 - 暗夜零星</description>
         <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
-            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Thu, 17 Dec 2020 10:09:53 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/categories/spring/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sun, 14 Mar 2021 18:49:18 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/categories/spring/" rel="self" type="application/rss+xml" /><item>
+    <title>事务、非事务状态获取、释放连接的区别</title>
+    <link>https://wlizhi.cc/posts/spring/transaction-attention/</link>
+    <pubDate>Sun, 14 Mar 2021 18:49:18 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/transaction-attention/</guid>
+    <description><![CDATA[<p>spring声明式事务使用时如果不注意，很容易造成连接佣金而导致线程阻塞。</p>]]></description>
+</item><item>
     <title>27 DispatcherServlet具体业务方法的调用</title>
     <link>https://wlizhi.cc/posts/spring/27-dispatcher-servlet-handler-adapter-handle/</link>
     <pubDate>Thu, 17 Dec 2020 10:09:53 &#43;0800</pubDate>
@@ -67,12 +74,5 @@
     <author>作者</author>
     <guid>https://wlizhi.cc/posts/spring/21-load-servlet-container-initializer-on-startup/</guid>
     <description><![CDATA[在web容器启动时为提供给第三方组件机会做一些初始化的工作，例如注册 servlet 或者 filter 等，servlet 规范中通过 ServletContainerInitializer 实现此功能。]]></description>
-</item><item>
-    <title>20 声明式事务扩展 TransactionSynchronization</title>
-    <link>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</link>
-    <pubDate>Mon, 07 Dec 2020 14:14:56 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://wlizhi.cc/posts/spring/20-transaction-extention-transaction-synchronization/</guid>
-    <description><![CDATA[事务提交前后是可以自定义一些逻辑，嵌入到事务提交的流程中的，通过spring-tx包提供的TransactionSynchronization类、使用TransactionSynchronizationManager的静态方法registerSynchronization() 或者使用注解方式均可。]]></description>
 </item></channel>
 </rss>

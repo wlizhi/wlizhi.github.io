@@ -2,12 +2,16 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://wlizhi.cc/categories/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/posts/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/categories/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/posts/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/spring/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/tags/%E4%BA%8B%E5%8A%A1/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/posts/spring/transaction-attention/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
+            <loc>https://wlizhi.cc/</loc><lastmod>2021-03-14T18:49:18&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/categories/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/concurrent/reentrant-distributed-lock/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/%E9%94%81/</loc><lastmod>2021-01-19T10:24:51&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/mybatis/04-mybatis-cache/</loc><lastmod>2020-12-30T17:08:55&#43;08:00</lastmod></url><url>
@@ -17,11 +21,9 @@
             <loc>https://wlizhi.cc/posts/mybatis/02-mybatis-log/</loc><lastmod>2020-12-20T10:02:59&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/mybatis/01-mybatis-structure/</loc><lastmod>2020-12-20T09:59:30&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/27-dispatcher-servlet-handler-adapter-handle/</loc><lastmod>2020-12-17T10:09:53&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/categories/spring/</loc><lastmod>2020-12-17T10:09:53&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/spring%E6%BA%90%E7%A0%81/</loc><lastmod>2020-12-17T10:09:53&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/26-dispatcher-servlet-core-process/</loc><lastmod>2020-12-16T19:30:41&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/25-request-mapping-and-adapter-init/</loc><lastmod>2020-12-16T17:11:54&#43;08:00</lastmod></url><url>
-            <loc>https://wlizhi.cc/tags/spring/</loc><lastmod>2020-12-16T00:07:13&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/layering-cache/</loc><lastmod>2020-12-16T00:07:13&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/tags/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</loc><lastmod>2020-12-16T00:07:13&#43;08:00</lastmod></url><url>
             <loc>https://wlizhi.cc/posts/spring/24-dispatcher-servlet-init/</loc><lastmod>2020-12-15T22:41:32&#43;08:00</lastmod></url><url>

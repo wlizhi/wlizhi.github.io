@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>事务 - 标签 - 暗夜零星</title>
+        <link>https://wlizhi.cc/tags/%E4%BA%8B%E5%8A%A1/</link>
+        <description>事务 - 标签 - 暗夜零星</description>
+        <generator>Hugo -- gohugo.io</generator><managingEditor>wlizhicc@163.com (Wlizhi)</managingEditor>
+            <webMaster>wlizhicc@163.com (Wlizhi)</webMaster><lastBuildDate>Sun, 14 Mar 2021 18:49:18 &#43;0800</lastBuildDate><atom:link href="https://wlizhi.cc/tags/%E4%BA%8B%E5%8A%A1/" rel="self" type="application/rss+xml" /><item>
+    <title>事务、非事务状态获取、释放连接的区别</title>
+    <link>https://wlizhi.cc/posts/spring/transaction-attention/</link>
+    <pubDate>Sun, 14 Mar 2021 18:49:18 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://wlizhi.cc/posts/spring/transaction-attention/</guid>
+    <description><![CDATA[<p>spring声明式事务使用时如果不注意，很容易造成连接佣金而导致线程阻塞。</p>]]></description>
+</item></channel>
+</rss>
