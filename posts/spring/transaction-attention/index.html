@@ -6,7 +6,7 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>事务、非事务状态获取、释放连接的区别 - 暗夜零星</title><meta name="Description" content="暗夜零星，java程序员。这里是我的个人博客，交流技术，分享经验。"><meta property="og:title" content="事务、非事务状态获取、释放连接的区别" />
-<meta property="og:description" content="spring声明式事务使用时如果不注意，很容易造成连接佣金而导致线程阻塞。" />
+<meta property="og:description" content="spring声明式事务使用时如果不注意，很容易造成连接用尽而导致线程阻塞。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://wlizhi.cc/posts/spring/transaction-attention/" />
 <meta property="og:image" content="https://wlizhi.cc/logo.png"/>
@@ -16,7 +16,7 @@
 <meta name="twitter:image" content="https://wlizhi.cc/logo.png"/>
 
 <meta name="twitter:title" content="事务、非事务状态获取、释放连接的区别"/>
-<meta name="twitter:description" content="spring声明式事务使用时如果不注意，很容易造成连接佣金而导致线程阻塞。"/>
+<meta name="twitter:description" content="spring声明式事务使用时如果不注意，很容易造成连接用尽而导致线程阻塞。"/>
 <meta name="application-name" content="暗夜零星">
 <meta name="apple-mobile-web-app-title" content="暗夜零星"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -123,7 +123,7 @@
     <li><a href="#4-解决方式">4 解决方式</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>spring声明式事务使用时如果不注意，很容易造成连接佣金而导致线程阻塞。</p>
+            </div><div class="content" id="content"><p>spring声明式事务使用时如果不注意，很容易造成连接用尽而导致线程阻塞。</p>
 <h2 id="1-事务流程">1 事务流程</h2>
 <p>spring声明式事务是动态代理实现的，在spring声明式事务中，完成一个事务需经历以下步骤：</p>
 <ol>
